@@ -18,6 +18,7 @@ import History from "../Sections/Main/History";
 import { SyntheticsPage } from "../Sections/Main/SyntheticsPage";
 import GM from "../Sections/Main/GM";
 import { getIsSyntheticsSupported } from "@/utils/gmx/config/features";
+import AgentChat from "../Sections/Main/AgentChat";
 import { useChainId } from "@/utils/gmx/lib/chains";
 import { SyntheticsFallbackPage } from "../Sections/Fallbacks/SyntheticsFallbackPage";
 import Credit from "../Sections/Main/Credit";
@@ -48,6 +49,9 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
         break;
       case "Spot":
         setPage(<Spot />);
+        break;
+      case "AI Agent":
+        setPage(<AgentChat />);
         break;
 
       case "Perps":

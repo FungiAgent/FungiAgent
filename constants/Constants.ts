@@ -11,6 +11,8 @@ import CreditActive from "../public/navbar/CreditActive.svg";
 import CreditDesactive from "../public/navbar/CreditDesactive.svg";
 import NFTActive from "../public/navbar/NFTActive.svg";
 import NFTDesactive from "../public/navbar/NFTDesactive.svg";
+import AIAgent from "../public/navbar/AIAgent.svg";
+import AIAgentActive from "../public/navbar/AIAgentActive.svg";
 import Arbitrum from "../public/Arbitrum.svg";
 import Polygon from "../public/Polygon.svg";
 import Optimism from "../public/Optimism.svg";
@@ -29,17 +31,23 @@ export const navigation = [
     imageDesactive: SpotDesactive.src,
   },
   {
+    name: "AI Agent",
+    href: "/agent",
+    imageActive: AIAgentActive.src,
+    imageDesactive: AIAgent.src,
+  },
+  {
     name: "Perps",
     href: "/perpetuals",
     imageActive: PerpsActive.src,
     imageDesactive: PerpsDesactive.src,
   },
-  {
-    name: "Credit",
-    href: "/credit",
-    imageActive: CreditActive.src,
-    imageDesactive: CreditDesactive.src,
-  },
+  // {
+  //   name: "Credit",
+  //   href: "/credit",
+  //   imageActive: CreditActive.src,
+  //   imageDesactive: CreditDesactive.src,
+  // },
   {
     name: "Yield",
     href: "/yield",
