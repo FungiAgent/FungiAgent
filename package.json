@@ -16,6 +16,7 @@
     "@apollo/client": "3.5.6",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@langchain/openai": "^0.0.23",
     "@types/lodash": "4.14.198",
     "@types/react-router-dom": "5.3.3",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
