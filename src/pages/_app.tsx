@@ -1,6 +1,8 @@
 // React
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+// import { cors } from "cors";
+
 // Next
 import type { AppProps } from "next/app";
 // Styles
@@ -22,6 +24,7 @@ import { swrGCMiddleware } from "@/lib/swrMiddlewares";
 import { FungiContextProvider } from "@/context/FungiContextProvider";
 import { NotificationContextProvider } from "@/context/NotificationContextProvider";
 import { ModalContextProvider } from "@/context/ModalContextProvider";
+
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
