@@ -1,25 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
 import { agentExecutor } from '@/AI_Agent/AgentExecutor';
-// import { ChatAnthropic } from "@langchain/anthropic";
-// import { OpenAI, ChatOpenAI } from "@langchain/openai";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { HumanMessage } from "@langchain/core/messages";
+import { useTokensInfo } from '@/hooks/useTokensInfo';
 import dotenv from "dotenv";
+import {
+    ChatPromptTemplate,
+    FewShotChatMessagePromptTemplate,
+    FewShotChatMessagePromptTemplateInput
+  } from "langchain/prompts";
+
+import { PromptTemplate } from "langchain/prompts";
+import { format } from 'path';
 
 dotenv.config();
 
 const AI_AgentTester = () => {
-    const [query, setQuery] = useState('');
+    const { tokens } = useTokensInfo();
+    const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
 
-    // Placeholder function for sending the query to the AI agent
-    const handleQuerySubmit = async () => {
-        // This will be replaced with actual agent execution logic
-        let response = await agentExecutor.invoke({input: query});
-        console.log(response);
-        setAgentResponse(response.output);
+    const generateQueryFromPortfolio = (tokens) => {
+        // Filter out tokens with 0 balance and convert the rest to their USD equivalents
+        const tokensWithNonZeroBalance = tokens
+            .filter(token => token.balance > 0) // Assuming 'balance' is directly usable; adjust if it's in a different format
+            .map(token => {
+                const balanceUSD = (token.balance / Math.pow(10, token.decimals)) * token.priceUSD;
+                return `${token.symbol} in USD: $${balanceUSD.toFixed(2)} USD | ${token.symbol} raw balance: ${token.balance}`;
+            });
+        
+        return tokensWithNonZeroBalance.join('\n');
     };
+
+    const getCurrentDate = () => {
+        return new Date().toISOString();
+      };
+
+    const promptTemplate = new PromptTemplate({
+        template: "Portfolio composition:\n\n{date}\n\n{portfolio}",
+        inputVariables: ["date", "portfolio"],
+    });
+
+    const handleQuerySubmit = async () => {
+        if (tokens.length > 0) {
+            const portfolioQuery = generateQueryFromPortfolio(tokens);
+            const formattedPrompt = await promptTemplate.format({
+                date: getCurrentDate(),
+                portfolio: portfolioQuery,
+            });
+
+            let response = await agentExecutor.invoke({ input: formattedPrompt + query });
+            setAgentResponse(response.output);
+            console.log(response);
+        }
+    };
+
+    // useEffect(() => {
+    //     // Automatically generate and set query when tokens are fetched/updated
+    //     if(tokens.length > 0) {
+    //         // const portfolioQuery = generateQueryFromPortfolio(tokens);
+    //         // const portfolioQuery = prompt;
+    //         // setQuery(portfolioQuery);
+    //         // console.log(portfolioQuery);
+    //     }
+    // }, []);
 
     return (
         <PageContainer
