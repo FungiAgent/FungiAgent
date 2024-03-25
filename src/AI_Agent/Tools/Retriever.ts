@@ -3,11 +3,6 @@ import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { createRetrieverTool } from "langchain/tools/retriever";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const apiKey = process.env.OPENAI_API_KEY;
 
 const loader = new CheerioWebBaseLoader(
   "https://docs.smith.langchain.com/user_guide"
@@ -24,7 +19,7 @@ const vectorstore = await MemoryVectorStore.fromDocuments(
   docs,
   new OpenAIEmbeddings(
     {
-        openAIApiKey: apiKey,
+      openAIApiKey: "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",
     }
   )
 );
