@@ -3,11 +3,8 @@ import PageContainer from '@/components/Container/PageContainer';
 import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import dotenv from "dotenv";
-import {
-    ChatPromptTemplate,
-    FewShotChatMessagePromptTemplate,
-    FewShotChatMessagePromptTemplateInput
-  } from "langchain/prompts";
+import { useSimUO } from "@/hooks/useSimUO";
+import { useERC20Transfer } from "@/hooks/useERC20Transfer";
 
 import { PromptTemplate } from "langchain/prompts";
 import { format } from 'path';
@@ -18,6 +15,7 @@ const AI_AgentTester = () => {
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
+    const { simStatus, simTransfer } = useSimUO();
 
     const generateQueryFromPortfolio = (tokens) => {
         // Filter out tokens with 0 balance and convert the rest to their USD equivalents
@@ -54,15 +52,16 @@ const AI_AgentTester = () => {
         }
     };
 
-    // useEffect(() => {
-    //     // Automatically generate and set query when tokens are fetched/updated
-    //     if(tokens.length > 0) {
-    //         // const portfolioQuery = generateQueryFromPortfolio(tokens);
-    //         // const portfolioQuery = prompt;
-    //         // setQuery(portfolioQuery);
-    //         // console.log(portfolioQuery);
-    //     }
-    // }, []);
+    const simulateTransfer = () => {
+        console.log("Simulate Transfer triggered!");
+        // Add the actual simulation logic or function call here
+    };
+
+    useEffect(() => {
+        if (agentResponse.includes("0x403")) {
+            simulateTransfer();
+        }
+    }, [agentResponse]);
 
     return (
         <PageContainer
@@ -100,3 +99,9 @@ const AI_AgentTester = () => {
 };
 
 export default AI_AgentTester;
+
+// PERFORM A SIMULATION:
+
+// recipient: 0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD
+// tokenAddress: 0xaf88d065e77c8cc2239327c5edb3a432268e5831
+// amount: $5
