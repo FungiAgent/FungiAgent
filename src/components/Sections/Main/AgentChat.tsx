@@ -11,6 +11,7 @@ import { useUserOperations } from "@/hooks/useUserOperations";
 
 import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
+import { set } from 'lodash';
 
 dotenv.config();
 
@@ -63,32 +64,33 @@ const AgentChat = () => {
         }
     };
 
-    const handleSend = async () => {
-        if (
-          tokenAddress === undefined ||
-          amount === undefined ||
-          recipient === undefined ||
-          typeof sendTransfer !== "function"
-        ) {
-          showNotification({
-            message: "Error sending tokens",
-            type: "error",
-          });
-          return Promise.resolve();
-        } else {
-            setTokenAddress(tokenAddress);
-            setAmount(amount);
-            setRecipient(recipient);
-        }
-        const resultTx: any = await sendTransfer();
+    // const handleSend = async (params: any) => {
+    //     const { tokenAddress, amount, recipient } = params;
+    //     if (
+    //       tokenAddress === undefined ||
+    //       amount === undefined ||
+    //       recipient === undefined ||
+    //       typeof sendTransfer !== "function"
+    //     ) {
+    //       showNotification({
+    //         message: "Error sending tokens",
+    //         type: "error",
+    //       });
+    //       return Promise.resolve();
+    //     } else {
+    //         setTokenAddress(tokenAddress);
+    //         setAmount(amount);
+    //         setRecipient(recipient);
+    //     }
+    //     const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
+    //     console.log("RESULT TX", resultTx);
     
-        await sendUserOperations(resultTx);
-      };
+    //     await sendUserOperations(resultTx);
+    //   };
 
-    const simulateTransfer = async (params: any) => {
+    const handleSend = async (params: any) => {
         
         const { tokenAddress, amount, recipient } = params;
-        console.log(`Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}`);
         
         if (
             tokenAddress === undefined ||
@@ -105,11 +107,50 @@ const AgentChat = () => {
         try {
             const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
             console.log("RESULT TX", resultTx);
+            const result: any = await sendUserOperations(resultTx);
+            setUpdatedSendTransfer(result);
+            showNotification({
+                message: "Transfer successful",
+                type: "success",
+            });
+        } catch (error: any) {
+            showNotification({
+                message: error.message,
+                type: "error",
+            });
+            setUpdatedSendTransfer(null); // Clear previous simulation results
+        }
+    };
+
+    const simulateTransfer = async (params: any) => {
+        
+        const { tokenAddress, amount, recipient } = params;
+        console.log(`Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}`);
+        
+        if (
+            tokenAddress === undefined ||
+            amount === undefined ||
+            recipient === undefined ||
+            typeof sendTransfer !== "function"
+        ) {
+            showNotification({
+                message: "Error simulating transfer",
+                type: "error",
+            });
+            return Promise.resolve();
+        }
+        try {
+            const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
+            console.log("RESULT TX", resultTx);
             const result: any = await simTransfer(resultTx);
             if (!result || result.error) {
                 throw new Error(result?.error || "Simulation failed. No result returned.");
             }
             setSimulationResult(result);
+            showNotification({
+                message: "Transfer simulated successfully",
+                type: "success",
+            });
         } catch (error: any) {
             showNotification({
                 message: error.message,
@@ -137,7 +178,7 @@ const AgentChat = () => {
               break;
             // Add more cases for other tools and hooks
             case 'Perform-Transfer':
-                handleSend();
+                handleSend(params);
                 break;
             default:
               console.log('Unknown tool:', tool);
