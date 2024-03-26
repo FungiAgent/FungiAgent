@@ -5,17 +5,28 @@ import { useTokensInfo } from '@/hooks/useTokensInfo';
 import dotenv from "dotenv";
 import { useSimUO } from "@/hooks/useSimUO";
 import { useERC20Transfer } from "@/hooks/useERC20Transfer";
+import { useNotification } from '@/context/NotificationContextProvider';
+import { BigNumber } from 'ethers';
+import { useUserOperations } from "@/hooks/useUserOperations";
 
 import { PromptTemplate } from "langchain/prompts";
-import { format } from 'path';
+import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 
 dotenv.config();
 
-const AI_AgentTester = () => {
+const AgentChat = () => {
+    const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
+    const [amount, setAmount] = useState<string>("1000000");
+    const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
+    const { showNotification } = useNotification();
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
     const { simStatus, simTransfer } = useSimUO();
+    const [updatedSendTransfer, setUpdatedSendTransfer] = useState<any>(null);
+    const [status, sendTransfer] = useERC20Transfer(tokenAddress, BigNumber.from(amount), recipient);
+    const [simulationResult, setSimulationResult] = useState<any>(null);
+    const { sendUserOperations } = useUserOperations();
 
     const generateQueryFromPortfolio = (tokens) => {
         // Filter out tokens with 0 balance and convert the rest to their USD equivalents
@@ -34,7 +45,7 @@ const AI_AgentTester = () => {
       };
 
     const promptTemplate = new PromptTemplate({
-        template: "Portfolio composition:\n\n{date}\n\n{portfolio}",
+        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nQuery: ",
         inputVariables: ["date", "portfolio"],
     });
 
@@ -52,16 +63,96 @@ const AI_AgentTester = () => {
         }
     };
 
-    const simulateTransfer = () => {
-        console.log("Simulate Transfer triggered!");
-        // Add the actual simulation logic or function call here
+    const handleSend = async () => {
+        if (
+          tokenAddress === undefined ||
+          amount === undefined ||
+          recipient === undefined ||
+          typeof sendTransfer !== "function"
+        ) {
+          showNotification({
+            message: "Error sending tokens",
+            type: "error",
+          });
+          return Promise.resolve();
+        } else {
+            setTokenAddress(tokenAddress);
+            setAmount(amount);
+            setRecipient(recipient);
+        }
+        const resultTx: any = await sendTransfer();
+    
+        await sendUserOperations(resultTx);
+      };
+
+    const simulateTransfer = async (params: any) => {
+        
+        const { tokenAddress, amount, recipient } = params;
+        console.log(`Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}`);
+        
+        if (
+            tokenAddress === undefined ||
+            amount === undefined ||
+            recipient === undefined ||
+            typeof sendTransfer !== "function"
+        ) {
+            showNotification({
+                message: "Error sending tokens",
+                type: "error",
+            });
+            return Promise.resolve();
+        }
+        try {
+            const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
+            console.log("RESULT TX", resultTx);
+            const result: any = await simTransfer(resultTx);
+            if (!result || result.error) {
+                throw new Error(result?.error || "Simulation failed. No result returned.");
+            }
+            setSimulationResult(result);
+        } catch (error: any) {
+            showNotification({
+                message: error.message,
+                type: "error",
+            });
+            setSimulationResult(null); // Clear previous simulation results
+        }
     };
 
     useEffect(() => {
-        if (agentResponse.includes("0x403")) {
-            simulateTransfer();
-        }
-    }, [agentResponse]);
+        setTokenAddress(tokenAddress);
+        setAmount(amount);
+        setRecipient(recipient);
+    }, [tokenAddress, amount, recipient]);
+
+    useEffect(() => {
+        const handleToolRequest = (data: { tool: string; params: any; result: string }) => {
+          const { tool, params, result } = data;
+    
+          // Handle the tool invocation based on the tool name
+          switch (tool) {
+            case 'Simulate-Transfer':
+                console.log('Simulate-Transfer tool invoked with params:', params);
+                simulateTransfer(params);
+              break;
+            // Add more cases for other tools and hooks
+            case 'Perform-Transfer':
+                handleSend();
+                break;
+            default:
+              console.log('Unknown tool:', tool);
+          }
+    
+          // Update the agent response with the tool result
+          setAgentResponse((prevResponse) => prevResponse + '\n' + result);
+        };
+    
+        agentCommunicationChannel.on(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
+    
+        return () => {
+          agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
+        };
+      }, []);
 
     return (
         <PageContainer
@@ -98,10 +189,4 @@ const AI_AgentTester = () => {
     );
 };
 
-export default AI_AgentTester;
-
-// PERFORM A SIMULATION:
-
-// recipient: 0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD
-// tokenAddress: 0xaf88d065e77c8cc2239327c5edb3a432268e5831
-// amount: $5
+export default AgentChat;

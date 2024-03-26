@@ -12,7 +12,7 @@ const llm = new ChatOpenAI({
 
 export const tools = dynamicTools;
 
-export const prompt = await pull<ChatPromptTemplate>(
+const prompt = await pull<ChatPromptTemplate>(
   "hwchase17/openai-functions-agent"
 );
 
