@@ -2,52 +2,34 @@ import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
 import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
-import dotenv from "dotenv";
-import { useSimUO } from "@/hooks/useSimUO";
-import { useERC20Transfer } from "@/hooks/useERC20Transfer";
-import { useNotification } from '@/context/NotificationContextProvider';
-import { BigNumber } from 'ethers';
-import { useUserOperations } from "@/hooks/useUserOperations";
+import { generateQueryFromPortfolio } from '../../../AI_Agent/Utils/generateQueryFromPortfolio';
 
 import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
-import { set } from 'lodash';
-
-dotenv.config();
+import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
+import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
+import { useSimLiFiTx } from '@/AI_Agent/hooks/useSimLiFiTx';
+import useWallet from "@/hooks/useWallet";
 
 const AgentChat = () => {
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
     const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
-    const { showNotification } = useNotification();
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
-    const { simStatus, simTransfer } = useSimUO();
-    const [updatedSendTransfer, setUpdatedSendTransfer] = useState<any>(null);
-    const [status, sendTransfer] = useERC20Transfer(tokenAddress, BigNumber.from(amount), recipient);
-    const [simulationResult, setSimulationResult] = useState<any>(null);
-    const { sendUserOperations } = useUserOperations();
-
-    const generateQueryFromPortfolio = (tokens) => {
-        // Filter out tokens with 0 balance and convert the rest to their USD equivalents
-        const tokensWithNonZeroBalance = tokens
-            .filter(token => token.balance > 0) // Assuming 'balance' is directly usable; adjust if it's in a different format
-            .map(token => {
-                const balanceUSD = (token.balance / Math.pow(10, token.decimals)) * token.priceUSD;
-                return `${token.symbol} in USD: $${balanceUSD.toFixed(2)} USD | ${token.symbol} raw balance: ${token.balance}`;
-            });
-        
-        return tokensWithNonZeroBalance.join('\n');
-    };
+    const { simulationResult, simulateTransfer } = useSimulateTransfer();
+    const { updatedSendTransfer, handleSend } = useHandleSend();
+    const { status, sendLiFiTx } = useSimLiFiTx();
+    const { scAccount } = useWallet();
 
     const getCurrentDate = () => {
         return new Date().toISOString();
-      };
+    };
 
     const promptTemplate = new PromptTemplate({
-        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nQuery: ",
-        inputVariables: ["date", "portfolio"],
+        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nSource address: {scAccount} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 \n\nQuery: ",
+        inputVariables: ["date", "portfolio", "scAccount"],
     });
 
     const handleQuerySubmit = async () => {
@@ -56,107 +38,12 @@ const AgentChat = () => {
             const formattedPrompt = await promptTemplate.format({
                 date: getCurrentDate(),
                 portfolio: portfolioQuery,
+                scAccount: scAccount,
             });
 
             let response = await agentExecutor.invoke({ input: formattedPrompt + query });
             setAgentResponse(response.output);
             console.log(response);
-        }
-    };
-
-    // const handleSend = async (params: any) => {
-    //     const { tokenAddress, amount, recipient } = params;
-    //     if (
-    //       tokenAddress === undefined ||
-    //       amount === undefined ||
-    //       recipient === undefined ||
-    //       typeof sendTransfer !== "function"
-    //     ) {
-    //       showNotification({
-    //         message: "Error sending tokens",
-    //         type: "error",
-    //       });
-    //       return Promise.resolve();
-    //     } else {
-    //         setTokenAddress(tokenAddress);
-    //         setAmount(amount);
-    //         setRecipient(recipient);
-    //     }
-    //     const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
-    //     console.log("RESULT TX", resultTx);
-    
-    //     await sendUserOperations(resultTx);
-    //   };
-
-    const handleSend = async (params: any) => {
-        
-        const { tokenAddress, amount, recipient } = params;
-        
-        if (
-            tokenAddress === undefined ||
-            amount === undefined ||
-            recipient === undefined ||
-            typeof sendTransfer !== "function"
-        ) {
-            showNotification({
-                message: "Error sending tokens",
-                type: "error",
-            });
-            return Promise.resolve();
-        }
-        try {
-            const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
-            console.log("RESULT TX", resultTx);
-            const result: any = await sendUserOperations(resultTx);
-            setUpdatedSendTransfer(result);
-            showNotification({
-                message: "Transfer successful",
-                type: "success",
-            });
-        } catch (error: any) {
-            showNotification({
-                message: error.message,
-                type: "error",
-            });
-            setUpdatedSendTransfer(null); // Clear previous simulation results
-        }
-    };
-
-    const simulateTransfer = async (params: any) => {
-        
-        const { tokenAddress, amount, recipient } = params;
-        console.log(`Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}`);
-        
-        if (
-            tokenAddress === undefined ||
-            amount === undefined ||
-            recipient === undefined ||
-            typeof sendTransfer !== "function"
-        ) {
-            showNotification({
-                message: "Error simulating transfer",
-                type: "error",
-            });
-            return Promise.resolve();
-        }
-        try {
-            const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
-            console.log("RESULT TX", resultTx);
-            const result: any = await simTransfer(resultTx);
-            if (!result || result.error) {
-                throw new Error(result?.error || "Simulation failed. No result returned.");
-            }
-            setSimulationResult(result);
-            showNotification({
-                message: "Transfer simulated successfully",
-                type: "success",
-            });
-        } catch (error: any) {
-            showNotification({
-                message: error.message,
-                type: "error",
-            });
-            setSimulationResult(null); // Clear previous simulation results
         }
     };
 
@@ -179,6 +66,12 @@ const AgentChat = () => {
             // Add more cases for other tools and hooks
             case 'Perform-Transfer':
                 handleSend(params);
+                break;
+            case 'LiFi-Transaction':
+                console.log('LiFi-Quote tool invoked with params:', params);
+                // handleLiFiTx(params);
+                sendLiFiTx(params);
+                    
                 break;
             default:
               console.log('Unknown tool:', tool);
