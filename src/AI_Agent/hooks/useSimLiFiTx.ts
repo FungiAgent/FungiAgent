@@ -5,8 +5,13 @@ import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { UserOperation } from "@/lib/userOperations/types";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
+import { useSimUO } from "@/hooks/useSimUO";
+import { useNotification } from '@/context/NotificationContextProvider';
 
+// This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {
+  const { simStatus, simTransfer } = useSimUO();
+  const { showNotification } = useNotification();
   const [status, setStatus] = useState<{
     disabled: boolean;
     text: string | null;
@@ -17,7 +22,7 @@ export const useSimLiFiTx = () => {
     return response.data;
   };
 
-  const sendLiFiTx = useMemo(() => {
+  const simLiFiTx = useMemo(() => {
     const handleLiFiTx = async (params: any) => {
       const {
         type,
@@ -107,9 +112,19 @@ export const useSimLiFiTx = () => {
         }
 
         setStatus({ disabled: true, text: "Enter an amount" });
-        return userOps;
-      } catch (error) {
+        console.log("userOps", userOps);
+        const result = await simTransfer(userOps);
+        showNotification({
+          message: "Transfer simulated successfully",
+          type: "success",
+      });
+        return result;
+      } catch (error: any) {
         setStatus({ disabled: true, text: "Enter an amount" });
+        showNotification({
+          message: error.message,
+          type: "error",
+        });
         console.error(error);
       }
     };
@@ -117,5 +132,5 @@ export const useSimLiFiTx = () => {
     return handleLiFiTx;
   }, []);
 
-  return { status, sendLiFiTx };
+  return { status, simLiFiTx };
 };

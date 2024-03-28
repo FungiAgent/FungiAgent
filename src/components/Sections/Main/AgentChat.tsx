@@ -10,6 +10,7 @@ import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
 import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
 import { useSimLiFiTx } from '@/AI_Agent/hooks/useSimLiFiTx';
 import useWallet from "@/hooks/useWallet";
+import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 
 const AgentChat = () => {
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
@@ -20,7 +21,9 @@ const AgentChat = () => {
     const [agentResponse, setAgentResponse] = useState<string>("");
     const { simulationResult, simulateTransfer } = useSimulateTransfer();
     const { updatedSendTransfer, handleSend } = useHandleSend();
-    const { status, sendLiFiTx } = useSimLiFiTx();
+    const { status, simLiFiTx } = useSimLiFiTx();
+    const { sendLiFiTx } = useLiFiTx();
+    
     const { scAccount } = useWallet();
 
     const getCurrentDate = () => {
@@ -67,8 +70,14 @@ const AgentChat = () => {
             case 'Perform-Transfer':
                 handleSend(params);
                 break;
+            case 'LiFi-Simulator':
+                console.log('LiFi-Simulation tool invoked with params:', params);
+                // handleLiFiTx(params);
+                simLiFiTx(params);
+                    
+                break;
             case 'LiFi-Transaction':
-                console.log('LiFi-Quote tool invoked with params:', params);
+                console.log('LiFi-Transaction tool invoked with params:', params);
                 // handleLiFiTx(params);
                 sendLiFiTx(params);
                     
