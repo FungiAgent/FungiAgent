@@ -20,6 +20,7 @@ import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { getViemChain } from "@/config/chains";
 import { MagicMultichainClient } from "@/lib/magic/MagicMultichainClient";
 import {  AlchemySmartAccountClient  } from "@alchemy/aa-alchemy"
+// import { useUserOperations } from '@/hooks/useUserOperations';
 
 
 import {
@@ -45,6 +46,7 @@ export function useGlobalContext() {
   return useContext(FungiGlobalContext) as FungiGlobalContextType;
 }
 
+// FungiGlobalContextProvider.tsx
 export function FungiGlobalContextProvider({
   children,
 }: {
@@ -65,6 +67,23 @@ export function FungiGlobalContextProvider({
   const [chain, setChain] = useState(ARBITRUM);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // BatchContext
+  // const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
+  // const { sendUserOperations } = useUserOperations();
+
+  // const addOperationToBatch = (operation: any) => {
+  //     setBatchedOperations(prev => [...prev, operation]);
+  // };
+
+  // const executeBatchedOperations = async (): Promise<string | undefined> => {
+  //     if (batchedOperations.length > 0) {
+  //         const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
+  //         setBatchedOperations([]);
+  //         return txHash;
+  //     }
+  //     return undefined;
+  // };
 
   useEffect(() => {
 
@@ -208,6 +227,8 @@ export function FungiGlobalContextProvider({
       isConnected,
       login,
       logout,
+      // batchedOperations,
+      // addOperationToBatch,
     };
   }, [
     alchemyClient,
@@ -219,6 +240,8 @@ export function FungiGlobalContextProvider({
     isLoading,
     isConnected,
     logout,
+    // batchedOperations,
+    // addOperationToBatch,
   ]);
 
   return (

@@ -153,4 +153,61 @@ export const dynamicTools = [
       return result;
     },
   }),
+  new DynamicStructuredTool({
+    name: "Add-Operation-To-Batch",
+    description: "Add an operation to the batch",
+    schema: z.object({
+      fromChainId: z.number().describe("The ID of the source chain"),
+      fromAmount: z.string().describe("The amount to transfer from the source chain"),
+      fromToken: z.string().describe("The address of the token to transfer from the source chain"),
+      toChainId: z.number().describe("The ID of the destination chain"),
+      toToken: z.string().describe("The address of the token to receive on the destination chain"),
+      fromAddress: z.string().describe("The address to transfer from on the source chain"),
+      toAddress: z.string().describe("The address to receive the tokens on the destination chain"),
+      slippage: z.string().describe("The maximum slippage allowed for the transaction"),
+    }),
+    func: async ({
+      fromChainId,
+      fromAmount,
+      fromToken,
+      toChainId,
+      toToken,
+      fromAddress,
+      toAddress,
+      slippage,
+    }) => {
+      const result = `Operation added to the batch: Transfer ${fromAmount} ${fromToken} tokens from ${fromAddress} to ${toAddress}.`;
+      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+        tool: 'Add-Operation-To-Batch',
+        params: {
+          fromChainId,
+          fromAmount,
+          fromToken,
+          toChainId,
+          toToken,
+          fromAddress,
+          toAddress,
+          slippage,
+        },
+        result: result,
+      });
+
+      return result;
+    },
+  }),
+  new DynamicStructuredTool({
+    name: "Execute-Batch-Operations",
+    description: "Execute the batch of operations",
+    schema: z.object({}),
+    func: async () => {
+      const result = `Batch of operations executed.`;
+      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+        tool: 'Execute-Batch-Operations',
+        params: {},
+        result: result,
+      });
+
+      return result;
+    },
+  }),
 ];

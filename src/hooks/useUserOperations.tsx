@@ -36,6 +36,7 @@ export function useUserOperations() {
         ),
         type: "success",
       });
+      return txHash;
     } catch (e) {
       console.error(e);
       showNotification({

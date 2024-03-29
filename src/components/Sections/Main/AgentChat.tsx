@@ -3,6 +3,7 @@ import PageContainer from '@/components/Container/PageContainer';
 import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../AI_Agent/Utils/generateQueryFromPortfolio';
+// import { useGlobalContext } from "@/context/FungiContextProvider";
 
 import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
@@ -11,6 +12,7 @@ import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
 import { useSimLiFiTx } from '@/AI_Agent/hooks/useSimLiFiTx';
 import useWallet from "@/hooks/useWallet";
 import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
+import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 
 const AgentChat = () => {
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
@@ -23,6 +25,7 @@ const AgentChat = () => {
     const { updatedSendTransfer, handleSend } = useHandleSend();
     const { status, simLiFiTx } = useSimLiFiTx();
     const { sendLiFiTx } = useLiFiTx();
+    const { addToBatch, batchedOperations, executeBatchOperations } = useLiFiBatch();
     
     const { scAccount } = useWallet();
 
@@ -31,7 +34,7 @@ const AgentChat = () => {
     };
 
     const promptTemplate = new PromptTemplate({
-        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nSource address: {scAccount} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 \n\nQuery: ",
+        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nSource address: {scAccount} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\nQuery: ",
         inputVariables: ["date", "portfolio", "scAccount"],
     });
 
@@ -74,13 +77,20 @@ const AgentChat = () => {
                 console.log('LiFi-Simulation tool invoked with params:', params);
                 // handleLiFiTx(params);
                 simLiFiTx(params);
-                    
                 break;
             case 'LiFi-Transaction':
                 console.log('LiFi-Transaction tool invoked with params:', params);
                 // handleLiFiTx(params);
                 sendLiFiTx(params);
-                    
+                break;
+            case 'Add-Operation-To-Batch':
+                console.log('Add-Operation-To-Batch tool invoked with params:', params);
+                addToBatch(params);
+                console.log('Batched operations:', batchedOperations);
+                break;
+            case 'Execute-Batch-Operations':
+                console.log('Execute-Batch-Operations tool invoked');
+                executeBatchOperations();
                 break;
             default:
               console.log('Unknown tool:', tool);

@@ -20,6 +20,7 @@ import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { getViemChain } from "@/config/chains";
 import { MagicMultichainClient } from "@/lib/magic/MagicMultichainClient";
 import { AlchemySmartAccountClient } from "@alchemy/aa-alchemy";
+// import { useUserOperations } from '@/hooks/useUserOperations';
 
 import { type Address, type SmartAccountSigner } from "@alchemy/aa-core";
 // Types
@@ -31,6 +32,7 @@ export function useGlobalContext() {
   return useContext(FungiContext) as FungiContextType;
 }
 
+// Provider
 export function FungiContextProvider({ children }: { children: ReactNode }) {
   const [alchemyMultichainClient, setAlchemyMultichainClient] =
     useState<AlchemyMultichainClient>();
@@ -47,6 +49,26 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
   const [chain, setChain] = useState(ARBITRUM);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Batch operations
+  // BatchContext
+  // const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
+  // const { sendUserOperations } = useUserOperations();
+
+  // const addOperationToBatch = useCallback((operation: any) => {
+  //   setBatchedOperations(prev => [...prev, operation]);
+  //   // console.log("Batched operations", batchedOperations);
+  // }, []);
+
+  // const executeBatchedOperations = useCallback(async (): Promise<string | undefined> => {
+  //   if (batchedOperations.length > 0) {
+  //     const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
+  //     setBatchedOperations([]);
+  //     return txHash;
+  //   }
+  //   return undefined;
+  // }, [batchedOperations, sendUserOperations]);
+
 
   useEffect(() => {
     const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
@@ -171,7 +193,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
       isLoading,
       isConnected,
       login,
-      logout,
+      logout
     };
   }, [
     alchemyClient,
@@ -182,7 +204,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
     chain,
     isLoading,
     isConnected,
-    logout,
+    logout
   ]);
 
   return (

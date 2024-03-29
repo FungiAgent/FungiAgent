@@ -46,6 +46,9 @@ export type FungiContextType = {
   isLoading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  // addOperationToBatch: (operation: any) => void;
+  // executeBatchedOperations: () => Promise<string | undefined>;
+  // batchedOperations: any[];
 };
 
 // General types
