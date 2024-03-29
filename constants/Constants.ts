@@ -36,30 +36,30 @@ export const navigation = [
     imageActive: AIAgentActive.src,
     imageDesactive: AIAgent.src,
   },
-  {
-    name: "Perps",
-    href: "/perpetuals",
-    imageActive: PerpsActive.src,
-    imageDesactive: PerpsDesactive.src,
-  },
+  // {
+  //   name: "Perps",
+  //   href: "/perpetuals",
+  //   imageActive: PerpsActive.src,
+  //   imageDesactive: PerpsDesactive.src,
+  // },
   // {
   //   name: "Credit",
   //   href: "/credit",
   //   imageActive: CreditActive.src,
   //   imageDesactive: CreditDesactive.src,
   // },
-  {
-    name: "Yield",
-    href: "/yield",
-    imageActive: YieldActive.src,
-    imageDesactive: YieldDesactive.src,
-  },
-  {
-    name: "NFTs",
-    href: "/nfts",
-    imageActive: NFTActive.src,
-    imageDesactive: NFTDesactive.src,
-  },
+  // {
+  //   name: "Yield",
+  //   href: "/yield",
+  //   imageActive: YieldActive.src,
+  //   imageDesactive: YieldDesactive.src,
+  // },
+  // {
+  //   name: "NFTs",
+  //   href: "/nfts",
+  //   imageActive: NFTActive.src,
+  //   imageDesactive: NFTDesactive.src,
+  // },
 ];
 
 export const networks = [

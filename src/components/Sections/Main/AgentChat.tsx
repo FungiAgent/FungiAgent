@@ -4,6 +4,10 @@ import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../AI_Agent/Utils/generateQueryFromPortfolio';
 // import { useGlobalContext } from "@/context/FungiContextProvider";
+import useScAccountPositions from "@/domain/position/useScAccountPositions";
+import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
+import LightSpotTable from '@/components/Tables/LightSpotTable';
+import Loader from "../../Loader/SpinnerLoader";
 
 import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
@@ -13,6 +17,8 @@ import { useSimLiFiTx } from '@/AI_Agent/hooks/useSimLiFiTx';
 import useWallet from "@/hooks/useWallet";
 import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { TokenInfo } from "@/domain/tokens/types";
 
 const AgentChat = () => {
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
@@ -26,6 +32,11 @@ const AgentChat = () => {
     const { status, simLiFiTx } = useSimLiFiTx();
     const { sendLiFiTx } = useLiFiTx();
     const { addToBatch, batchedOperations, executeBatchOperations } = useLiFiBatch();
+    const { totalBalance } = useScAccountPositions();
+    const { totalCash } = useScAccountSpotPosition();
+    const [length, setLength] = useState(tokens.length);
+    const [tokenFrom, setTokenFrom] = useState<TokenInfo | undefined>();
+    const [currentPage, setCurrentPage] = useState<number>(1);
     
     const { scAccount } = useWallet();
 
@@ -51,6 +62,10 @@ const AgentChat = () => {
             setAgentResponse(response.output);
             console.log(response);
         }
+    };
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     };
 
     useEffect(() => {
@@ -106,36 +121,148 @@ const AgentChat = () => {
           agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
       }, []);
+      const getLength = (length: number) => {
+        setLength(length);
+      };
 
-    return (
+      const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+      };
+
+      const handleClickPrevious = () => {
+        setCurrentPage(currentPage - 1);
+      };
+
+      const handleClickNext = () => {
+        setCurrentPage(currentPage + 1);
+      };
+      const ITEMS_PER_PAGE = 6;
+      const totalPages = Math.ceil(length / ITEMS_PER_PAGE);
+
+      const renderPageNumbers = () => {
+        const pageNumbers: (number | string)[] = [];
+        for (let i = 1; i <= totalPages; i++) {
+          if (
+            i === 1 ||
+            i === currentPage ||
+            i === currentPage - 1 ||
+            i === currentPage + 1 ||
+            i === totalPages
+          ) {
+            pageNumbers.push(i);
+          } else if (i === currentPage - 2 || i === currentPage + 2) {
+            pageNumbers.push("...");
+          }
+        }
+    
+        return pageNumbers.map((pageNumber, index) =>
+          pageNumber.toString() !== "..." ? (
+            <button
+              key={index}
+              className={
+                pageNumber === currentPage
+                  ? "bg-main px-2 rounded-lg text-white"
+                  : "mx-2.5"
+              }
+              onClick={() => handlePageChange(Number(pageNumber))}
+            >
+              {pageNumber}
+            </button>
+          ) : (
+            <span className="mx-1" key={index}>
+              {pageNumber}
+            </span>
+          )
+        );
+      };
+      
+      
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
+
+      return (
         <PageContainer
             main={
                 <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
-                <h1 className="text-3xl font-semibold text-gray-900">AI Agent Console</h1>
-                <p className="text-gray-500 my-4">
-                    AI responses will appear here after your query is submitted.
-                </p>
-                <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl rounded-md border border-gray-200">
-                    <p className="text-gray-800">{agentResponse}</p>
-                </div>
+                    <h1 className="text-3xl font-semibold text-gray-900">AI Agent Console</h1>
+                    <p className="text-gray-500 my-4">
+                        AI responses will appear here after your query is submitted.
+                    </p>
+                    <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl rounded-md border border-gray-200">
+                        <p className="text-gray-800">{agentResponse}</p>
+                    </div>
+                    {/* Flex container for textarea and button */}
+                    <div className="flex items-end mt-4 w-full max-w-3xl">
+                        <textarea
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Enter your prompt for the AI agent..."
+                            className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
+                        ></textarea>
+                        <button
+                            type="button"
+                            onClick={handleQuerySubmit}
+                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md"
+                        >
+                            Run
+                        </button>
+                    </div>
                 </div>
             }
             secondary={
-                <div className="flex flex-col items-center justify-center">
-                <textarea
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Enter your prompt for the AI agent..."
-                    className="w-full h-64 p-4 mt-4 border border-gray-300 rounded-md bg-white"
-                ></textarea>
-                <button
-                    type="button"
-                    onClick={handleQuerySubmit}
-                    className="mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md"
-                >
-                    Execute Agent
-                </button>
-                </div>
+                <>
+                <div className="text-lg font-semibold mb-4">Account Details</div>
+                    <p>Total Balance: {formatCurrency(totalBalance)}</p>
+                    <p>Cash Held: {formatCurrency(totalCash)}</p>
+                {tokens.length > 0 ? (
+                  <div className="flex flex-col items-center mt-4 relative h-full">
+                    <LightSpotTable
+                      startIndex={startIndex}
+                      endIndex={endIndex}
+                      getLength={getLength}
+                      handlePageChange={handlePageChange}
+                      setTokenFrom={setTokenFrom}
+                    />{" "}
+                    <div className="flex justify-center items-center absolute inset-x-0 2xl:bottom-6 bottom-10 mx-10">
+                      {length !== 0 && (
+                        <span className="absolute inset-x-0 bottom-2">
+                          Showing {startIndex + 1}-{endIndex} out of {length}
+                        </span>
+                      )}
+                      <div className="absolute bottom-2">
+                        {currentPage !== 1 && (
+                          <button
+                            onClick={() => handleClickPrevious()}
+                            className="absolute top-0 -left-6"
+                          >
+                            <ChevronLeftIcon
+                              className=" w-[24px] h-[24px] text-black"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        )}
+                        {renderPageNumbers()}{" "}
+                        {currentPage < length / ITEMS_PER_PAGE && (
+                          <button
+                            onClick={() => handleClickNext()}
+                            className="absolute top-0 -right-6"
+                          >
+                            <ChevronRightIcon
+                              className=" w-[24px] h-[24px] text-black"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    {" "}
+                    <Loader />
+                  </div>
+                )}
+              </>
             }
             page="AI Agent Tester"
         />
