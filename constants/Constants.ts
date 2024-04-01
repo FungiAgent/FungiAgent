@@ -18,12 +18,12 @@ import Polygon from "../public/Polygon.svg";
 import Optimism from "../public/Optimism.svg";
 
 export const navigation = [
-  {
-    name: "Home",
-    href: "/",
-    imageActive: HomeActive.src,
-    imageDesactive: HomeDesactive.src,
-  },
+  // {
+  //   name: "Home",
+  //   href: "/",
+  //   imageActive: HomeActive.src,
+  //   imageDesactive: HomeDesactive.src,
+  // },
   {
     name: "Spot",
     href: "/spot",

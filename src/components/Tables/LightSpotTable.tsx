@@ -1,14 +1,11 @@
-// React
 import React, { useEffect, useState } from "react";
-// Components
 import LightSpotTableCard from "../Cards/TableCards/LightSpotTableCard";
-// Constants
 import Loader from "../Loader/SpinnerLoader";
+import StartDepositBanner from "../Sections/Fallbacks/StartDepositBanner";
+import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
 import { TokenData, TokenInfo } from "@/domain/tokens/types";
 import { useTokenMarketData } from "@/hooks/useTokenMarketData";
-import StartDepositBanner from "../Sections/Fallbacks/StartDepositBanner";
 import { useTokensInfo } from "@/hooks/useTokensInfo";
-import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
 
 type SpotTableProps = {
   startIndex: number;
@@ -16,14 +13,16 @@ type SpotTableProps = {
   getLength: (length: number) => void;
   handlePageChange: (page: number) => void;
   setTokenFrom: (token: TokenInfo) => void;
+  forceReload: boolean; // New prop to force reload the table
 };
 
-export default function SpotTable({
+export default function LightSpotTable({
   startIndex,
   endIndex,
   getLength,
   handlePageChange,
   setTokenFrom,
+  forceReload, // New prop to force reload the table
 }: SpotTableProps) {
   const { tokens } = useTokensInfo();
   const [typeMember, setTypeMember] = useState<string>("Portfolio");
@@ -61,10 +60,9 @@ export default function SpotTable({
 
   useEffect(() => {
     checkTokens();
-  }, [tokens]);
+  }, [tokens, forceReload]); // Listen for changes in forceReload
 
   useEffect(() => {
-    checkTokens();
     handlePageChange(1);
   }, [typeMember]);
 
@@ -72,18 +70,12 @@ export default function SpotTable({
     checkTokens();
   }, [startIndex, endIndex]);
 
-  // const getTypeMember = (action: string) => {
-  //   setTypeMember(action);
-  // };
-
   return (
     <div className="mt-[20px] w-full h-[574px] pt-[24px] bg-white rounded-lg">
       <div className="grid grid-cols-6 pb-[26px] text-xl font-medium border-b-1 border-gray-300 flex items-center">
         <div className="text-center col-span-2">Name</div>{" "}
-        {/* <div className="text-center">Price</div>{" "} */}
         <div className="text-center">Amount</div>{" "}
         <div className="text-center">Balance</div>{" "}
-
       </div>
       {loading ? (
         <div className="w-full h-[500px] flex items-center justify-center">
@@ -106,7 +98,7 @@ export default function SpotTable({
                         key={token.token.coinKey}
                         index={index}
                       />
-                    ))}{" "}
+                    ))}
                 </>
               ) : (
                 <div>

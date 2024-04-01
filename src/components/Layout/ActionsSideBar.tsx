@@ -34,7 +34,7 @@ type ActionsSideBarProps = {
 
 export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
   const { isConnected, chainId } = useWallet();
-  const [actionSelected, setActionSelected] = useState<string>("Home");
+  const [actionSelected, setActionSelected] = useState<string>("AI Agent");
   const [connected, setConnected] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -44,9 +44,9 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
 
   const getViewComponent = () => {
     switch (actionSelected) {
-      case "Home":
-        setPage(<Home getSelectedAction={getSelectedAction} />);
-        break;
+      // case "Home":
+      //   setPage(<Home getSelectedAction={getSelectedAction} />);
+      //   break;
       case "Spot":
         setPage(<Spot />);
         break;
@@ -54,31 +54,32 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
         setPage(<AgentChat />);
         break;
 
-      case "Perps":
-        {
-          getIsSyntheticsSupported(chainId)
-            ? setPage(<SyntheticsPage />)
-            : setPage(<SyntheticsFallbackPage />);
-        }
-        break;
-      case "Credit":
-        setPage(<Credit />);
-        break;
-      case "Yield":
-        {
-          getIsSyntheticsSupported(chainId)
-            ? setPage(<GM />)
-            : setPage(<SyntheticsFallbackPage />);
-        }
-        break;
-      case "NFTs":
-        setPage(<Nfts />);
-        break;
-      case "Transaction History":
-        setPage(<History />);
-        break;
+      // case "Perps":
+      //   {
+      //     getIsSyntheticsSupported(chainId)
+      //       ? setPage(<SyntheticsPage />)
+      //       : setPage(<SyntheticsFallbackPage />);
+      //   }
+      //   break;
+      // case "Credit":
+      //   setPage(<Credit />);
+      //   break;
+      // case "Yield":
+      //   {
+      //     getIsSyntheticsSupported(chainId)
+      //       ? setPage(<GM />)
+      //       : setPage(<SyntheticsFallbackPage />);
+      //   }
+      //   break;
+      // case "NFTs":
+      //   setPage(<Nfts />);
+      //   break;
+      // case "Transaction History":
+      //   setPage(<History />);
+      //   break;
       default:
-        setPage(<Home getSelectedAction={getSelectedAction} />);
+        // setPage(<Home getSelectedAction={getSelectedAction} />);
+        setPage(<AgentChat />);
         break;
     }
   };
@@ -88,7 +89,9 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
   };
 
   const [page, setPage] = useState<ReactElement>(
-    <Home getSelectedAction={getSelectedAction} />
+    // <Home getSelectedAction={getSelectedAction} />
+    <AgentChat />
+    // <Spot />
   );
 
   useEffect(() => {
@@ -105,6 +108,15 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
       setConnected(true);
     } else {
       setConnected(false);
+    }
+  }, [isConnected]);
+
+  // A useEffect that changes from Home to AI Agent
+  useEffect(() => {
+    if (isConnected) {
+      setActionSelected("AI Agent");
+    } else {
+      setActionSelected("Spot");
     }
   }, [isConnected]);
 
