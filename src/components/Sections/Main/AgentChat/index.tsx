@@ -16,6 +16,8 @@ import useWallet from "@/hooks/useWallet";
 import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 import { TokenInfo } from '@/domain/tokens/types';
+import { executeAgent } from '@/AI_Agent/AgentCreation';
+
 
 const AgentChat = () => {
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
@@ -43,21 +45,14 @@ const AgentChat = () => {
         return new Date().toISOString();
     };
 
-    const promptTemplate = new PromptTemplate({
-        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nSource address: {scAccount} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\nQuery: ",
-        inputVariables: ["date", "portfolio", "scAccount"],
-    });
-
-    const handleQuerySubmit = async () => {
+    const handleQuerySubmit = async (query: string) => {
         if (tokens.length > 0) {
             const portfolioQuery = generateQueryFromPortfolio(tokens);
-            const formattedPrompt = await promptTemplate.format({
-                date: getCurrentDate(),
-                portfolio: portfolioQuery,
-                scAccount: scAccount,
-            });
+            const date = getCurrentDate();
+            const portfolio = portfolioQuery;
+            const scaAddress = scAccount;
 
-            let response = await agentExecutor.invoke({ input: formattedPrompt + query });
+            let response = await executeAgent(query, date, portfolio, scaAddress);
             setAgentResponse(response.output);
             setQuery(""); // Clear the text input box
             setIsInputEmpty(true); // Disable the "Run" button and message sending capacity
@@ -129,7 +124,7 @@ const AgentChat = () => {
     const handleKeyPress = (event) => {
           if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
               event.preventDefault();
-              handleQuerySubmit();
+              handleQuerySubmit(query);
           }
       };
 
@@ -162,12 +157,12 @@ const AgentChat = () => {
                               placeholder="Enter your prompt for the AI agent..."
                               className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
                           ></textarea>
-                          <button
-                              type="button"
-                              onClick={handleQuerySubmit}
-                              disabled={isInputEmpty} // Disable button if input is empty
-                              className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
+                        <button
+                            type="button"
+                            onClick={() => handleQuerySubmit('')}
+                            disabled={isInputEmpty} // Disable button if input is empty
+                            className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
                               Run
                           </button>
                       </div>
