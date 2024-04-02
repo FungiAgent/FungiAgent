@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useGlobalContext } from "@/context/FungiContextProvider";
 import useWallet from "@/utils/gmx/lib/wallets/useWallet";
 import { TokenInfo } from "@/domain/tokens/types";
@@ -16,22 +16,23 @@ export function useTokensInfo() {
   const { alchemyClient } = useGlobalContext();
   const [tokens, setTokens] = useState<TokenInfo[] | []>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (alchemyClient && chainId && scAccount) {
-        const tokensInfo = await getAllTokensWithBalances(
-          alchemyClient,
-          chainId,
-          scAccount
-        );
-        if (!tokensInfo) {
-          return;
-        }
-        setTokens(tokensInfo);
+  const fetchTokens = useCallback(async () => {
+    if (alchemyClient && chainId && scAccount) {
+      const tokensInfo = await getAllTokensWithBalances(
+        alchemyClient,
+        chainId,
+        scAccount
+      );
+      if (!tokensInfo) {
+        return;
       }
-    };
-    fetchData();
-  }, [alchemyClient]);
+      setTokens(tokensInfo);
+    }
+  }, [alchemyClient, chainId, scAccount]);
 
-  return { tokens };
+  useEffect(() => {
+    fetchTokens();
+  }, [alchemyClient, fetchTokens]);
+
+  return { tokens, fetchTokens };
 }

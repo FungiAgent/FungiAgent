@@ -133,7 +133,7 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
               aria-hidden="true"
             />
           </div>
-          {!isHistory && (
+          {/* {!isHistory && (
             <div className="h-[44px] p-[4px] w-[800px] rounded-full grid grid-cols-6 bg-white items-center text-center shadow-xl text-sm">
               {navigation.map((link: navigationType) => {
                 return (
@@ -163,7 +163,7 @@ export default function ActionsSideBar({ isHistory }: ActionsSideBarProps) {
                 );
               })}
             </div>
-          )}
+          )} */}
           <div className="relative flex items-center">
             {connected ? (
               <div className="flex flex-row items-center">

@@ -6,6 +6,7 @@ import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
 import { TokenData, TokenInfo } from "@/domain/tokens/types";
 import { useTokenMarketData } from "@/hooks/useTokenMarketData";
 import { useTokensInfo } from "@/hooks/useTokensInfo";
+import { CHAIN_ID } from "@/utils/gmx/config/chains";
 
 type SpotTableProps = {
   startIndex: number;
@@ -13,7 +14,8 @@ type SpotTableProps = {
   getLength: (length: number) => void;
   handlePageChange: (page: number) => void;
   setTokenFrom: (token: TokenInfo) => void;
-  forceReload: boolean; // New prop to force reload the table
+  forceReload: boolean;
+  handleReloadTable: () => void; // Add handleReloadTable prop
 };
 
 export default function LightSpotTable({
@@ -22,9 +24,10 @@ export default function LightSpotTable({
   getLength,
   handlePageChange,
   setTokenFrom,
-  forceReload, // New prop to force reload the table
+  forceReload,
+  handleReloadTable, // Destructure handleReloadTable prop
 }: SpotTableProps) {
-  const { tokens } = useTokensInfo();
+  const { tokens, fetchTokens } = useTokensInfo();
   const [typeMember, setTypeMember] = useState<string>("Portfolio");
   const [loading, setLoading] = useState(false);
   const { tokenMarketsData, fetchData, isLoading } = useTokenMarketData([]);
@@ -32,6 +35,7 @@ export default function LightSpotTable({
 
   const checkTokens = () => {
     if (tokens && typeMember === "All") {
+      fetchTokens();
       setLoading(true);
       setPortfolioEmpty(false);
       fetchData(tokens.slice(startIndex, endIndex));
@@ -46,6 +50,7 @@ export default function LightSpotTable({
           1
         );
       });
+      console.log("Tokens with balance: ", tokensWithBalance);
 
       if (tokensWithBalance.length !== 0) {
         setPortfolioEmpty(false);
@@ -72,11 +77,15 @@ export default function LightSpotTable({
 
   return (
     <div className="mt-[20px] w-full h-[574px] pt-[24px] bg-white rounded-lg">
-      <div className="grid grid-cols-6 pb-[26px] text-xl font-medium border-b-1 border-gray-300 flex items-center">
-        <div className="text-center col-span-2">Name</div>{" "}
-        <div className="text-center">Amount</div>{" "}
+      <div className="grid grid-cols-6 pb-[26px] text-xl font-medium border-b-1 border-gray-300 items-center">
+        <div className="text-center col-span-2">Token</div>{" "}
+        <div className="text-center">Price</div>{" "}
         <div className="text-center">Balance</div>{" "}
+        <button className="ml-3" onClick={fetchTokens}>
+          <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4 mr-2" />
+        </button>
       </div>
+      
       {loading ? (
         <div className="w-full h-[500px] flex items-center justify-center">
           <Loader />

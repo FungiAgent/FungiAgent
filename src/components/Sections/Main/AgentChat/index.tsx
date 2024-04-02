@@ -35,6 +35,7 @@ const AgentChat = () => {
     const [tokenFrom, setTokenFrom] = useState<TokenInfo | undefined>();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [forceTableReload, setForceTableReload] = useState(false);
+    const [isInputEmpty, setIsInputEmpty] = useState(true);
     
     const { scAccount } = useWallet();
 
@@ -58,6 +59,8 @@ const AgentChat = () => {
 
             let response = await agentExecutor.invoke({ input: formattedPrompt + query });
             setAgentResponse(response.output);
+            setQuery(""); // Clear the text input box
+            setIsInputEmpty(true); // Disable the "Run" button and message sending capacity
             console.log(response);
         }
     };
@@ -79,25 +82,20 @@ const AgentChat = () => {
     useEffect(() => {
         const handleToolRequest = (data: { tool: string; params: any; result: string }) => {
           const { tool, params, result } = data;
-        //   const pageNumbers: (number | string)[] = [];
-          // Handle the tool invocation based on the tool name
           switch (tool) {
             case 'Simulate-Transfer':
                 console.log('Simulate-Transfer tool invoked with params:', params);
                 simulateTransfer(params);
               break;
-            // Add more cases for other tools and hooks
             case 'Perform-Transfer':
                 handleSend(params);
                 break;
             case 'LiFi-Simulator':
                 console.log('LiFi-Simulation tool invoked with params:', params);
-                // handleLiFiTx(params);
                 simLiFiTx(params);
                 break;
             case 'LiFi-Transaction':
                 console.log('LiFi-Transaction tool invoked with params:', params);
-                // handleLiFiTx(params);
                 sendLiFiTx(params);
                 break;
             case 'Add-Operation-To-Batch':
@@ -113,7 +111,6 @@ const AgentChat = () => {
               console.log('Unknown tool:', tool);
           }
     
-          // Update the agent response with the tool result
           setAgentResponse((prevResponse) => prevResponse + '\n' + result);
         };
     
@@ -123,43 +120,53 @@ const AgentChat = () => {
           agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
       }, []);
-      const getLength = (length: number) => {
+
+    const handleInputChange = (event) => {
+        setQuery(event.target.value);
+        setIsInputEmpty(event.target.value.trim() === ""); // Check if input box is empty
+    };
+
+    const handleKeyPress = (event) => {
+          if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
+              event.preventDefault();
+              handleQuerySubmit();
+          }
+      };
+
+    const getLength = (length: number) => {
         setLength(length);
       };
 
-      const handlePageChange = (newPage: number) => {
+    const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
       };
 
-      const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 6;
 
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
 
-      return (
+    return (
         <main>
           <PageContainer
               main={
                   <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
-                      <h1 className="text-3xl font-semibold text-gray-900">AI Agent Console</h1>
-                      <p className="text-gray-500 my-4">
-                          AI responses will appear here after your query is submitted.
-                      </p>
-                      <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl rounded-md border border-gray-200">
-                          <p className="text-gray-800">{agentResponse}</p>
-                      </div>
-                      {/* Flex container for textarea and button */}
+                        <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl h-[60vh] rounded-md border border-gray-200">
+                            <p className="text-gray-800">{agentResponse}</p>
+                        </div>
                       <div className="flex items-end mt-4 w-full max-w-3xl">
                           <textarea
                               value={query}
-                              onChange={(e) => setQuery(e.target.value)}
+                              onChange={handleInputChange}
+                              onKeyDown={handleKeyPress}
                               placeholder="Enter your prompt for the AI agent..."
                               className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
                           ></textarea>
                           <button
                               type="button"
                               onClick={handleQuerySubmit}
-                              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md"
+                              disabled={isInputEmpty} // Disable button if input is empty
+                              className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                               Run
                           </button>
@@ -177,7 +184,6 @@ const AgentChat = () => {
                   getLength={getLength}
                   handlePageChange={handlePageChange}
                   setTokenFrom={setTokenFrom}
-                  handleReloadTable={handleReloadTable}
                   forceTableReload={forceTableReload}
                   currentPage={currentPage}
                   ITEMS_PER_PAGE={ITEMS_PER_PAGE}
@@ -186,7 +192,7 @@ const AgentChat = () => {
               }
               page="AI Agent Tester"
           />
-          </main>
+        </main>
       );
 };
 

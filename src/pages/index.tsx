@@ -1,20 +1,14 @@
 // React
 import React from "react";
-// Hooks
-import useWindowSize from "@/hooks/useWindowSize";
-// Components
-import ErrorPage from "@/components/Sections/Fallbacks/ErrorPage";
+// import ErrorPage from "@/components/Sections/Fallbacks/ErrorPage";
 import ActionsSideBar from "@/components/Layout/ActionsSideBar";
+import AgentChat from "@/components/Sections/Main/AgentChat";
 
 export default function HomePage() {
-  const size = useWindowSize();
-
-  if (size.width && size.width < 1024) {
-    return <ErrorPage />;
-  }
 
   return (
     <div>
+      {/* <AgentChat /> */}
       <ActionsSideBar isHistory={false} />
     </div>
   );

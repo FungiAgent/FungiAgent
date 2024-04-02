@@ -14,18 +14,23 @@ const Secondary = ({
   getLength,
   handlePageChange,
   setTokenFrom,
-  handleReloadTable,
   forceTableReload,
   currentPage,
   ITEMS_PER_PAGE,
   length,
 }) => {
+  const [tableReloadKey, setTableReloadKey] = useState(0);
+
   const handleClickPrevious = () => {
     handlePageChange(currentPage - 1);
   };
 
   const handleClickNext = () => {
     handlePageChange(currentPage + 1);
+  };
+
+  const handleReloadTable = () => {
+    setTableReloadKey((prevKey) => prevKey + 1); // Increment the key to force reload
   };
 
   const renderPageNumbers = () => {
@@ -43,7 +48,6 @@ const Secondary = ({
         pageNumbers.push("...");
       }
     }
-
     return pageNumbers.map((pageNumber, index) =>
       pageNumber.toString() !== "..." ? (
         <button
@@ -66,19 +70,17 @@ const Secondary = ({
   };
 
   return (
-    <>
-        <div className="flex justify-between items-center text-lg font-semibold mb-4">
-                Account Details
-                <button onClick={handleReloadTable}>
-                    <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4 mr-2" />
-                </button>
-            </div>
+    <div style={{ width: "500px" }}>
       <div className="flex justify-between mb-4">
-        
-        <div className="text-2xl font-bold">
-          <p>Total Balance: {formatCurrency(totalBalance)}</p>
+        <div className="flex justify-between items-center text-lg font-semibold mb-4">
+          <p>
+            Total Balance: {formatCurrency(totalBalance)} <br />
+            Cash: {formatCurrency(totalCash)}
+          </p>
           {/* <p>{formatCurrency(totalBalance)}</p> */}
-          <p>Cash: {formatCurrency(totalCash)}</p>
+          {/* <button className="ml-32" onClick={renderPageNumbers}>
+            <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4 mr-2" />
+          </button> */}
         </div>
       </div>
 
@@ -91,6 +93,7 @@ const Secondary = ({
             handlePageChange={handlePageChange}
             setTokenFrom={setTokenFrom}
             forceReload={forceTableReload}
+            handleReloadTable={handleReloadTable}
           />
           <div className="flex justify-center items-center absolute inset-x-0 2xl:bottom-6 bottom-10 mx-10">
             {length !== 0 && (
@@ -131,7 +134,7 @@ const Secondary = ({
           <Loader />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
