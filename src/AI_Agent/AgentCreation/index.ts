@@ -3,6 +3,11 @@ import type { ChatPromptTemplate } from "@langchain/core/prompts";
 import { pull } from "langchain/hub";
 import { createOpenAIFunctionsAgent } from "langchain/agents";
 import { dynamicTools } from "../Tools/DynamicTool";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+// LANGCHAIN_CALLBACKS_BACKGROUND=true
 
 const llm = new ChatOpenAI({
   modelName: "gpt-3.5-turbo",

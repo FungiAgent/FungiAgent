@@ -1,10 +1,6 @@
-//React
-import React, { ReactElement, ReactNode } from "react";
-// Next
+import React, { ReactElement, ReactNode, useState, useEffect } from "react";
 import Image from "next/image";
-// Utils
 import useWallet from "@/utils/gmx/lib/wallets/useWallet";
-// Images
 import Logo from "../../../public/profile/Logo.svg";
 
 type PageContainerProps = {
@@ -21,6 +17,29 @@ export default function PageContainer({
   keepWorkingMessage,
 }: PageContainerProps) {
   const { scAccount } = useWallet();
+  const [isSecondaryVisible, setIsSecondaryVisible] = useState(false); // Initially collapsed
+
+  const toggleSecondaryVisibility = () => {
+    setIsSecondaryVisible((prevVisibility) => !prevVisibility);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Check if the window width is less than a certain value
+      const screenWidth = window.innerWidth;
+      const breakpointWidth = 768; // Adjust this value as needed
+      setIsSecondaryVisible(screenWidth >= breakpointWidth);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Call handleResize once to set initial visibility
+    handleResize();
+
+    // Remove event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
@@ -44,9 +63,15 @@ export default function PageContainer({
           </div>
         </main>
       ) : (
-        <main className="grid grid-cols-3 mt-[20px] w-full h-[77vh] bg-white rounded-lg overflow-hidden">
-          <div className="col-span-2">{main}</div>
-          <div className="border-l-1">{secondary}</div>
+        <main className={`grid grid-cols-${isSecondaryVisible ? '3' : '2'} mt-[20px] w-full bg-white rounded-lg overflow-hidden relative`}>
+          <div className={`col-span-${isSecondaryVisible ? '2' : '3'}`}>{main}</div>
+          {/* <button className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md shadow-md" onClick={toggleSecondaryVisibility}>
+              {isSecondaryVisible ? 'Hide Portfolio' : 'Show Portfolio'}
+          </button> */}
+          <div className={`border-l-1 ${isSecondaryVisible ? '' : 'hidden'}`}>
+            {secondary}
+          </div>
+          
         </main>
       )}
     </>
