@@ -1,12 +1,14 @@
 // Import the necessary class
 import { ChatBotCreation } from '../ChatBotCreation'; // Adjust the path as necessary
+import { ChatMessageHistory } from 'langchain/stores/message/in_memory'; // Adjust the path as necessary
 
 class Mind {
   private chatBot: ChatBotCreation;
+  private chatHistory: ChatMessageHistory;
 
-  constructor() {
-    // Initialize ChatBotCreation when a new instance of Mind is created
-    this.chatBot = new ChatBotCreation();
+  constructor(openAIApiKey: string) {
+    this.chatHistory = new ChatMessageHistory();
+    this.chatBot = new ChatBotCreation(this.chatHistory, openAIApiKey);
   }
 
   // Example method to process a message using ChatBotCreation
@@ -24,11 +26,11 @@ class Mind {
 
   // You might also want to expose chat history and clearing history functionality
   public async getChatHistory(): Promise<any[]> {
-    return await this.chatBot.getHistory();
+    return await this.chatHistory.getMessages();
   }
 
   public async clearChatHistory(): Promise<void> {
-    await this.chatBot.clearHistory();
+    await this.chatHistory.clear();
   }
 }
 

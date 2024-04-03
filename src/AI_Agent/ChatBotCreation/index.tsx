@@ -13,19 +13,20 @@ export class ChatBotCreation {
   private chat: ChatOpenAI;
   private chatHistory: ChatMessageHistory;
 
-  constructor() {
+  // Modified constructor to accept ChatMessageHistory instance
+  constructor(chatHistory: ChatMessageHistory, openAIApiKey: string) {
     this.chat = new ChatOpenAI({
       modelName: "gpt-3.5-turbo",
       temperature: 0,
-      openAIApiKey: "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",
-    //   openAIApiKey: process.env.OPENAI_API_KEY, // Use environment variable instead of hardcoding
+      openAIApiKey: openAIApiKey,
     });
 
-    this.chatHistory = new ChatMessageHistory();
+    this.chatHistory = chatHistory;
   }
 
     public async processMessage(inputMessage: string, dynamicTemplate: string[]): Promise<string> {
-        const input = new HumanMessage(inputMessage);
+      console.log("Processing message, current history length:", await this.chatHistory.getMessages());
+      const input = new HumanMessage(inputMessage);
         await this.chatHistory.addMessage(input);
 
         const dynamicTemplateMessages = dynamicTemplate.map(templateItem => (["system", templateItem] as [string, string]));
@@ -47,6 +48,7 @@ export class ChatBotCreation {
 
         await this.chatHistory.addMessage(response);
         // console.log(this.chatHistory.getMessages());
+        console.log("After adding, history length:", await this.chatHistory.getMessages());
         return response.lc_kwargs.content;
     }
 

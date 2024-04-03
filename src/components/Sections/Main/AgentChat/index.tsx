@@ -20,8 +20,8 @@ import { ChatBotCreation } from '@/AI_Agent/ChatBotCreation';
 
 
 const AgentChat = () => {
-    const mind = new Mind();
-    const chatBot = new ChatBotCreation();
+    const mind = new Mind("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");
+    // const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
     const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
