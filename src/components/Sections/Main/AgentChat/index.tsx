@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
-import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
 import Secondary from "./secondary";
 
-import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
 import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
@@ -17,9 +15,13 @@ import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 import { TokenInfo } from '@/domain/tokens/types';
 import { executeAgent } from '@/AI_Agent/AgentCreation';
+import { Mind } from '@/AI_Agent/Mind';
+import { ChatBotCreation } from '@/AI_Agent/ChatBotCreation';
 
 
 const AgentChat = () => {
+    const mind = new Mind();
+    const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
     const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
@@ -46,27 +48,31 @@ const AgentChat = () => {
     };
 
     const handleQuerySubmit = async (query: string) => {
-        if (tokens.length > 0) {
-            const portfolioQuery = generateQueryFromPortfolio(tokens);
-            const date = getCurrentDate();
-            const portfolio = portfolioQuery;
-            const scaAddress = scAccount;
+      if (tokens.length > 0 && query.trim() !== "") {
+        const portfolioQuery = generateQueryFromPortfolio(tokens);
+        const date = getCurrentDate();
+        const portfolio = portfolioQuery;
+        const scaAddress = scAccount;
 
-            let response = await executeAgent(query, date, portfolio, scaAddress);
-            setAgentResponse(response.output);
-            setQuery(""); // Clear the text input box
-            setIsInputEmpty(true); // Disable the "Run" button and message sending capacity
-            console.log(response);
-        }
+        try {
+          // Call Mind's processChatMessage and await its response
+          const response = await mind.processChatMessage(query, date, portfolio, scaAddress);
+          // Directly set the response as the agent's response
+          setAgentResponse(response);
+          console.log("CHat history: ", await mind.getChatHistory());
+      } catch (error) {
+          console.error("Error processing chat message:", error);
+          // Handle error appropriately
+      }
+
+      setQuery(""); // Clear the text input box after processing
+      setIsInputEmpty(true); // Reset input validation state
+      }
     };
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     };
-
-    const handleReloadTable = () => {
-      setForceTableReload(true);
-  };
 
     useEffect(() => {
         setTokenAddress(tokenAddress);

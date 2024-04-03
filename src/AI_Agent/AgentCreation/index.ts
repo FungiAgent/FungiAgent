@@ -15,13 +15,13 @@ const llm = new ChatOpenAI({
   openAIApiKey: "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",
 });
 
-export const tools = dynamicTools;
+const tools = dynamicTools;
 
 const prompt = await pull<ChatType>(
   "hwchase17/openai-functions-agent"
 );
 
-export const agent = await createOpenAIFunctionsAgent({
+const agent = await createOpenAIFunctionsAgent({
   llm,
   tools,
   prompt,
@@ -35,9 +35,10 @@ export const agentExecutor = new AgentExecutor({
 
 // A function for executing the agent
 export const executeAgent = async (query: string, date: string, portfolio: string, scaAddress: string | undefined) => {
+  
   let response = await agentExecutor.invoke(
     {
-      input: query,
+      input: new HumanMessage(query),
       chat_history: [
         new SystemMessage(`Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address: ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\nQuery: ${query}`),
         new AIMessage("What is my purpose?"),
