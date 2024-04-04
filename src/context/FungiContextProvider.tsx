@@ -21,6 +21,7 @@ import { getViemChain } from "@/config/chains";
 import { MagicMultichainClient } from "@/lib/magic/MagicMultichainClient";
 import { AlchemySmartAccountClient } from "@alchemy/aa-alchemy";
 // import { useUserOperations } from '@/hooks/useUserOperations';
+// import { ChatHistoryProvider } from "@/AI_Agent/Context/ChatHistoryContext";
 
 import { type Address, type SmartAccountSigner } from "@alchemy/aa-core";
 // Types

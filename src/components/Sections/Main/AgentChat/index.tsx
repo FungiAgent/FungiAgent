@@ -14,13 +14,13 @@ import useWallet from "@/hooks/useWallet";
 import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 import { TokenInfo } from '@/domain/tokens/types';
-import { executeAgent } from '@/AI_Agent/AgentCreation';
-import { Mind } from '@/AI_Agent/Mind';
-import { ChatBotCreation } from '@/AI_Agent/ChatBotCreation';
-
+// import { Mind } from '@/AI_Agent/Mind';
+import { useMind } from '@/AI_Agent/hooks/useMind';
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 
 const AgentChat = () => {
-    const mind = new Mind("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");
+    const { processChatMessage } = useMind();
+    const { chatHistory } = useChatHistory();
     // const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
@@ -56,10 +56,10 @@ const AgentChat = () => {
 
         try {
           // Call Mind's processChatMessage and await its response
-          const response = await mind.processChatMessage(query, date, portfolio, scaAddress);
+          const response = await processChatMessage(query, date, portfolio, scaAddress);
           // Directly set the response as the agent's response
           setAgentResponse(response);
-          console.log("CHat history: ", await mind.getChatHistory());
+          console.log("Chat message processed successfully:", response);
       } catch (error) {
           console.error("Error processing chat message:", error);
           // Handle error appropriately
@@ -70,7 +70,7 @@ const AgentChat = () => {
       }
     };
 
-    const formatCurrency = (value) => {
+    const formatCurrency = (value: number | bigint) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     };
 

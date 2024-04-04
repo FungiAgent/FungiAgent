@@ -24,7 +24,7 @@ import { swrGCMiddleware } from "@/lib/swrMiddlewares";
 import { FungiContextProvider } from "@/context/FungiContextProvider";
 import { NotificationContextProvider } from "@/context/NotificationContextProvider";
 import { ModalContextProvider } from "@/context/ModalContextProvider";
-
+import { ChatHistoryProvider } from "@/AI_Agent/Context/ChatHistoryContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -41,30 +41,32 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <main>
       {" "}
-      <FungiContextProvider>
-        <SWRConfig
-          value={{
-            refreshInterval: 50000,
-            refreshWhenHidden: false,
-            refreshWhenOffline: false,
-            use: [swrGCMiddleware as any],
-          }}
-        >
-          <SettingsContextProvider>
-            <SubaccountContextProvider>
-              <NotificationContextProvider>
-                <ModalContextProvider>
-                  <SyntheticsEventsProvider>
-                    <main className="font-dmSans">
-                      <Component {...pageProps} />
-                    </main>
-                  </SyntheticsEventsProvider>{" "}
-                </ModalContextProvider>
-              </NotificationContextProvider>
-            </SubaccountContextProvider>
-          </SettingsContextProvider>{" "}
-        </SWRConfig>
-      </FungiContextProvider>
+      <ChatHistoryProvider>
+        <FungiContextProvider>
+          <SWRConfig
+            value={{
+              refreshInterval: 50000,
+              refreshWhenHidden: false,
+              refreshWhenOffline: false,
+              use: [swrGCMiddleware as any],
+            }}
+          >
+            <SettingsContextProvider>
+              <SubaccountContextProvider>
+                <NotificationContextProvider>
+                  <ModalContextProvider>
+                    <SyntheticsEventsProvider>
+                      <main className="font-dmSans">
+                        <Component {...pageProps} />
+                      </main>
+                    </SyntheticsEventsProvider>{" "}
+                  </ModalContextProvider>
+                </NotificationContextProvider>
+              </SubaccountContextProvider>
+            </SettingsContextProvider>{" "}
+          </SWRConfig>
+        </FungiContextProvider>
+      </ChatHistoryProvider>
       <script
         async
         src="/charting_library/charting_library.standalone.js"

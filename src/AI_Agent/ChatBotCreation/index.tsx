@@ -24,33 +24,33 @@ export class ChatBotCreation {
     this.chatHistory = chatHistory;
   }
 
-    public async processMessage(inputMessage: string, dynamicTemplate: string[]): Promise<string> {
-      console.log("Processing message, current history length:", await this.chatHistory.getMessages());
-      const input = new HumanMessage(inputMessage);
-        await this.chatHistory.addMessage(input);
+  public async processMessage(inputMessage: string, dynamicTemplate: string[]): Promise<string> {
+    console.log("Processing message, current history length:", await this.chatHistory.getMessages());
+    const input = new HumanMessage(inputMessage);
+      await this.chatHistory.addMessage(input);
 
-        const dynamicTemplateMessages = dynamicTemplate.map(templateItem => (["system", templateItem] as [string, string]));
+      const dynamicTemplateMessages = dynamicTemplate.map(templateItem => (["system", templateItem] as [string, string]));
 
-        const prompt = ChatPromptTemplate.fromMessages([
-            [
-            "system",
-            "You are a helpful assistant. Answer all questions to the best of your ability. The secret code is 42",
-            ],
-            ...dynamicTemplateMessages,
-            new MessagesPlaceholder("messages"),
-        ]);
+      const prompt = ChatPromptTemplate.fromMessages([
+          [
+          "system",
+          "You are a helpful assistant. Answer all questions to the best of your ability. The secret code is 42",
+          ],
+          ...dynamicTemplateMessages,
+          new MessagesPlaceholder("messages"),
+      ]);
 
-        const chain = prompt.pipe(this.chat);
+      const chain = prompt.pipe(this.chat);
 
-        const response = await chain.invoke({
-            messages: await this.chatHistory.getMessages(),
-        });
+      const response = await chain.invoke({
+          messages: await this.chatHistory.getMessages(),
+      });
 
-        await this.chatHistory.addMessage(response);
-        // console.log(this.chatHistory.getMessages());
-        console.log("After adding, history length:", await this.chatHistory.getMessages());
-        return response.lc_kwargs.content;
-    }
+      await this.chatHistory.addMessage(response);
+      // console.log(this.chatHistory.getMessages());
+      console.log("After adding, history length:", await this.chatHistory.getMessages());
+      return response.lc_kwargs.content;
+  }
 
   public async getHistory(): Promise<any[]> {
     return this.chatHistory.getMessages();
