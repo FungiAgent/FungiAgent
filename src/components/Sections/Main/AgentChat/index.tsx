@@ -18,6 +18,7 @@ import { TokenInfo } from '@/domain/tokens/types';
 import { useMind } from '@/AI_Agent/hooks/useMind';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 
+
 const AgentChat = () => {
     const { processChatMessage } = useMind();
     const { chatHistory } = useChatHistory();
@@ -59,10 +60,9 @@ const AgentChat = () => {
           const response = await processChatMessage(query, date, portfolio, scaAddress);
           // Directly set the response as the agent's response
           setAgentResponse(response);
-          console.log("Chat message processed successfully:", response);
       } catch (error) {
+          // eslint-disable-next-line no-console
           console.error("Error processing chat message:", error);
-          // Handle error appropriately
       }
 
       setQuery(""); // Clear the text input box after processing
