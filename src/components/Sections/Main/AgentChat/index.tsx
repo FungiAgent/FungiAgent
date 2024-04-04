@@ -49,25 +49,25 @@ const AgentChat = () => {
     };
 
     const handleQuerySubmit = async (query: string) => {
-      if (tokens.length > 0 && query.trim() !== "") {
+        if (tokens.length > 0 && query.trim() !== "") {
         const portfolioQuery = generateQueryFromPortfolio(tokens);
         const date = getCurrentDate();
         const portfolio = portfolioQuery;
         const scaAddress = scAccount;
 
         try {
-          // Call Mind's processChatMessage and await its response
-          const response = await processChatMessage(query, date, portfolio, scaAddress);
-          // Directly set the response as the agent's response
-          setAgentResponse(response);
-      } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error("Error processing chat message:", error);
-      }
+            // Call Mind's processChatMessage and await its response
+            const response = await processChatMessage(query, date, portfolio, scaAddress);
+            // Directly set the response as the agent's response
+            setAgentResponse(response);
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error("Error processing chat message:", error);
+        }
 
-      setQuery(""); // Clear the text input box after processing
-      setIsInputEmpty(true); // Reset input validation state
-      }
+        setQuery(""); // Clear the text input box after processing
+        setIsInputEmpty(true); // Reset input validation state
+        }
     };
 
     const formatCurrency = (value: number | bigint) => {
@@ -82,12 +82,12 @@ const AgentChat = () => {
 
     useEffect(() => {
         const handleToolRequest = (data: { tool: string; params: any; result: string }) => {
-          const { tool, params, result } = data;
-          switch (tool) {
+            const { tool, params, result } = data;
+            switch (tool) {
             case 'Simulate-Transfer':
                 console.log('Simulate-Transfer tool invoked with params:', params);
                 simulateTransfer(params);
-              break;
+                break;
             case 'Perform-Transfer':
                 handleSend(params);
                 break;
@@ -109,18 +109,18 @@ const AgentChat = () => {
                 executeBatchOperations();
                 break;
             default:
-              console.log('Unknown tool:', tool);
-          }
-    
-          setAgentResponse((prevResponse) => prevResponse + '\n' + result);
+                console.log('Unknown tool:', tool);
+            }
+
+            setAgentResponse((prevResponse) => prevResponse + '\n' + result);
         };
-    
+
         agentCommunicationChannel.on(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
-    
+
         return () => {
-          agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
+            agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-      }, []);
+        }, []);
 
     const handleInputChange = (event) => {
         setQuery(event.target.value);
@@ -128,11 +128,11 @@ const AgentChat = () => {
     };
 
     const handleKeyPress = (event) => {
-          if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
-              event.preventDefault();
-              handleQuerySubmit(query);
-          }
-      };
+            if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
+                event.preventDefault();
+                handleQuerySubmit(query);
+            }
+        };
 
     const getLength = (length: number) => {
         setLength(length);
@@ -140,7 +140,7 @@ const AgentChat = () => {
 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
-      };
+        };
 
     const ITEMS_PER_PAGE = 6;
 
@@ -149,52 +149,52 @@ const AgentChat = () => {
 
     return (
         <main>
-          <PageContainer
-              main={
-                  <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
+            <PageContainer
+                main={
+                    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
                         <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl h-[60vh] rounded-md border border-gray-200">
                             <p className="text-gray-800">{agentResponse}</p>
                         </div>
-                      <div className="flex items-end mt-4 w-full max-w-3xl">
-                          <textarea
-                              value={query}
-                              onChange={handleInputChange}
-                              onKeyDown={handleKeyPress}
-                              placeholder="Enter your prompt for the AI agent..."
-                              className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
-                          ></textarea>
+                        <div className="flex items-end mt-4 w-full max-w-3xl">
+                            <textarea
+                                value={query}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyPress}
+                                placeholder="Enter your prompt for the AI agent..."
+                                className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
+                            ></textarea>
                         <button
                             type="button"
                             onClick={() => handleQuerySubmit('')}
                             disabled={isInputEmpty} // Disable button if input is empty
                             className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                              Run
-                          </button>
-                      </div>
-                  </div>
-              }
-              secondary={
-                <Secondary
-                  totalBalance={totalBalance}
-                  totalCash={totalCash}
-                  tokens={tokens}
-                  formatCurrency={formatCurrency}
-                  startIndex={startIndex}
-                  endIndex={endIndex}
-                  getLength={getLength}
-                  handlePageChange={handlePageChange}
-                  setTokenFrom={setTokenFrom}
-                  forceTableReload={forceTableReload}
-                  currentPage={currentPage}
-                  ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-                  length={length}
-                />
-              }
-              page="AI Agent Tester"
-          />
+                                Run
+                            </button>
+                        </div>
+                    </div>
+                }
+                secondary={
+                    <Secondary
+                        totalBalance={totalBalance}
+                        totalCash={totalCash}
+                        tokens={tokens}
+                        formatCurrency={formatCurrency}
+                        startIndex={startIndex}
+                        endIndex={endIndex}
+                        getLength={getLength}
+                        handlePageChange={handlePageChange}
+                        setTokenFrom={setTokenFrom}
+                        forceTableReload={forceTableReload}
+                        currentPage={currentPage}
+                        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                        length={length}
+                    />
+                }
+                page="AI Agent Tester"
+            />
         </main>
-      );
+        );
 };
 
 export default AgentChat;
