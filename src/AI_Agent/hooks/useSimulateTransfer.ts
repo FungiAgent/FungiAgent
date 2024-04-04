@@ -3,12 +3,15 @@ import { BigNumber } from "ethers";
 import { useNotification } from '@/context/NotificationContextProvider';
 import { useERC20Transfer } from "@/hooks/useERC20Transfer";
 import { useSimUO } from "@/hooks/useSimUO";
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { SystemMessage } from '@langchain/core/messages';
 
 export const useSimulateTransfer = () => {
   const { showNotification } = useNotification();
   const { simStatus, simTransfer } = useSimUO();
   const [simulationResult, setSimulationResult] = useState<any>(null);
   const [status, sendTransfer] = useERC20Transfer();
+  const { addMessage } = useChatHistory();
 
   const simulateTransfer = useMemo(() => {
     const handleSimulateTransfer = async (params: any) => {
@@ -38,6 +41,8 @@ export const useSimulateTransfer = () => {
         }
 
         setSimulationResult(result);
+
+        await addMessage(new SystemMessage(`Simulation result: ${JSON.stringify(result)}`));
         showNotification({
           message: "Transfer simulated successfully",
           type: "success",
@@ -48,6 +53,7 @@ export const useSimulateTransfer = () => {
           type: "error",
         });
         setSimulationResult(null); // Clear previous simulation results
+        await addMessage(new SystemMessage(error.message));
       }
     };
 

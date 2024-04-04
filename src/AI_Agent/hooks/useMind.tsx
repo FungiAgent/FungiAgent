@@ -8,17 +8,10 @@ export const useMind = () => {
     const { addMessage, getHistory } = useChatHistory();
 
     const processChatMessage = useCallback(async (inputMessage: string, date: string, portfolio: string, scaAddress: string | undefined) => {
-        const dynamicTemplate = [
-            `Date: ${date}`,
-            `Portfolio: ${portfolio}`,
-            `SCA Address (Smart Contract Account): ${scaAddress}`,
-        ];
 
-        const dynamicTemplateMessages = dynamicTemplate.map(templateItem => (["system", templateItem] as [string, string]));
-
-        new SystemMessage(`Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address: ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\n`);
-        new AIMessage("What is my purpose?");
-        new SystemMessage("You are a friendly AI agent that helps users with their queries.");
+        // await addMessage(new SystemMessage(`Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address: ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\n`));
+        // await addMessage(new AIMessage("What is my purpose?"));
+        // await addMessage(new SystemMessage("You are a friendly AI agent that helps users with their queries."));
 
         // The chat history
         const chatHistory = await getHistory();

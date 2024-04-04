@@ -17,11 +17,13 @@ import { TokenInfo } from '@/domain/tokens/types';
 // import { Mind } from '@/AI_Agent/Mind';
 import { useMind } from '@/AI_Agent/hooks/useMind';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { SystemMessage } from '@langchain/core/messages';
+import ChatDisplay from '@/AI_Agent/ChatDisplay';
 
 
 const AgentChat = () => {
     const { processChatMessage } = useMind();
-    const { chatHistory } = useChatHistory();
+    const { addMessage, getHistory } = useChatHistory();
     // const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
@@ -87,26 +89,32 @@ const AgentChat = () => {
             case 'Simulate-Transfer':
                 console.log('Simulate-Transfer tool invoked with params:', params);
                 simulateTransfer(params);
+                addMessage(new SystemMessage(`Transfer simulation details: ${params}`));
                 break;
             case 'Perform-Transfer':
                 handleSend(params);
+                // addMessage(new SystemMessage(`Transfer details: ${params}`));
                 break;
             case 'LiFi-Simulator':
                 console.log('LiFi-Simulation tool invoked with params:', params);
                 simLiFiTx(params);
+                // addMessage(new SystemMessage(`LiFi simulation details: ${params}`));
                 break;
             case 'LiFi-Transaction':
                 console.log('LiFi-Transaction tool invoked with params:', params);
                 sendLiFiTx(params);
+                // addMessage(new SystemMessage(`LiFi transaction details: ${params}`));
                 break;
             case 'Add-Operation-To-Batch':
                 console.log('Add-Operation-To-Batch tool invoked with params:', params);
                 addToBatch(params);
+                // addMessage(new SystemMessage(`Batch operation details: ${params}`));
                 console.log('Batched operations:', batchedOperations);
                 break;
             case 'Execute-Batch-Operations':
                 console.log('Execute-Batch-Operations tool invoked');
                 executeBatchOperations();
+                // addMessage(new SystemMessage('Batch operations executed'));
                 break;
             default:
                 console.log('Unknown tool:', tool);
@@ -152,6 +160,7 @@ const AgentChat = () => {
             <PageContainer
                 main={
                     <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
+                        <ChatDisplay chatHistory={getHistory()} />
                         <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl h-[60vh] rounded-md border border-gray-200">
                             <p className="text-gray-800">{agentResponse}</p>
                         </div>
