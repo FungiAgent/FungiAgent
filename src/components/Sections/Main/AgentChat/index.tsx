@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
-import { agentExecutor } from '@/AI_Agent/AgentExecutor';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
 import Secondary from "./secondary";
 
-import { PromptTemplate } from "langchain/prompts";
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
 import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
@@ -16,8 +14,15 @@ import useWallet from "@/hooks/useWallet";
 import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
 import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 import { TokenInfo } from '@/domain/tokens/types';
+// import { Mind } from '@/AI_Agent/Mind';
+import { useMind } from '@/AI_Agent/hooks/useMind';
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+
 
 const AgentChat = () => {
+    const { processChatMessage } = useMind();
+    const { chatHistory } = useChatHistory();
+    // const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
     const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
@@ -43,35 +48,31 @@ const AgentChat = () => {
         return new Date().toISOString();
     };
 
-    const promptTemplate = new PromptTemplate({
-        template: "Portfolio composition:\n\n{date}\n\n{portfolio}\n\nSource address: {scAccount} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\nQuery: ",
-        inputVariables: ["date", "portfolio", "scAccount"],
-    });
+    const handleQuerySubmit = async (query: string) => {
+      if (tokens.length > 0 && query.trim() !== "") {
+        const portfolioQuery = generateQueryFromPortfolio(tokens);
+        const date = getCurrentDate();
+        const portfolio = portfolioQuery;
+        const scaAddress = scAccount;
 
-    const handleQuerySubmit = async () => {
-        if (tokens.length > 0) {
-            const portfolioQuery = generateQueryFromPortfolio(tokens);
-            const formattedPrompt = await promptTemplate.format({
-                date: getCurrentDate(),
-                portfolio: portfolioQuery,
-                scAccount: scAccount,
-            });
+        try {
+          // Call Mind's processChatMessage and await its response
+          const response = await processChatMessage(query, date, portfolio, scaAddress);
+          // Directly set the response as the agent's response
+          setAgentResponse(response);
+      } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error("Error processing chat message:", error);
+      }
 
-            let response = await agentExecutor.invoke({ input: formattedPrompt + query });
-            setAgentResponse(response.output);
-            setQuery(""); // Clear the text input box
-            setIsInputEmpty(true); // Disable the "Run" button and message sending capacity
-            console.log(response);
-        }
+      setQuery(""); // Clear the text input box after processing
+      setIsInputEmpty(true); // Reset input validation state
+      }
     };
 
-    const formatCurrency = (value) => {
+    const formatCurrency = (value: number | bigint) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     };
-
-    const handleReloadTable = () => {
-      setForceTableReload(true);
-  };
 
     useEffect(() => {
         setTokenAddress(tokenAddress);
@@ -129,7 +130,7 @@ const AgentChat = () => {
     const handleKeyPress = (event) => {
           if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
               event.preventDefault();
-              handleQuerySubmit();
+              handleQuerySubmit(query);
           }
       };
 
@@ -162,12 +163,12 @@ const AgentChat = () => {
                               placeholder="Enter your prompt for the AI agent..."
                               className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
                           ></textarea>
-                          <button
-                              type="button"
-                              onClick={handleQuerySubmit}
-                              disabled={isInputEmpty} // Disable button if input is empty
-                              className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
+                        <button
+                            type="button"
+                            onClick={() => handleQuerySubmit('')}
+                            disabled={isInputEmpty} // Disable button if input is empty
+                            className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
                               Run
                           </button>
                       </div>
