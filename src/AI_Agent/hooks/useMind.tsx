@@ -1,7 +1,6 @@
 import { useChatHistory } from '../Context/ChatHistoryContext';
 import { useCallback } from 'react';
-import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
-import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { executeAgent } from '../AgentCreation';
 
 export const useMind = () => {
@@ -26,7 +25,7 @@ export const useMind = () => {
         // Add AI's response to the chat history
         await addMessage(new AIMessage(content));
 
-        console.log("Chat History:", chatHistory);
+        // console.log("Chat History:", chatHistory);
         return content;
     }, [addMessage, getHistory]);
 

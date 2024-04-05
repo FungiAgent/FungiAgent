@@ -19,11 +19,13 @@ import { useMind } from '@/AI_Agent/hooks/useMind';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
+import { BaseMessage } from '@langchain/core/messages';
 
 
 const AgentChat = () => {
     const { processChatMessage } = useMind();
     const { addMessage, getHistory } = useChatHistory();
+    const [chatHistory, setChatHistory] = useState<BaseMessage[]>([]);
     // const chatBot = new ChatBotCreation();
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
@@ -62,6 +64,9 @@ const AgentChat = () => {
             const response = await processChatMessage(query, date, portfolio, scaAddress);
             // Directly set the response as the agent's response
             setAgentResponse(response);
+            // const history = await getHistory();
+            // console.log("Chat history: ", history.map((msg) => msg.lc_id[2]));
+
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error("Error processing chat message:", error);
@@ -81,6 +86,16 @@ const AgentChat = () => {
         setAmount(amount);
         setRecipient(recipient);
     }, [tokenAddress, amount, recipient]);
+
+    useEffect(() => {
+        const updateChatHistory = async () => {
+            const history: BaseMessage[] = await getHistory(); // Assume getHistory() returns a Promise
+            setChatHistory(history);
+        };
+
+        updateChatHistory();
+    }
+    , [getHistory]);
 
     useEffect(() => {
         const handleToolRequest = (data: { tool: string; params: any; result: string }) => {
@@ -160,10 +175,10 @@ const AgentChat = () => {
             <PageContainer
                 main={
                     <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
-                        <ChatDisplay chatHistory={getHistory()} />
-                        <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl h-[60vh] rounded-md border border-gray-200">
+                        <ChatDisplay chatHistory={chatHistory} />
+                        {/* <div className="mt-4 p-4 bg-gray-50 w-full max-w-3xl h-[60vh] rounded-md border border-gray-200">
                             <p className="text-gray-800">{agentResponse}</p>
-                        </div>
+                        </div> */}
                         <div className="flex items-end mt-4 w-full max-w-3xl">
                             <textarea
                                 value={query}

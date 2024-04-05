@@ -1,21 +1,34 @@
+// ChatDisplay.jsx or ChatDisplay.tsx
+
 import React from 'react';
+import styles from './ChatDisplay.module.css';
 
 const ChatDisplay = ({ chatHistory }) => {
-    const renderMessage = (msg: { id: any[]; kwargs: { content: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }; }, index: React.Key | null | undefined) => {
+    // Ensure chatHistory is an array before mapping over it
+    // const safeChatHistory = Array.isArray(chatHistory) ? chatHistory : [];
+
+    const containerClass = chatHistory.length > 0 ? `${styles.chatContainer} ${styles.scrolling}` : styles.chatContainer;
+
+    const renderMessage = (msg, index) => {
         let msgClass = '';
         let prefix = '';
+        let messageStyle = '';
 
-        switch (msg.id[2]) { // msg.id[2] should indicate the type: SystemMessage, HumanMessage, AIMessage
+        // Adjusted to safely access properties
+        const messageType = msg?.lc_id[2];
+        const content = msg?.content || "Unknown message format";
+
+        switch (messageType) {
             case 'SystemMessage':
-                msgClass = 'text-gray-500';
+                messageStyle = styles.systemMessage;
                 prefix = 'System: ';
                 break;
             case 'HumanMessage':
-                msgClass = 'text-blue-600';
+                messageStyle = styles.humanMessage;
                 prefix = 'You: ';
                 break;
             case 'AIMessage':
-                msgClass = 'text-green-600';
+                messageStyle = styles.aiMessage;
                 prefix = 'AI: ';
                 break;
             default:
@@ -23,15 +36,21 @@ const ChatDisplay = ({ chatHistory }) => {
         }
 
         return (
-            <div key={index} className={`${msgClass} mb-2`}>
-                {prefix}{msg.kwargs.content}
+            <div key={index} className={`${styles.message} ${messageStyle}`}>
+                {prefix}{content}
             </div>
         );
     };
 
+    const renderPlaceholder = () => {
+        return <div className="text-gray-500 text-center">No messages yet...</div>;
+    };
+
     return (
-        <div className="chat-display overflow-auto p-4" style={{ maxHeight: '60vh' }}>
-            {chatHistory.map(renderMessage)}
+        <div className={containerClass}>
+            {chatHistory.length === 0
+                ? renderPlaceholder()
+                : chatHistory.map(renderMessage)}
         </div>
     );
 };
