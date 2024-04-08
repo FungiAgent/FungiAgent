@@ -6,10 +6,13 @@ import { useNotification } from '@/context/NotificationContextProvider';
 import axios from "axios";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useUserOperations } from "@/hooks/useUserOperations";
-
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { SystemMessage } from '@langchain/core/messages';
+import { add } from "lodash";
 
 export const useLiFiBatch = () => {
     const { showNotification } = useNotification();
+    const { addMessage } = useChatHistory();
     const { sendUserOperations } = useUserOperations();
     const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
     // const { addOperationToBatch, batchedOperations } = useGlobalContext();
@@ -117,6 +120,8 @@ export const useLiFiBatch = () => {
                         data: quote.transactionRequest.data,
                     };
 
+                    await addMessage(new SystemMessage(`Adding batched operations for ${amount} tokens of ${tokenAddress} to ${toAddress}`));
+
                     addOperationToBatch(callDataApprove);
                     addOperationToBatch(callDataSwap);
                     showNotification({
@@ -133,6 +138,7 @@ export const useLiFiBatch = () => {
                     type: "error",
                   });
                 console.error("Error sending batch", error);
+                await addMessage(new SystemMessage(`Error sending batch: ${error.message}`));
             }
         };
 

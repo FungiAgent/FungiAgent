@@ -7,17 +7,20 @@ import { UserOperation } from "@/lib/userOperations/types";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useUserOperations } from "@/hooks/useUserOperations";
 import { useNotification } from '@/context/NotificationContextProvider';
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { SystemMessage } from '@langchain/core/messages';
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and performs the transaction
 export const useLiFiTx = () => {
     const { showNotification } = useNotification();
+    const { addMessage } = useChatHistory();
     const { sendUserOperations } = useUserOperations();
     const [status, setStatus] = useState<{
         disabled: boolean;
         text: string | null;
     }>({ disabled: true, text: "Enter an amount" });
 
-    const getQuote = async (params) => {
+    const getQuote = async (params: { fromChain: string | null; fromAmount: any; fromToken: any; toChain: string | null; toToken: any; fromAddress: any; toAddress: any; slippage: any; order: string; }) => {
         const response = await axios.get("https://li.quest/v1/quote", { params });
         return response.data;
     };
@@ -81,7 +84,8 @@ export const useLiFiTx = () => {
                 filteredResponses[0]
             );
             } catch (error) {
-            console.error("Error obtaining quotes:", error);
+                await addMessage(new SystemMessage(`Error: ${error}`)); 
+                console.error("Error obtaining quotes:", error);
             }
 
             const spender: Hex = quote.transactionRequest.to;
@@ -113,6 +117,7 @@ export const useLiFiTx = () => {
 
             setStatus({ disabled: true, text: "Enter an amount" });
             console.log("userOps", userOps);
+            await addMessage(new SystemMessage(`LiFi transaction details: ${JSON.stringify(quote)}`));
             const result = await sendUserOperations(userOps);
             showNotification({
                 message: "Transfer simulated successfully",
@@ -127,6 +132,7 @@ export const useLiFiTx = () => {
                 type: "error",
               });
             console.error(error);
+            addMessage(new SystemMessage(`Error: ${error.message}`));
         }
         };
 

@@ -1,0 +1,57 @@
+/* ChatDisplay.module.css */
+
+.chatContainer {
+    background-color: #f8f9fa;
+    border: 1px solid #e3e6eb;
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 60vh;
+    max-height: 60vh;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+  
+  /* Add this class to ensure the latest message is visible */
+.chatContainer.scrolling {
+    justify-content: flex-end; /* Pushes content to the bottom */
+  }
+  
+  .messagesWrapper {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%; /* This should take up all the available height */
+}
+
+.message {
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    max-width: 80%;
+    word-break: break-word;
+}
+  
+.systemMessage {
+    background-color: #ebebeb;
+    color: #333;
+}
+
+.humanMessage {
+    background-color: #b6defd;
+    color: #1a1a1a;
+    margin-left: auto; /* Aligns the human messages to the right */
+}
+
+.aiMessage {
+    background-color: #d1fae5;
+    color: #1a1a1a;
+}
+  
+  .chatDisplay {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
