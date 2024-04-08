@@ -6,7 +6,6 @@ import { dynamicTools } from "../Tools/DynamicTool";
 import dotenv from "dotenv";
 import { AgentExecutor } from "langchain/agents";
 import { AIMessage, SystemMessage, HumanMessage } from "@langchain/core/messages";
-import { useChatHistory } from '../Context/ChatHistoryContext';
 
 dotenv.config();
 

@@ -15,7 +15,6 @@ export const useMind = () => {
         const response = await executeAgent(inputMessage, chatHistory, date, portfolio, scaAddress);
         
         await addMessage(new HumanMessage(inputMessage));
-        // Assuming response.lc_kwargs.content is the way to access the message content
         const content = response.output;
 
         // Add AI's response to the chat history

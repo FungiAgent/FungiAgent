@@ -210,4 +210,32 @@ export const dynamicTools = [
       return result;
     },
   }),
+  new DynamicStructuredTool({
+      name: "Fetch-RSS3-Activities",
+      description: "Fetches on-chain activities for a specified account from the RSS3 network",
+      schema: z.object({
+          account: z.string().describe("The account to retrieve activities from. An EVM address"),
+          limit: z.number().optional().describe("Specify the number of activities to retrieve. An integer between 1 and 100"),
+          action_limit: z.number().optional().describe("Specify the number of actions within the activity to retrieve. An integer between 1 and 20"),
+          since_timestamp: z.number().optional().describe("Retrieve activities starting from this timestamp"),
+          until_timestamp: z.number().optional().describe("Retrieve activities up to this timestamp"),
+          status: z.string().optional().describe("Retrieve activities with a specific status. 'successful' or 'failed'"),
+          direction: z.string().optional().describe("Retrieve activities with a specific direction. 'in' or 'out'"),
+          network: z.array(z.string()).optional().describe("Retrieve activities from specified network(s). Default: 'Arbitrum'"),
+          tag: z.array(z.string()).optional().describe("Retrieve activities with specified tag(s). By default: 'transaction'"),
+          type: z.array(z.string()).optional().describe("Retrieve activities of a specified type(s). Default: 'transfer'"),
+      }),
+      func: async ({ account, limit, action_limit, since_timestamp, until_timestamp, status, direction, network, tag, type }) => {
+          // Placeholder function. The actual data fetching will be triggered in AgentChat
+          // and not directly executed here due to the hook's constraints.
+          const placeholderResult = `Request to fetch RSS3 activities for account ${account}`;
+          agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+              tool: 'Fetch-RSS3-Activities',
+              params: { account, limit, action_limit, since_timestamp, until_timestamp, status, direction, network, tag, type },
+              result: placeholderResult,
+          });
+          return placeholderResult;
+      },
+  }),
+
 ];
