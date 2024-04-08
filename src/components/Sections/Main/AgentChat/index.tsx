@@ -89,8 +89,14 @@ const AgentChat = () => {
     const confirmAction = async () => {
         if (confirmationDetails) {
             setIsConfirmed(true); // Update confirmation state
-            await confirmationDetails.action();
-            setConfirmationDetails(null); // Clear the confirmation details
+            try {
+                await confirmationDetails.action();
+                setConfirmationDetails(null); // Clear the confirmation details
+                setIsConfirmed(false); // Reset confirmation state
+            } catch (error) {
+                console.error("Error confirming action:", error);
+                setIsConfirmed(false); // Reset confirmation state in case of error
+            }
         }
     };
 
@@ -123,9 +129,17 @@ const AgentChat = () => {
             const actions = {
                 'Perform-Transfer': async () => {
                     await handleSend(params);
-                    // Here you would add a message to the chat confirming the action has been taken
+                    // setForceTableReload((prev) => !prev);
                 },
                 // Define other actions if needed
+                'LiFi-Transaction': async () => {
+                    await sendLiFiTx(params);
+                    // setForceTableReload((prev) => !prev);
+                },
+                'Execute-Batch-Operations': async () => {
+                    await executeBatchOperations();
+                    // setForceTableReload((prev) => !prev);
+                }
             };
 
             switch (tool) {
@@ -140,15 +154,18 @@ const AgentChat = () => {
                         message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
                     });
                     // Add a message to the chat asking for confirmation
-                    addMessage(new AIMessage('Please confirm the transfer: ' + params.amount + ' to ' + params.recipient));
+                    // addMessage(new AIMessage('Please confirm the transfer: ' + params.amount + ' to ' + params.recipient));
                     break;
                 case 'LiFi-Simulator':
-                    console.log('LiFi-Simulation tool invoked with params:', params);
+                    // console.log('LiFi-Simulation tool invoked with params:', params);
                     simLiFiTx(params);
                     break;
                 case 'LiFi-Transaction':
-                    console.log('LiFi-Transaction tool invoked with params:', params);
-                    sendLiFiTx(params);
+                    // console.log('LiFi-Transaction tool invoked with params:', params);
+                    setConfirmationDetails({
+                        action: actions['LiFi-Transaction'],
+                        message: 'Please confirm the LiFi transaction: ' + params.amount + ' to ' + params.recipient,
+                    });
                     break;
                 case 'Add-Operation-To-Batch':
                     console.log('Add-Operation-To-Batch tool invoked with params:', params);
@@ -157,7 +174,10 @@ const AgentChat = () => {
                     break;
                 case 'Execute-Batch-Operations':
                     console.log('Execute-Batch-Operations tool invoked');
-                    executeBatchOperations();
+                    setConfirmationDetails({
+                        action: actions['Execute-Batch-Operations'],
+                        message: 'Please confirm the batch operations',
+                    });
                     break;
                 default:
                     console.log('Unknown tool:', tool);
