@@ -1,16 +1,15 @@
-// ChatDisplay.jsx or ChatDisplay.tsx
+// ChatDisplay.tsx
 
 import React from 'react';
 import styles from './ChatDisplay.module.css';
 
 const ChatDisplay = ({ chatHistory }) => {
-    // Ensure chatHistory is an array before mapping over it
-    // const safeChatHistory = Array.isArray(chatHistory) ? chatHistory : [];
-
     const containerClass = chatHistory.length > 0 ? `${styles.chatContainer} ${styles.scrolling}` : styles.chatContainer;
 
+    // Filter out system messages before mapping
+    const nonSystemMessages = chatHistory.filter(msg => msg?.lc_id[2] !== 'SystemMessage');
+
     const renderMessage = (msg, index) => {
-        let msgClass = '';
         let prefix = '';
         let messageStyle = '';
 
@@ -19,10 +18,6 @@ const ChatDisplay = ({ chatHistory }) => {
         const content = msg?.content || "Unknown message format";
 
         switch (messageType) {
-            case 'SystemMessage':
-                messageStyle = styles.systemMessage;
-                prefix = 'System: ';
-                break;
             case 'HumanMessage':
                 messageStyle = styles.humanMessage;
                 prefix = 'You: ';
@@ -32,7 +27,7 @@ const ChatDisplay = ({ chatHistory }) => {
                 prefix = 'AI: ';
                 break;
             default:
-                msgClass = 'text-gray-800';
+                messageStyle = 'text-gray-800';
         }
 
         return (
@@ -47,10 +42,12 @@ const ChatDisplay = ({ chatHistory }) => {
     };
 
     return (
-        <div className={containerClass}>
-            {chatHistory.length === 0
-                ? renderPlaceholder()
-                : chatHistory.map(renderMessage)}
+        <div className={styles.chatContainer}>
+            <div className={styles.messagesWrapper}>
+                {nonSystemMessages.length === 0
+                    ? renderPlaceholder()
+                    : nonSystemMessages.map(renderMessage)}
+            </div>
         </div>
     );
 };

@@ -4,47 +4,51 @@
     background-color: #f8f9fa;
     border: 1px solid #e3e6eb;
     border-radius: 8px;
-    overflow-y: auto; /* Allows for scrolling */
     padding: 16px;
-    max-height: 60vh; /* Fixed maximum height */
     min-height: 60vh;
+    max-height: 60vh;
     min-width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    justify-content: flex-start; /* Start filling messages from the top */
-  }
+}
   
   /* Add this class to ensure the latest message is visible */
 .chatContainer.scrolling {
     justify-content: flex-end; /* Pushes content to the bottom */
   }
   
-  .message {
+  .messagesWrapper {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%; /* This should take up all the available height */
+}
+
+.message {
     padding: 10px;
     border-radius: 12px;
     margin-bottom: 8px;
     max-width: 80%;
-    word-break: break-word; /* Ensures text breaks if too long */
-  }
+    word-break: break-word;
+}
   
-  .systemMessage {
+.systemMessage {
     background-color: #ebebeb;
     color: #333;
-    align-self: flex-start;
-  }
-  
-  .humanMessage {
+}
+
+.humanMessage {
     background-color: #b6defd;
     color: #1a1a1a;
-    align-self: flex-end;
-  }
-  
-  .aiMessage {
+    margin-left: auto; /* Aligns the human messages to the right */
+}
+
+.aiMessage {
     background-color: #d1fae5;
     color: #1a1a1a;
-    align-self: flex-start;
-  }
+}
   
   .chatDisplay {
     display: flex;
