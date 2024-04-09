@@ -4,7 +4,7 @@ import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 
 export const useRSS3Activities = () => {
-    const [data, setData] = useState<string | null>(null);
+    const [fetchedData, setFetchedData] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
     const { addMessage } = useChatHistory();
@@ -19,18 +19,18 @@ export const useRSS3Activities = () => {
                     direction: (params.direction === "in" || params.direction === "out") ? params.direction : undefined,
                     tag: params.tag as (any),
                     type: params.type as (any),
-                    limit: 10,
+                    limit: 2,
                     since_timestamp: params.since_timestamp,
                     until_timestamp: params.until_timestamp,
                     status: params.status as ("failed" | "successful" | undefined),
                 });
-                console.log('RSS3 data:', activities);
-                const activitiesStr = JSON.stringify(activities);
-                setData(activitiesStr);
+                // console.log('RSS3 data:', activities.data);
+                const activitiesStr = JSON.stringify(activities.data);
+                setFetchedData(activitiesStr);
                 console.log('RSS3 data string:', activitiesStr);
 
                 // Optionally add a message right after fetching
-                await addMessage(new SystemMessage(`RSS3 data: ${activities}`));
+                await addMessage(new SystemMessage(`Fetching data: ${activitiesStr}`));
 
                 return activitiesStr; // You can return the stringified data if needed
             } catch (error) {
@@ -38,7 +38,7 @@ export const useRSS3Activities = () => {
                 setError(error as Error);
 
                 // Optionally add an error message to chat history
-                await addMessage(new SystemMessage(`Error fetching RSS3 data.`));
+                await addMessage(new SystemMessage(`Error fetching RSS3 data. ${error}`));
                 
                 throw error; // Rethrow to allow caller to handle
             } finally {
@@ -47,5 +47,5 @@ export const useRSS3Activities = () => {
         };
     }, [addMessage]); // addMessage is stable and shouldn't change, but it's listed as a dependency to adhere to hooks rules
 
-    return { fetchActivities, data, loading, error };
+    return { fetchActivities, fetchedData, loading, error };
 };

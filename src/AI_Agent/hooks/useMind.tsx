@@ -11,10 +11,11 @@ export const useMind = () => {
         // The chat history
         const chatHistory = await getHistory();
 
+        await addMessage(new HumanMessage(inputMessage));
+
         // Call the agent's executeAgent function passing the chat history as query, date, portfolio, and scaAddress
         const response = await executeAgent(inputMessage, chatHistory, date, portfolio, scaAddress);
         
-        await addMessage(new HumanMessage(inputMessage));
         const content = response.output;
 
         // Add AI's response to the chat history

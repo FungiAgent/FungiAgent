@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { DynamicTool, DynamicStructuredTool } from "@langchain/core/tools";
+import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
-import { useSimLiFiTx } from "../hooks/useSimLiFiTx";
 
 export const dynamicTools = [
   new DynamicStructuredTool({

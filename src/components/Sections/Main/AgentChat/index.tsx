@@ -21,7 +21,7 @@ import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import { dataClient, searchClient } from '@rss3/js-sdk';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
-
+import { executeAgent } from '@/AI_Agent/AgentCreation';
 
 interface ConfirmationDetails {
     action: () => Promise<void>;
@@ -52,7 +52,7 @@ const AgentChat = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [forceTableReload, setForceTableReload] = useState(false);
     const [isInputEmpty, setIsInputEmpty] = useState(true);
-    const { fetchActivities, data } = useRSS3Activities();
+    const { fetchActivities, fetchedData } = useRSS3Activities();
     
     const { scAccount } = useWallet();
 
@@ -185,7 +185,10 @@ const AgentChat = () => {
                     break;
                 case 'Fetch-RSS3-Activities':
                     await fetchActivities(params);
-                    break;
+                    // await addMessage(new SystemMessage(`Fetching data: ${fetchedData}`));
+                    console.log('RSS3 data:', fetchedData);
+                    await handleQuerySubmit("Analyse the RSS3 data");
+                    break;  
 
                 default:
                     console.log('Unknown tool:', tool);
