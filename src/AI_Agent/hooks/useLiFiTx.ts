@@ -123,6 +123,7 @@ export const useLiFiTx = () => {
                 message: "Transfer simulated successfully",
                 type: "success",
             });
+            await addMessage(new SystemMessage(`LiFi transaction result: ${JSON.stringify(result)}`));
             return result;
             
         } catch (error: any) {

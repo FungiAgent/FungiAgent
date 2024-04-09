@@ -19,7 +19,9 @@ import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { AIMessage, SystemMessage } from '@langchain/core/messages';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
-import axios from 'axios';
+import { dataClient, searchClient } from '@rss3/js-sdk';
+import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
+
 
 interface ConfirmationDetails {
     action: () => Promise<void>;
@@ -50,6 +52,7 @@ const AgentChat = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [forceTableReload, setForceTableReload] = useState(false);
     const [isInputEmpty, setIsInputEmpty] = useState(true);
+    const { fetchActivities, data } = useRSS3Activities();
     
     const { scAccount } = useWallet();
 
@@ -180,39 +183,10 @@ const AgentChat = () => {
                         message: 'Please confirm the batch operations',
                     });
                     break;
-                    case 'Fetch-RSS3-Activities':
-                        // Directly handling the RSS3 API call within the switch
-                        try {
-                            // Construct the URL with query parameters
-                            let queryParams = `limit=${params.limit || ''}&action_limit=${params.action_limit || ''}`;
-                            queryParams += `&status=${params.status || ''}&direction=${params.direction || ''}`;
-                            queryParams += params.network ? `&network=${params.network.join(',')}` : '';
-                            queryParams += params.tag ? `&tag=${params.tag.join(',')}` : '';
-                            queryParams += params.type ? `&type=${params.type.join(',')}` : '';
-                            queryParams += `&since_timestamp=${params.since_timestamp || ''}`;
-                            queryParams += `&until_timestamp=${params.until_timestamp || ''}`;
-                    
-                            // Construct the final URL
-                            const url = `https://testnet.rss3.io/data/accounts/${params.account}/activities?${queryParams}`;
-                            console.log('RSS3 API URL:', url)
-                    
-                            // Make the API call
-                            const response = await axios.get(url, {
-                                headers: { accept: 'application/json' }
-                            });
-                    
-                            // Process the response
-                            const formattedResult = JSON.stringify(response.data); // Example formatting
-                            console.log('RSS3 activities:', formattedResult);
-                            setAgentResponse((prevResponse) => prevResponse + '\n' + formattedResult);
-                            await addMessage(new SystemMessage(`RSS3 activities: ${formattedResult}`));
-                        } catch (error) {
-                            console.error('Error fetching RSS3 activities:', error);
-                            setAgentResponse((prevResponse) => prevResponse + '\n Error fetching RSS3 activities.');
-                        }
-                        break;
-                    
-                    
+                case 'Fetch-RSS3-Activities':
+                    await fetchActivities(params);
+                    break;
+
                 default:
                     console.log('Unknown tool:', tool);
             }
