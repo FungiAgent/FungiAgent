@@ -5,7 +5,6 @@ import { useERC20Transfer } from "@/hooks/useERC20Transfer";
 import { useUserOperations } from "@/hooks/useUserOperations";
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
-import { add } from "lodash";
 
 export const useHandleSend = () => {
   const { showNotification } = useNotification();

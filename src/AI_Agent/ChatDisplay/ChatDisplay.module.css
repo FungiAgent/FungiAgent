@@ -40,14 +40,15 @@
 }
 
 .humanMessage {
-    background-color: #b6defd;
+    background-color: #d1fae5;
     color: #1a1a1a;
-    margin-left: auto; /* Aligns the human messages to the right */
+     
 }
 
 .aiMessage {
-    background-color: #d1fae5;
+    background-color: #b6defd;
     color: #1a1a1a;
+    margin-left: auto;
 }
   
   .chatDisplay {
