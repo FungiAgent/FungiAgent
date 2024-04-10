@@ -16,12 +16,9 @@ import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
 import { TokenInfo } from '@/domain/tokens/types';
 import { useMind } from '@/AI_Agent/hooks/useMind';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
-import { AIMessage, SystemMessage } from '@langchain/core/messages';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
-import { dataClient, searchClient } from '@rss3/js-sdk';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
-import { executeAgent } from '@/AI_Agent/AgentCreation';
 
 interface ConfirmationDetails {
     action: () => Promise<void>;
@@ -31,7 +28,7 @@ interface ConfirmationDetails {
 const AgentChat = () => {
     const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
     const [isConfirmed, setIsConfirmed] = useState(false); // New state to track confirmation
-    const { processChatMessage } = useMind();
+    const { processChatMessage, processInternalMessage } = useMind();
     const { addMessage, getHistory } = useChatHistory();
     const [chatHistory, setChatHistory] = useState<BaseMessage[]>([]);
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
@@ -72,9 +69,6 @@ const AgentChat = () => {
                 const response = await processChatMessage(query, date, portfolio, scaAddress);
                 // Directly set the response as the agent's response
                 setAgentResponse(response);
-                // const history = await getHistory();
-                // console.log("Chat history: ", history.map((msg) => msg.lc_id[2]));
-
             } catch (error) {
                 // eslint-disable-next-line no-console
                 console.error("Error processing chat message:", error);
@@ -148,36 +142,27 @@ const AgentChat = () => {
 
             switch (tool) {
                 case 'Simulate-Transfer':
-                    console.log('Simulate-Transfer tool invoked with params:', params);
                     simulateTransfer(params);
                     break;
                 case 'Perform-Transfer':
-                    // Set up confirmation details for actions that require confirmation
                     setConfirmationDetails({
                         action: actions['Perform-Transfer'],
                         message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
                     });
-                    // Add a message to the chat asking for confirmation
-                    // addMessage(new AIMessage('Please confirm the transfer: ' + params.amount + ' to ' + params.recipient));
                     break;
                 case 'LiFi-Simulator':
-                    // console.log('LiFi-Simulation tool invoked with params:', params);
                     simLiFiTx(params);
                     break;
                 case 'LiFi-Transaction':
-                    // console.log('LiFi-Transaction tool invoked with params:', params);
                     setConfirmationDetails({
                         action: actions['LiFi-Transaction'],
                         message: 'Please confirm the LiFi transaction: ' + params.amount + ' to ' + params.recipient,
                     });
                     break;
                 case 'Add-Operation-To-Batch':
-                    console.log('Add-Operation-To-Batch tool invoked with params:', params);
                     addToBatch(params);
-                    console.log('Batched operations:', batchedOperations);
                     break;
                 case 'Execute-Batch-Operations':
-                    console.log('Execute-Batch-Operations tool invoked');
                     setConfirmationDetails({
                         action: actions['Execute-Batch-Operations'],
                         message: 'Please confirm the batch operations',
@@ -185,10 +170,9 @@ const AgentChat = () => {
                     break;
                 case 'Fetch-RSS3-Activities':
                     await fetchActivities(params);
-                    // await addMessage(new SystemMessage(`Fetching data: ${fetchedData}`));
-                    console.log('RSS3 data:', fetchedData);
-                    await handleQuerySubmit("Analyse the RSS3 data");
-                    break;  
+                    // Ensure that the agent answers after fetching the data
+                    setAgentResponse(await processInternalMessage("Analyse the fetched data and give a brief summary (DO NOT USE ANOTHER TOOL FOR THE NEXT RESPONSE)"));
+                    break;
 
                 default:
                     console.log('Unknown tool:', tool);
