@@ -10,6 +10,7 @@ import { AIMessage, SystemMessage, HumanMessage } from "@langchain/core/messages
 dotenv.config();
 
 const llm = new ChatOpenAI({
+  maxTokens: 200,
   modelName: "gpt-3.5-turbo",
   temperature: 0,
   openAIApiKey: "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",

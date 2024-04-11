@@ -19,6 +19,7 @@ import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
+import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 
 interface ConfirmationDetails {
     action: () => Promise<void>;
@@ -52,6 +53,7 @@ const AgentChat = () => {
     const { fetchActivities, fetchedData } = useRSS3Activities();
     
     const { scAccount } = useWallet();
+    const { search } = useTavilySearch("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");
 
     const getCurrentDate = () => {
         return new Date().toISOString();
@@ -70,7 +72,6 @@ const AgentChat = () => {
                 // Directly set the response as the agent's response
                 setAgentResponse(response);
             } catch (error) {
-                // eslint-disable-next-line no-console
                 console.error("Error processing chat message:", error);
             }
 
@@ -127,16 +128,13 @@ const AgentChat = () => {
             const actions = {
                 'Perform-Transfer': async () => {
                     await handleSend(params);
-                    // setForceTableReload((prev) => !prev);
                 },
                 // Define other actions if needed
                 'LiFi-Transaction': async () => {
                     await sendLiFiTx(params);
-                    // setForceTableReload((prev) => !prev);
                 },
                 'Execute-Batch-Operations': async () => {
                     await executeBatchOperations();
-                    // setForceTableReload((prev) => !prev);
                 }
             };
 
@@ -173,7 +171,17 @@ const AgentChat = () => {
                     // Ensure that the agent answers after fetching the data
                     setAgentResponse(await processInternalMessage("Analyse the fetched data and give a brief summary (DO NOT USE ANOTHER TOOL FOR THE NEXT RESPONSE)"));
                     break;
-
+                case 'tavily-search':
+                    try {
+                        await search(params);
+                        setAgentResponse(await processInternalMessage("Return the search results."));
+                        // await addMessage(new SystemMessage(`Search Results: ${JSON.stringify(searchResults)}`));
+                    } catch (error) {
+                        // console.error('Search failed:', error);
+                        setAgentResponse(await processInternalMessage('Search failed. Please try again.'));
+                        // await addMessage(new SystemMessage('Search failed. Please try again.'));
+                    }
+                    break;
                 default:
                     console.log('Unknown tool:', tool);
             }
