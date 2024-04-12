@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
+import { stringify } from 'querystring';
 
 export const useTavilySearch = (apiKey) => {
     const [results, setResults] = useState(null);
@@ -50,7 +51,7 @@ export const useTavilySearch = (apiKey) => {
                 console.log('Tavily search results:', result);
 
                 // Add a message indicating successful data fetching
-                await addMessage(new SystemMessage(`Search completed. Results fetched.`));
+                await addMessage(new SystemMessage(`Fetched results: ${stringify(result)}`));
                 
                 return result;
             } catch (error) {
