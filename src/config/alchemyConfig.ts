@@ -9,18 +9,19 @@ import {
   isSupportedChainOrDefault,
 } from "@/config/chains";
 import { Network } from "alchemy-sdk";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const ALCHEMY_API_KEYS = {
-  [ARBITRUM]: "wa9SqZ2OET5sVzUtzMZUu-WGuwx85Xdt",
-  [POLYGON]: "D10Zw8Iea33Vssr-oGS-VJwONZNrkUzr",
-  [ARBITRUM_SEPOLIA]: "EIeMw-aBVJDyYoBC0BwwlbsHw9j36kbw",
-  [OPTIMISM]: "gDd2FjDqJRJqCinbG27rC9JTxsQSoX3n",
+  [ARBITRUM]: process.env.ARBITRUM_API_KEY,
+  [POLYGON]: process.env.POLYGON_API_KEY,
+  [OPTIMISM]: process.env.OPTIMISM_API_KEY,
 };
 
 const ALCHEMY_URL = {
   [ARBITRUM]: "https://arb-mainnet.g.alchemy.com/v2/",
   [POLYGON]: "https://polygon-mainnet.g.alchemy.com/v2/",
-  [ARBITRUM_SEPOLIA]: "https://arb-sepolia.g.alchemy.com/v2/",
   [OPTIMISM]: "https://opt-mainnet.g.alchemy.com/v2/",
 };
 

@@ -20,6 +20,9 @@ import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface ConfirmationDetails {
     action: () => Promise<void>;
@@ -53,7 +56,7 @@ const AgentChat = () => {
     const { fetchActivities, fetchedData } = useRSS3Activities();
     
     const { scAccount } = useWallet();
-    const { search } = useTavilySearch("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");
+    const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
 
     const getCurrentDate = () => {
         return new Date().toISOString();
