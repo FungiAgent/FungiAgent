@@ -20,6 +20,8 @@ import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
+import  { UserInput }   from '@/components/TextInputs/UserInput';
+
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -252,10 +254,10 @@ const AgentChat = () => {
         <main>
             <PageContainer
                 main={
-                    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
+                    <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
                         <ChatDisplay chatHistory={chatHistory} />
                         {renderConfirmationButtons()}
-                        <div className="flex items-end mt-4 w-full max-w-3xl">
+                        {/* <div className="flex items-end mt-4 w-full max-w-3xl">
                             <textarea
                                 value={query}
                                 onChange={handleInputChange}
@@ -271,7 +273,8 @@ const AgentChat = () => {
                             >
                                 Run
                             </button>
-                        </div>
+                        </div> */}
+                        <UserInput onSubmit={handleQuerySubmit} />
                     </div>
                 }
                 secondary={

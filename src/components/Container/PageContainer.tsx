@@ -2,6 +2,8 @@ import React, { ReactElement, ReactNode, useState, useEffect } from "react";
 import Image from "next/image";
 import useWallet from "@/utils/gmx/lib/wallets/useWallet";
 import Logo from "../../../public/profile/Logo.svg";
+import  AgentChat  from "@/components/Sections/Main/AgentChat";
+import { Agent } from "http";
 
 type PageContainerProps = {
   main: ReactElement;
@@ -44,7 +46,7 @@ export default function PageContainer({
   return (
     <>
       {scAccount === undefined || keepWorkingMessage ? (
-        <main className="grid grid-cols-3 mt-[20px] w-full h-[740px] bg-white rounded-lg overflow-hidden">
+        <main className="grid grid-cols-3 mt-[20px] w-full h-[740px] rounded-lg overflow-hidden">
           <div className="col-span-3 flex items-center justify-center flex-col">
             <h1 className="text-4xl">
               {keepWorkingMessage
@@ -63,15 +65,14 @@ export default function PageContainer({
           </div>
         </main>
       ) : (
-        <main className={`grid grid-cols-${isSecondaryVisible ? '3' : '2'} mt-[20px] w-full bg-white rounded-lg overflow-hidden relative`}>
-          <div className={`col-span-${isSecondaryVisible ? '2' : '3'}`}>{main}</div>
-          {/* <button className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md shadow-md" onClick={toggleSecondaryVisibility}>
-              {isSecondaryVisible ? 'Hide Portfolio' : 'Show Portfolio'}
-          </button> */}
+        <main className={`grid grid-cols-${isSecondaryVisible ? '3' : '2'} mt-[20px] w-full rounded-lg overflow-hidden relative`}>
           <div className={`border-l-1 ${isSecondaryVisible ? '' : 'hidden'}`}>
             {secondary}
           </div>
-          
+          <div className={`col-span-${isSecondaryVisible ? '2' : '3'}`}>{main}</div>
+          <button className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md shadow-md" onClick={toggleSecondaryVisibility}>
+              {isSecondaryVisible ? 'Hide Portfolio' : 'Show Portfolio'}
+          </button>
         </main>
       )}
     </>
