@@ -7,17 +7,20 @@ import { UserOperation } from "@/lib/userOperations/types";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from '@/context/NotificationContextProvider';
+import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { SystemMessage } from '@langchain/core/messages';
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {
   const { simStatus, simTransfer } = useSimUO();
+  const { addMessage } = useChatHistory();
   const { showNotification } = useNotification();
   const [status, setStatus] = useState<{
     disabled: boolean;
     text: string | null;
   }>({ disabled: true, text: "Enter an amount" });
 
-  const getQuote = async (params) => {
+  const getQuote = async (params: { fromChain: string | null; fromAmount: any; fromToken: any; toChain: string | null; toToken: any; fromAddress: any; toAddress: any; slippage: any; order: string; }) => {
     const response = await axios.get("https://li.quest/v1/quote", { params });
     return response.data;
   };
@@ -113,11 +116,14 @@ export const useSimLiFiTx = () => {
 
         setStatus({ disabled: true, text: "Enter an amount" });
         console.log("userOps", userOps);
+        await addMessage(new SystemMessage(`LiFi transaction details: ${JSON.stringify(quote)}`));
         const result = await simTransfer(userOps);
+        
         showNotification({
           message: "Transfer simulated successfully",
           type: "success",
       });
+        
         return result;
       } catch (error: any) {
         setStatus({ disabled: true, text: "Enter an amount" });
@@ -126,11 +132,12 @@ export const useSimLiFiTx = () => {
           type: "error",
         });
         console.error(error);
+        await addMessage(new SystemMessage(`Error simulating LiFi transaction: ${error.message}`));
       }
     };
 
     return handleLiFiTx;
-  }, []);
+  }, [addMessage, showNotification, simTransfer]);
 
   return { status, simLiFiTx };
 };

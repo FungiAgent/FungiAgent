@@ -6,11 +6,11 @@ import { dynamicTools } from "../Tools/DynamicTool";
 import dotenv from "dotenv";
 import { AgentExecutor } from "langchain/agents";
 import { AIMessage, SystemMessage, HumanMessage } from "@langchain/core/messages";
-import { useChatHistory } from '../Context/ChatHistoryContext';
 
 dotenv.config();
 
 const llm = new ChatOpenAI({
+  maxTokens: 200,
   modelName: "gpt-3.5-turbo",
   temperature: 0,
   openAIApiKey: "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",
@@ -35,15 +35,14 @@ export const agentExecutor = new AgentExecutor({
 });
 
 // A function for executing the agent
-export const executeAgent = async (query: string, memory: (SystemMessage | AIMessage | HumanMessage)[], date: string, portfolio: string, scaAddress: string | undefined) => {
-  console.log("Memory:", memory);
+export const executeAgent = async (query: string, memory: (SystemMessage | AIMessage | HumanMessage)[], date?: string, portfolio?: string, scaAddress?: string | undefined) => {
   let response = await agentExecutor.invoke(
     {
       input: query,
       chat_history: [
-        new SystemMessage(`Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address: ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\nQuery: ${query}`),
+        new SystemMessage(`Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address or Smart Contract Account (SCA): ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\n`),
         new AIMessage("What is my purpose?"),
-        new SystemMessage("You are a friendly AI agent that helps users with their queries."),
+        new SystemMessage("You are a friendly AI agent that helps users with their queries concerning decentralized finance (DeFi). You are able to manage a Smart Contract Account (SCA) and perform operations such as swaps, transfers and search for transaction history of addresses. When performing an operation such as a swap, you always add the required 0s to the amount provided in the query, e.g. The user provides 1 USDC, you add 6 0s to make it 1,000,000 USDC."),
         ...memory,
       ],
     },
@@ -55,5 +54,6 @@ export const executeAgent = async (query: string, memory: (SystemMessage | AIMes
       },
     }
   );
+  console.log("Memory:", memory);
   return response;
 };

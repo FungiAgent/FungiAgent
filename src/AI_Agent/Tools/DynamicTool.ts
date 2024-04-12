@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { DynamicTool, DynamicStructuredTool } from "@langchain/core/tools";
+import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
-import { useSimLiFiTx } from "../hooks/useSimLiFiTx";
 
 export const dynamicTools = [
+  
   new DynamicStructuredTool({
     name: "random-number-generator",
     description: "generates a random number between two input numbers",
@@ -208,6 +208,67 @@ export const dynamicTools = [
       });
 
       return result;
+    },
+  }),
+  new DynamicStructuredTool({
+      name: "Fetch-RSS3-Activities",
+      description: "Fetches on-chain activities for a specified account from the RSS3 network",
+      schema: z.object({
+          account: z.string().describe("The account to retrieve activities from. An EVM address"),
+          limit: z.number().optional().describe("Specify the number of activities to retrieve. An integer between 1 and 100. 1 by default"),
+          // action_limit: z.number().optional().describe("Specify the number of actions within the activity to retrieve. An integer between 1 and 20"),
+          since_timestamp: z.number().optional().describe("Retrieve activities starting from this timestamp"),
+          until_timestamp: z.number().optional().describe("Retrieve activities up to this timestamp"),
+          status: z.string().optional().describe("Retrieve activities with a specific status. 'successful' or 'failed'"),
+          direction: z.string().optional().describe("Retrieve activities with a specific direction. 'in' or 'out'"),
+          network: z.array(z.string()).optional().describe("Retrieve activities from specified network(s). Default: 'arbitrum_one'"),
+          tag: z.array(z.string()).optional().describe("Retrieve activities with specified tag(s). By default: 'transaction'"),
+          type: z.array(z.string()).optional().describe("Retrieve activities of a specified type(s). Default: 'transfer'"),
+      }),
+      func: async ({ account, direction, network, tag, type }) => {
+          // Placeholder function. The actual data fetching will be triggered in AgentChat
+          // and not directly executed here due to the hook's constraints.
+          const placeholderResult = `Request to fetch RSS3 activities for account ${account}`;
+          agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+              tool: 'Fetch-RSS3-Activities',
+              params: { account, direction, network, tag, type },
+              result: placeholderResult,
+          });
+          return placeholderResult;
+      },
+  }),
+  new DynamicStructuredTool({
+    name: "tavily-search",
+    description: "Search for data using the Tavily Search API tailored for LLM Agents.",
+    schema: z.object({
+      query: z.string().describe("The search query string."),
+      searchDepth: z.enum(['basic', 'advanced']).optional().describe("The depth of the search."),
+      includeImages: z.boolean().optional().describe("Include images in the search results. False by default."),
+      includeAnswer: z.boolean().optional().describe("Include an answer in the search results. False by default."),
+      includeRawContent: z.boolean().optional().describe("Include raw content in the search results. False by default."),
+      maxResults: z.number().optional().describe("The maximum number of search results. 5 by default."),
+      includeDomains: z.array(z.string()).optional().describe("Domains specifically included in the search."),
+      excludeDomains: z.array(z.string()).optional().describe("Domains specifically excluded from the search."),
+    }),
+    func: async ({ query, searchDepth, includeImages, includeAnswer, includeRawContent, maxResults, includeDomains, excludeDomains }) => {
+      // Since actual search is performed in AgentChat using useTavilySearch hook,
+      // here we just emit the tool request with provided parameters
+      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+        tool: 'tavily-search',
+        params: {
+          query,
+          searchDepth,
+          includeImages,
+          includeAnswer,
+          includeRawContent,
+          maxResults,
+          includeDomains,
+          excludeDomains,
+        },
+        result: `Search request for: ${query}`,
+      });
+  
+      return `Search request initiated for query: "${query}" with parameters.`;
     },
   }),
 ];
