@@ -40,21 +40,6 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
         disabled={!input.trim()}
         className={`absolute right-4 bottom-4 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md ${!input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="w-4 h-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg> */}
-        
       </button>
     </div>
   );

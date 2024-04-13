@@ -4,7 +4,7 @@ import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
-import Secondary from "./secondary";
+import Secondary from "./sidebar";
 
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
@@ -257,23 +257,6 @@ const AgentChat = () => {
                     <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
                         <ChatDisplay chatHistory={chatHistory} />
                         {renderConfirmationButtons()}
-                        {/* <div className="flex items-end mt-4 w-full max-w-3xl">
-                            <textarea
-                                value={query}
-                                onChange={handleInputChange}
-                                onKeyDown={handleKeyPress}
-                                placeholder="Enter your prompt for the AI agent..."
-                                className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
-                            ></textarea>
-                            <button
-                                type="button"
-                                onClick={() => handleQuerySubmit('')}
-                                disabled={isInputEmpty} // Disable button if input is empty
-                                className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                Run
-                            </button>
-                        </div> */}
                         <UserInput onSubmit={handleQuerySubmit} />
                     </div>
                 }

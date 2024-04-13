@@ -2,9 +2,16 @@
 import React from 'react';
 import styles from './ChatDisplay.module.css';
 
-const AvatarImage: React.FC<{ type: 'human' | 'ai' }> = ({ type }) => {
+const AvatarAndName: React.FC<{ type: 'human' | 'ai' }> = ({ type }) => {
   const avatarSrc = type === 'human' ? '/profile/User.svg' : '/profile/Logo.svg';
-  return <img src={avatarSrc} alt={`${type} avatar`} className={styles.avatar} />;
+  const name = type === 'human' ? 'You' : 'Fungi';
+  return (
+    <div className={styles.avatarContainer}>
+      <img src={avatarSrc} alt={`${name} avatar`} className={styles.avatar} />
+      <span className={styles.name}>{name}</span>
+      <br/>
+    </div>
+  );
 };
 
 const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
@@ -30,9 +37,11 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
     return (
       <div key={index} className={`${styles.message} ${messageStyle}`}>
         {messageType === 'HumanMessage' || messageType === 'AIMessage' ? (
-          <AvatarImage type={messageType === 'HumanMessage' ? "human" : "ai"} />
+          <AvatarAndName type={messageType === 'HumanMessage' ? 'human' : 'ai'} />
         ) : null}
-        <span className={styles.messageContent}>{content}</span>
+        <div className={styles.messageContentContainer}>
+          <span className={styles.messageContent}>{content}</span>
+        </div>
       </div>
     );
   };
@@ -42,7 +51,7 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
   };
 
   return (
-    <div className={styles.chatContainer}>
+    <div className={containerClass}>
       <div className={styles.messagesWrapper}>
         {nonSystemMessages.length === 0 ? renderPlaceholder() : nonSystemMessages.map(renderMessage)}
       </div>

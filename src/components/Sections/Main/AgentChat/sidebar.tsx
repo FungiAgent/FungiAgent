@@ -70,21 +70,40 @@ const Secondary = ({
   };
 
   return (
-    <div style={{ width: "500px" }}>
+    <div style={{ width: "100%" }}>
       <div className="flex justify-between mb-4">
-        <div className="flex justify-between items-center text-lg font-semibold mb-4">
+        <div className="flex justify-between items-center text-lg font-semibold mb-4 pl-20">
           <p>
-            Total Balance: {formatCurrency(totalBalance)} <br />
-            Cash: {formatCurrency(totalCash)}
+            My Balance: 
+            <br />
+            {formatCurrency(totalBalance)} 
+            <br />
+            <br />
+            My Cash: 
+            <br />
+            {formatCurrency(totalCash)}
+            <br />
+            <br />
+            <br />
+            <a href="/portfolio" className="flex items-center mr-8">
+              <img src="public/navbar/portfolio.svg" className="mr-2" />
+              Portfolio
+            </a>
+            <br />
+            <a href="/history" className="flex items-center">
+              <img src="public/navbar/history.svg" className="mr-2" />
+              History
+            </a>
           </p>
-          {/* <p>{formatCurrency(totalBalance)}</p> */}
-          {/* <button className="ml-32" onClick={renderPageNumbers}>
-            <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4 mr-2" />
-          </button> */}
+          
+          {/* <div className="flex items-center"> */}
+            
+          {/* </div> */}
+          
         </div>
       </div>
 
-      {tokens.length > 0 ? (
+      {/* {tokens.length > 0 ? (
         <div className="flex flex-col items-center mt-4 relative h-full">
           <LightSpotTable
             startIndex={startIndex}
@@ -133,7 +152,7 @@ const Secondary = ({
           {" "}
           <Loader />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
