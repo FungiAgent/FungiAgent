@@ -252,35 +252,36 @@ const AgentChat = () => {
 
     return (
         <main>
-            <PageContainer
-                main={
-                    <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
-                        <ChatDisplay chatHistory={chatHistory} />
-                        {renderConfirmationButtons()}
-                        <UserInput onSubmit={handleQuerySubmit} />
-                    </div>
-                }
-                secondary={
-                    <Secondary
-                        totalBalance={totalBalance}
-                        totalCash={totalCash}
-                        tokens={tokens}
-                        formatCurrency={formatCurrency}
-                        startIndex={startIndex}
-                        endIndex={endIndex}
-                        getLength={getLength}
-                        handlePageChange={handlePageChange}
-                        setTokenFrom={setTokenFrom}
-                        forceTableReload={forceTableReload}
-                        currentPage={currentPage}
-                        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-                        length={length}
-                    />
-                }
-                page="AI Agent Tester"
-            />
+          <PageContainer
+            main={
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
+                <ChatDisplay chatHistory={chatHistory} />
+                {renderConfirmationButtons()}
+                <UserInput onSubmit={handleQuerySubmit}/>
+              </div>
+            }
+            secondary={
+              <Secondary
+                totalBalance={totalBalance}
+                totalCash={totalCash}
+                tokens={tokens}
+                formatCurrency={formatCurrency}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                getLength={getLength}
+                handlePageChange={handlePageChange}
+                setTokenFrom={setTokenFrom}
+                forceTableReload={forceTableReload}
+                currentPage={currentPage}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                length={length}
+              />
+            }
+            page="AI Agent Tester"
+          />
         </main>
-    );
+      );
+      
 };
 
 export default AgentChat;

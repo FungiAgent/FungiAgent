@@ -26,7 +26,7 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
   };
 
   return (
-    <div className="flex items-center mt-4 w-full max-w-3xl relative">
+    <div className="flex items-center mt-4 w-[731px] relative">
       <input
         value={input}
         onChange={handleInputChange}

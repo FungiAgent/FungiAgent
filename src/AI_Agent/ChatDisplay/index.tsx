@@ -1,6 +1,8 @@
 // ChatDisplay.tsx
 import React from 'react';
 import styles from './ChatDisplay.module.css';
+import Image from "next/image";
+import Logo from "../../../public/profile/Logo.svg";
 
 const AvatarAndName: React.FC<{ type: 'human' | 'ai' }> = ({ type }) => {
   const avatarSrc = type === 'human' ? '/profile/User.svg' : '/profile/Logo.svg';
@@ -47,7 +49,28 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
   };
 
   const renderPlaceholder = () => {
-    return <div className="text-gray-500 text-center">No messages yet...</div>;
+    // return <div className="text-gray-500 text-center">No messages yet...</div>;
+    return (
+      <div className="col-span-3 flex items-center justify-center flex-col">
+            {/* <h1 className="text-4xl">
+              {keepWorkingMessage
+                ? typeof keepWorkingMessage === "string"
+                  ? `${keepWorkingMessage}`
+                  : keepWorkingMessage
+                : `Log in or sign up to access the ${page}!`}
+            </h1> */}
+        <Image
+          width={210}
+          height={218}
+          alt="Logo"
+          src={Logo.src}
+          aria-hidden="true"
+        />
+        <h1 className="text-4xl">
+          Hi, I'm Fungi! your DeFi Friend
+        </h1>
+      </div>
+    )
   };
 
   return (

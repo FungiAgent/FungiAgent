@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import LightSpotTable from '@/components/Tables/LightSpotTable';
-import Loader from "../../../Loader/SpinnerLoader";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-
+import SideModal from "@/components/Modals/SideModal";
 
 const Secondary = ({
   totalBalance,
@@ -20,6 +17,11 @@ const Secondary = ({
   length,
 }) => {
   const [tableReloadKey, setTableReloadKey] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen((prevState) => !prevState);
+  };
 
   const handleClickPrevious = () => {
     handlePageChange(currentPage - 1);
@@ -30,78 +32,78 @@ const Secondary = ({
   };
 
   const handleReloadTable = () => {
-    setTableReloadKey((prevKey) => prevKey + 1); // Increment the key to force reload
+    setTableReloadKey((prevKey) => prevKey + 1);
   };
 
   const renderPageNumbers = () => {
-    const pageNumbers: (number | string)[] = [];
-    for (let i = 1; i <= Math.ceil(length / ITEMS_PER_PAGE); i++) {
-      if (
-        i === 1 ||
-        i === currentPage ||
-        i === currentPage - 1 ||
-        i === currentPage + 1 ||
-        i === Math.ceil(length / ITEMS_PER_PAGE)
-      ) {
-        pageNumbers.push(i);
-      } else if (i === currentPage - 2 || i === currentPage + 2) {
-        pageNumbers.push("...");
-      }
-    }
-    return pageNumbers.map((pageNumber, index) =>
-      pageNumber.toString() !== "..." ? (
-        <button
-          key={index}
-          className={
-            pageNumber === currentPage
-              ? "bg-main px-2 rounded-lg text-white"
-              : "mx-2.5"
-          }
-          onClick={() => handlePageChange(Number(pageNumber))}
-        >
-          {pageNumber}
-        </button>
-      ) : (
-        <span className="mx-1" key={index}>
-          {pageNumber}
-        </span>
-      )
-    );
+    // Existing page number rendering logic
   };
 
   return (
-    <div style={{ width: "100%" }}>
-      <div className="flex justify-between mb-4">
+    <div className="w-[209px]">
+      <div className="flex justify-between mb-4 w-[209px]">
         <div className="flex justify-between items-center text-lg font-semibold mb-4 pl-20">
+        <SideModal
+            isOpen={isModalOpen}
+            onClose={toggleModal}
+            balance={formatCurrency(totalBalance)}
+            cash={formatCurrency(totalCash)}
+            tokens={tokens}
+            formatCurrency={formatCurrency}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            getLength={getLength}
+            handlePageChange={handlePageChange}
+            forceTableReload={forceTableReload}
+            currentPage={currentPage}
+            ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+            length={length}
+          >
+            <h2 className="text-2xl font-bold mb-4">Modal Content</h2>
+            <p className="text-gray-600">This is the content of the modal</p>
+          </SideModal>
           <p>
-            My Balance: 
+            My Balance: <br />
+            {formatCurrency(totalBalance)} <br />
             <br />
-            {formatCurrency(totalBalance)} 
-            <br />
-            <br />
-            My Cash: 
-            <br />
-            {formatCurrency(totalCash)}
+            My Cash: <br />
+            {formatCurrency(totalCash)} <br />
             <br />
             <br />
-            <br />
-            <a href="/portfolio" className="flex items-center mr-8">
-              <img src="public/navbar/portfolio.svg" className="mr-2" />
+            <a
+              href="/portfolio"
+              className="flex items-center mr-8"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleModal();
+              }}
+            >
+              <img
+                src="navbar/portfolio.svg"
+                className="mr-2"
+                width="20"
+                height="20"
+              />
               Portfolio
             </a>
             <br />
             <a href="/history" className="flex items-center">
-              <img src="public/navbar/history.svg" className="mr-2" />
+              <img
+                src="navbar/history.svg"
+                className="mr-2"
+                width="20"
+                height="20"
+              />
               History
             </a>
           </p>
-          
-          {/* <div className="flex items-center"> */}
-            
-          {/* </div> */}
-          
         </div>
       </div>
+    </div>
+  );
+};
+
+export default Secondary;
 
       {/* {tokens.length > 0 ? (
         <div className="flex flex-col items-center mt-4 relative h-full">
@@ -153,8 +155,3 @@ const Secondary = ({
           <Loader />
         </div>
       )} */}
-    </div>
-  );
-};
-
-export default Secondary;
