@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SubmitButton from 'public/SubmitButton.svg';
 
 interface UserInputProps {
   onSubmit: (query: string) => void;
@@ -38,8 +39,12 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
         type="button"
         onClick={handleSubmit}
         disabled={!input.trim()}
-        className={`absolute right-4 bottom-4 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md ${!input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`absolute right-4 bottom-4 w-8 h-8 rounded-full text-white ${!input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
+        <img
+                src="SubmitButton.svg"
+                w-full h-full
+              />
       </button>
     </div>
   );

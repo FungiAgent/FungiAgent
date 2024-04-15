@@ -75,17 +75,24 @@ export default function LightSpotTable({
     checkTokens();
   }, [startIndex, endIndex]);
 
+  useEffect(() => {
+    if (forceReload) {
+      fetchTokens();  // Assuming this method fetches fresh data
+      setLoading(true);
+    }
+  }, [forceReload]);
+
   return (
     <div className="mt-[20px] w-full h-[574px] pt-[24px] bg-white rounded-lg">
-      <div className="grid grid-cols-6 pb-[26px] text-xl font-medium border-b-1 border-gray-300 items-center">
-        <div className="text-center col-span-2">Token</div>{" "}
-        <div className="text-center">Price</div>{" "}
-        <div className="text-center">Balance</div>{" "}
-        <button className="ml-3" onClick={fetchTokens}>
-          <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4 mr-2" />
-        </button>
+      {/* <button className="col-span-1 justify-self-center" onClick={handleReloadTable}>
+          <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4" />
+      </button> */}
+      <div className="grid grid-cols-3 pb-[26px] text-xl font-medium border-b border-gray-300 items-center">
+        <div className="col-span-1 text-center">Token</div>
+        <div className="col-span-1 text-center">Price</div>
+        <div className="col-span-1 text-center">Balance</div>
       </div>
-      
+  
       {loading ? (
         <div className="w-full h-[500px] flex items-center justify-center">
           <Loader />
@@ -97,23 +104,19 @@ export default function LightSpotTable({
           ) : (
             <>
               {!isLoading ? (
-                <>
-                  {tokenMarketsData &&
-                    tokenMarketsData.length > 0 &&
-                    tokenMarketsData.map((token: TokenData, index: number) => (
-                      <LightSpotTableCard
-                        setTokenFrom={setTokenFrom}
-                        asset={token}
-                        key={token.token.coinKey}
-                        index={index}
-                      />
-                    ))}
-                </>
+                tokenMarketsData.map((token, index) => (
+                  <LightSpotTableCard
+                    setTokenFrom={setTokenFrom}
+                    asset={token}
+                    key={token.token.coinKey}
+                    index={index}
+                  />
+                ))
               ) : (
                 <div>
-                  {[1, 2, 3, 4, 5].map((index: number) => {
-                    return <SpotTableCardFallback key={index} />;
-                  })}
+                  {[1, 2, 3].map((index) => (
+                    <SpotTableCardFallback key={index} />
+                  ))}
                 </div>
               )}
             </>
@@ -122,4 +125,5 @@ export default function LightSpotTable({
       )}
     </div>
   );
+  
 }

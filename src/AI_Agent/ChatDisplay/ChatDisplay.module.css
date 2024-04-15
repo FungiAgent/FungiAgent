@@ -40,9 +40,6 @@
 
 .humanMessage {
   color: #1a1a1a;
-  /* display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end; */
 }
 
 .aiMessage {
@@ -59,6 +56,12 @@
   display: flex;
   align-items: center;
   margin-right: 8px;
+}
+
+.img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .avatar {

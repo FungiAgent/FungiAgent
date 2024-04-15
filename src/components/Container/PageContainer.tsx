@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useEffect } from "react";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
 import useWallet from "@/utils/gmx/lib/wallets/useWallet";
 import Logo from "../../../public/profile/Logo.svg";
@@ -8,6 +8,7 @@ type PageContainerProps = {
   secondary: ReactElement;
   page: string;
   keepWorkingMessage?: string | ReactNode;
+  isModalOpen: boolean;  // Add this to the props
 };
 
 export default function PageContainer({
@@ -15,7 +16,9 @@ export default function PageContainer({
   secondary,
   page,
   keepWorkingMessage,
+  isModalOpen,  // Use this prop
 }: PageContainerProps) {
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const { scAccount } = useWallet();
 
   useEffect(() => {
@@ -51,10 +54,10 @@ export default function PageContainer({
           </div>
         </main>
       ) : (
-        <main className={`mt-[20px] w-full rounded-lg overflow-hidden relative flex`}>
-          <div className={`border-l-1 w-[209px]`}>{secondary}</div>
-          <div className={`flex-1`}>{main}</div>
-        </main>
+        <main className={`mt-[20px] w-full rounded-lg overflow-hidden relative flex ${isModalOpen ? 'ml-[585px]' : ''}`}>
+        <div className="border-l-1 w-[209px]">{secondary}</div>
+        <div className="flex-1">{main}</div>
+      </main>
       )}
     </>
   );

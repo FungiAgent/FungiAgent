@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import LightSpotTable from '@/components/Tables/LightSpotTable';
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";  // Importing XIcon for the close button
 import Loader from "../Loader/SpinnerLoader";
+import { Categories } from "../Cards/SideModal/Categories";
 
 type SideModalProps = {
   isOpen: boolean;
@@ -41,7 +42,8 @@ const SideModal: FC<SideModalProps> = ({
   children,
 }) => {
   const [forceReload, setForceReload] = useState(false);
-  
+  const [activeCategory, setActiveCategory] = useState('Tokens');
+
   if (!isOpen) return null;
 
   const handleClickPrevious = () => {
@@ -58,21 +60,55 @@ const SideModal: FC<SideModalProps> = ({
     setForceReload(false);
   };
 
+  const categoryContent = () => {
+    switch (activeCategory) {
+      case 'Tokens':
+        return (
+          <LightSpotTable
+            startIndex={startIndex}
+            endIndex={endIndex}
+            getLength={getLength}
+            handlePageChange={handlePageChange}
+            setTokenFrom={setTokenFrom}
+            forceReload={true} // Simplified for demonstration
+            handleReloadTable={handleReloadTable}
+          />
+        );
+      default:
+        return <div className="text-center mt-10">This feature is coming soon.</div>;
+    }
+  };
+
   return (
     <div
-      className={`fixed top-0 left-0 w-[25%] h-full bg-white z-50 transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-[585px] h-full bg-white z-50 transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
       <div className="h-full overflow-auto p-6">
-        <button onClick={onClose} className="absolute top-5 right-5 p-2">
-          {/* <XIcon className="w-6 h-6 text-black" aria-hidden="true" /> */}
-          X
-        </button>
-        <div className="mb-6">
-          <p className="text-lg font-semibold">My Balance: {balance}</p>
-          <p className="text-lg font-semibold">My Cash: {cash}</p>
+        <div className="h-[100px]">
+          <button onClick={onClose} className="absolute top-5 right-5 p-2">
+            <img
+                  src="navbar/CloseSideBar.svg"
+                  className="mr-2"
+                />
+          </button>
         </div>
+        <div className="mb-6 flex justify-center items-center h-[79px] pb-[16px]">
+          <div className="flex flex-col pr-[32px]">
+            <p className="text-lg">My Balance:</p>
+            <p className="text-lg font-semibold">{balance}</p>
+          </div>
+          <div className="flex flex-col">
+            <p className="text-lg">My Cash:</p>
+            <p className="text-lg font-semibold">{cash}</p>
+          </div>
+        </div>
+
+        <Categories setActiveCategory={setActiveCategory} />
+        {tokens.length > 0 ? categoryContent() : <Loader />}
+        {children}
+
         {tokens.length > 0 ? (
           <div className="flex flex-col items-center mt-4 relative h-full">
             <LightSpotTable
@@ -125,6 +161,7 @@ const SideModal: FC<SideModalProps> = ({
       </div>
     </div>
   );
+  
 };
 
 export default SideModal;

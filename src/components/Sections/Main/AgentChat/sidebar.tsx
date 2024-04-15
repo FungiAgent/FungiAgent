@@ -1,42 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import SideModal from "@/components/Modals/SideModal";
+import { type } from 'os';
+
+// type SecondaryProps = {
+//   totalBalance: number;
+//   totalCash: number;
+//   tokens: any[];
+//   formatCurrency: (value: number) => string;
+//   startIndex: number;
+//   endIndex: number;
+//   getLength: () => number;
+//   handlePageChange: (page: number) => void;
+//   setTokenFrom: (token: any) => void;
+//   forceTableReload: () => void;
+//   currentPage: number;
+//   ITEMS_PER_PAGE: number;
+//   length: number;
+//   onModalToggle?: (isOpen: boolean) => void;
+// };
 
 const Secondary = ({
-  totalBalance,
-  totalCash,
-  tokens,
-  formatCurrency,
-  startIndex,
-  endIndex,
-  getLength,
-  handlePageChange,
-  setTokenFrom,
-  forceTableReload,
-  currentPage,
-  ITEMS_PER_PAGE,
-  length,
-}) => {
-  const [tableReloadKey, setTableReloadKey] = useState(0);
+  totalBalance, totalCash, tokens, formatCurrency, startIndex, endIndex, getLength, handlePageChange,
+  setTokenFrom, forceTableReload, currentPage, ITEMS_PER_PAGE, length, onModalToggle
+} ) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
-    setIsModalOpen((prevState) => !prevState);
-  };
-
-  const handleClickPrevious = () => {
-    handlePageChange(currentPage - 1);
-  };
-
-  const handleClickNext = () => {
-    handlePageChange(currentPage + 1);
-  };
-
-  const handleReloadTable = () => {
-    setTableReloadKey((prevKey) => prevKey + 1);
-  };
-
-  const renderPageNumbers = () => {
-    // Existing page number rendering logic
+    setIsModalOpen(!isModalOpen);
+    onModalToggle(!isModalOpen);  // Notify parent about modal state change
   };
 
   return (
@@ -59,6 +50,7 @@ const Secondary = ({
             ITEMS_PER_PAGE={ITEMS_PER_PAGE}
             length={length}
             setTokenFrom={setTokenFrom}
+            // onModalToggle={() => {}}
           >
             <h2 className="text-2xl font-bold mb-4">Modal Content</h2>
             <p className="text-gray-600">This is the content of the modal</p>
@@ -105,54 +97,3 @@ const Secondary = ({
 };
 
 export default Secondary;
-
-      {/* {tokens.length > 0 ? (
-        <div className="flex flex-col items-center mt-4 relative h-full">
-          <LightSpotTable
-            startIndex={startIndex}
-            endIndex={endIndex}
-            getLength={getLength}
-            handlePageChange={handlePageChange}
-            setTokenFrom={setTokenFrom}
-            forceReload={forceTableReload}
-            handleReloadTable={handleReloadTable}
-          />
-          <div className="flex justify-center items-center absolute inset-x-0 2xl:bottom-6 bottom-10 mx-10">
-            {length !== 0 && (
-              <span className="absolute inset-x-0 bottom-2">
-                Showing {startIndex + 1}-{endIndex} out of {length}
-              </span>
-            )}
-            <div className="absolute bottom-2">
-              {currentPage !== 1 && (
-                <button
-                  onClick={handleClickPrevious}
-                  className="absolute top-0 -left-6"
-                >
-                  <ChevronLeftIcon
-                    className=" w-[24px] h-[24px] text-black"
-                    aria-hidden="true"
-                  />
-                </button>
-              )}
-              {renderPageNumbers()}
-              {currentPage < length / ITEMS_PER_PAGE && (
-                <button
-                  onClick={handleClickNext}
-                  className="absolute top-0 -right-6"
-                >
-                  <ChevronRightIcon
-                    className=" w-[24px] h-[24px] text-black"
-                    aria-hidden="true"
-                  />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="h-full flex items-center justify-center">
-          {" "}
-          <Loader />
-        </div>
-      )} */}

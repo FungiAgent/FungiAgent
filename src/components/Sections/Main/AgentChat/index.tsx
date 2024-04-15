@@ -56,7 +56,7 @@ const AgentChat = () => {
     const [forceTableReload, setForceTableReload] = useState(false);
     const [isInputEmpty, setIsInputEmpty] = useState(true);
     const { fetchActivities, fetchedData } = useRSS3Activities();
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
     const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
 
@@ -201,18 +201,6 @@ const AgentChat = () => {
         };
     }, []);
 
-    const handleInputChange = (event) => {
-        setQuery(event.target.value);
-        setIsInputEmpty(event.target.value.trim() === ""); // Check if input box is empty
-    };
-
-    const handleKeyPress = (event) => {
-        if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
-            event.preventDefault();
-            handleQuerySubmit(query);
-        }
-    };
-
     const getLength = (length: number) => {
         setLength(length);
     };
@@ -257,7 +245,7 @@ const AgentChat = () => {
               <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
                 <ChatDisplay chatHistory={chatHistory} />
                 {renderConfirmationButtons()}
-                <UserInput onSubmit={handleQuerySubmit}/>
+                <UserInput onSubmit={handleQuerySubmit} />
               </div>
             }
             secondary={
@@ -275,12 +263,16 @@ const AgentChat = () => {
                 currentPage={currentPage}
                 ITEMS_PER_PAGE={ITEMS_PER_PAGE}
                 length={length}
+                onModalToggle={setIsModalOpen}
               />
             }
             page="AI Agent Tester"
+            keepWorkingMessage={null}
+            isModalOpen={isModalOpen} 
           />
         </main>
       );
+  
       
 };
 
