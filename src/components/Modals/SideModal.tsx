@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import LightSpotTable from '@/components/Tables/LightSpotTable';
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";  // Importing XIcon for the close button
 import Loader from "../Loader/SpinnerLoader";
 
 type SideModalProps = {
@@ -21,7 +21,6 @@ type SideModalProps = {
   setTokenFrom: (token: any) => void;
   children: React.ReactNode;
 };
-
 
 const SideModal: FC<SideModalProps> = ({
   isOpen,
@@ -66,6 +65,10 @@ const SideModal: FC<SideModalProps> = ({
       }`}
     >
       <div className="h-full overflow-auto p-6">
+        <button onClick={onClose} className="absolute top-5 right-5 p-2">
+          {/* <XIcon className="w-6 h-6 text-black" aria-hidden="true" /> */}
+          X
+        </button>
         <div className="mb-6">
           <p className="text-lg font-semibold">My Balance: {balance}</p>
           <p className="text-lg font-semibold">My Cash: {cash}</p>
@@ -99,7 +102,6 @@ const SideModal: FC<SideModalProps> = ({
                     />
                   </button>
                 )}
-                {/* {renderPageNumbers()} */}
                 {currentPage < length / ITEMS_PER_PAGE && (
                   <button
                     onClick={handleClickNext}

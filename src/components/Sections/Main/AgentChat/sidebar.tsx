@@ -58,6 +58,7 @@ const Secondary = ({
             currentPage={currentPage}
             ITEMS_PER_PAGE={ITEMS_PER_PAGE}
             length={length}
+            setTokenFrom={setTokenFrom}
           >
             <h2 className="text-2xl font-bold mb-4">Modal Content</h2>
             <p className="text-gray-600">This is the content of the modal</p>
