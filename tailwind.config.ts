@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       colors: {
         main: "#514AF3",
-        secondBlack: "#0F0F0F",
+        // secondBlack: "#0F0F0F",
         mainHover: "#706aff",
       },
       boxShadow: {

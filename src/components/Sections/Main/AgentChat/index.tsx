@@ -4,7 +4,7 @@ import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
-import Secondary from "./secondary";
+import Secondary from "./sidebar";
 
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
@@ -20,6 +20,8 @@ import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
+import  { UserInput }   from '@/components/TextInputs/UserInput';
+
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -54,7 +56,7 @@ const AgentChat = () => {
     const [forceTableReload, setForceTableReload] = useState(false);
     const [isInputEmpty, setIsInputEmpty] = useState(true);
     const { fetchActivities, fetchedData } = useRSS3Activities();
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
     const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
 
@@ -199,18 +201,6 @@ const AgentChat = () => {
         };
     }, []);
 
-    const handleInputChange = (event) => {
-        setQuery(event.target.value);
-        setIsInputEmpty(event.target.value.trim() === ""); // Check if input box is empty
-    };
-
-    const handleKeyPress = (event) => {
-        if (event.key === "Enter" && !event.shiftKey && !isInputEmpty) {
-            event.preventDefault();
-            handleQuerySubmit(query);
-        }
-    };
-
     const getLength = (length: number) => {
         setLength(length);
     };
@@ -250,51 +240,41 @@ const AgentChat = () => {
 
     return (
         <main>
-            <PageContainer
-                main={
-                    <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm">
-                        <ChatDisplay chatHistory={chatHistory} />
-                        {renderConfirmationButtons()}
-                        <div className="flex items-end mt-4 w-full max-w-3xl">
-                            <textarea
-                                value={query}
-                                onChange={handleInputChange}
-                                onKeyDown={handleKeyPress}
-                                placeholder="Enter your prompt for the AI agent..."
-                                className="p-4 h-32 w-full resize-none border border-gray-300 rounded-md bg-white mr-4"
-                            ></textarea>
-                            <button
-                                type="button"
-                                onClick={() => handleQuerySubmit('')}
-                                disabled={isInputEmpty} // Disable button if input is empty
-                                className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md ${isInputEmpty ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                Run
-                            </button>
-                        </div>
-                    </div>
-                }
-                secondary={
-                    <Secondary
-                        totalBalance={totalBalance}
-                        totalCash={totalCash}
-                        tokens={tokens}
-                        formatCurrency={formatCurrency}
-                        startIndex={startIndex}
-                        endIndex={endIndex}
-                        getLength={getLength}
-                        handlePageChange={handlePageChange}
-                        setTokenFrom={setTokenFrom}
-                        forceTableReload={forceTableReload}
-                        currentPage={currentPage}
-                        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-                        length={length}
-                    />
-                }
-                page="AI Agent Tester"
-            />
+          <PageContainer
+            main={
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
+                <ChatDisplay chatHistory={chatHistory} />
+                {renderConfirmationButtons()}
+                <UserInput onSubmit={handleQuerySubmit} />
+              </div>
+            }
+            secondary={
+              <Secondary
+                totalBalance={totalBalance}
+                totalCash={totalCash}
+                tokens={tokens}
+                formatCurrency={formatCurrency}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                getLength={getLength}
+                handlePageChange={handlePageChange}
+                setTokenFrom={setTokenFrom}
+                forceTableReload={forceTableReload}
+                currentPage={currentPage}
+                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                length={length}
+                onModalToggle={setIsModalOpen}
+                isModalOpen={isModalOpen}
+              />
+            }
+            page="AI Agent Tester"
+            keepWorkingMessage={null}
+            isModalOpen={isModalOpen}
+          />
         </main>
-    );
+      );
+  
+      
 };
 
 export default AgentChat;
