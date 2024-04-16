@@ -8,7 +8,7 @@ type PageContainerProps = {
   secondary: ReactElement;
   page: string;
   keepWorkingMessage?: string | ReactNode;
-  isModalOpen: boolean;  // Add this to the props
+  isModalOpen: boolean;
 };
 
 export default function PageContainer({
@@ -16,9 +16,8 @@ export default function PageContainer({
   secondary,
   page,
   keepWorkingMessage,
-  isModalOpen,  // Use this prop
+  isModalOpen,
 }: PageContainerProps) {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const { scAccount } = useWallet();
 
   useEffect(() => {
@@ -54,10 +53,22 @@ export default function PageContainer({
           </div>
         </main>
       ) : (
-        <main className={`mt-[20px] w-full rounded-lg overflow-hidden relative flex ${isModalOpen ? 'ml-[585px]' : ''}`}>
-        <div className="border-l-1 w-[209px]">{secondary}</div>
-        <div className="flex-1">{main}</div>
-      </main>
+        <main className="mt-[20px] w-full rounded-lg overflow-hidden relative flex">
+          <div
+            className={`border-l-1 w-[209px] mr-[30px] ${
+              isModalOpen ? "absolute left-0 top-0 bottom-0" : ""
+            }`}
+          >
+            {secondary}
+          </div>
+          <div
+            className={`flex-1 ${isModalOpen ? "ml-[585px]" : ""} ${
+              isModalOpen ? "w-[calc(100%-585px)]" : ""
+            }`}
+          >
+            {main}
+          </div>
+        </main>
       )}
     </>
   );
