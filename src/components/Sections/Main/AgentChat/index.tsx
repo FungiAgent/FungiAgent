@@ -21,6 +21,8 @@ import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
+import ConfirmationButtons from '@/components/Cards/ChatConfirmations/ConfirmationButtons';
+import ConfirmationBox from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
 
 import dotenv from "dotenv";
 
@@ -215,24 +217,9 @@ const AgentChat = () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
 
     const renderConfirmationButtons = () => {
-        if (confirmationDetails) {
+        if (!confirmationDetails) {
             return (
-                <div className="flex mt-4">
-                    <button
-                        onClick={confirmAction}
-                        disabled={isConfirmed} // Disable the button if confirmed
-                        className={`px-4 py-2 mr-2 bg-green-500 hover:bg-green-600 text-white rounded-md shadow-md ${isConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        Approve
-                    </button>
-                    <button
-                        onClick={rejectAction}
-                        disabled={isConfirmed} // Disable the button if confirmed
-                        className={`px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md shadow-md ${isConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        Reject
-                    </button>
-                </div>
+                <ConfirmationBox confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
             );
         }
         return null;
@@ -273,8 +260,6 @@ const AgentChat = () => {
           />
         </main>
       );
-  
-      
 };
 
 export default AgentChat;

@@ -49,7 +49,6 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
   };
 
   const renderPlaceholder = () => {
-    // return <div className="text-gray-500 text-center">No messages yet...</div>;
     return (
       <div className="col-span-3 flex items-center justify-center flex-col">
         <Image
