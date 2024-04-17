@@ -52,7 +52,7 @@ const TxSummaryDetails = ({ isExpanded, priceImpact, networkCost, maxSlippage })
   );
 };
 
-const TxSummary = ({ usdcToEthRate, priceImpact, networkCost, maxSlippage }) => {
+const TxSummary = ({ exchangeRate, priceImpact, networkCost, maxSlippage }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleArrowClick = () => {
@@ -65,7 +65,7 @@ const TxSummary = ({ usdcToEthRate, priceImpact, networkCost, maxSlippage }) => 
         isExpanded={isExpanded}
         handleArrowClick={handleArrowClick}
         amountToSwap={100}
-        amountToReceive={usdcToEthRate * 100}
+        amountToReceive={exchangeRate * 100}
         tokenIn="USDC"
         tokenOut="ETH"
         gasCost={50}

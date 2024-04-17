@@ -5,6 +5,7 @@ import { useGlobalContext } from "@/context/FungiContextProvider";
 export function useSimUO() {
     const [simStatus, setSimStatus] = useState<{ loading: boolean, error: string | null, success: string | null, result: any }>({ loading: false, error: null, success: null, result: null });
     const { alchemyScaProvider } = useGlobalContext();
+    const [simResult, setSimResult] = useState<any>(null);
 
     const simTransfer = async (userOperations: UserOperation[]) => {
         try {
@@ -17,6 +18,7 @@ export function useSimUO() {
               uo: userOperations.length > 1 ? userOperations : userOperations[0],
             });
             console.log("SIM", result);
+            setSimResult(result);
             setSimStatus({ loading: false, error: null, success: 'Transfer simulated successfully!', result });
             return result; // Directly return the result for immediate use
           } catch (e: any) {
@@ -25,5 +27,5 @@ export function useSimUO() {
             return null; // Return null in case of an error
           }
     };
-    return {simStatus, simTransfer};
+    return {simStatus, simTransfer, simResult};
 }

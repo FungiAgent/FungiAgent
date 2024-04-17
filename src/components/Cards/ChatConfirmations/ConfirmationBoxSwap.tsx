@@ -2,11 +2,39 @@ import React from 'react';
 import TxSummary from './TxSummary';
 import ConfirmationButtons from './ConfirmationButtons';
 
-const ConfirmationBoxSwap = ({ confirmAction, rejectAction, isConfirmed }) => {
+// Define props interface
+interface ConfirmationBoxSwapProps {
+  confirmAction: () => void;
+  rejectAction: () => void;
+  isConfirmed: boolean;
+  exchangeRate: number;
+  priceImpact: number;
+  networkCost: number;
+  maxSlippage: number;
+}
+
+const ConfirmationBoxSwap = ({
+  confirmAction,
+  rejectAction,
+  isConfirmed,
+  exchangeRate,
+  priceImpact,
+  networkCost,
+  maxSlippage
+}: ConfirmationBoxSwapProps) => {
     return (
         <div className="space-y-4">
-            <TxSummary usdcToEthRate={0.01} priceImpact={0.5} networkCost={0.5} maxSlippage={0.5} />
-            <ConfirmationButtons confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
+            <TxSummary 
+              exchangeRate={exchangeRate} 
+              priceImpact={priceImpact} 
+              networkCost={networkCost} 
+              maxSlippage={maxSlippage} 
+            />
+            <ConfirmationButtons 
+              confirmAction={confirmAction} 
+              rejectAction={rejectAction} 
+              isConfirmed={isConfirmed} 
+            />
         </div>
     );
 };

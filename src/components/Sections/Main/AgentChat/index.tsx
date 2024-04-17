@@ -21,8 +21,8 @@ import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
-import ConfirmationButtons from '@/components/Cards/ChatConfirmations/ConfirmationButtons';
-import ConfirmationBox from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
+// import ConfirmationButtons from '@/components/Cards/ChatConfirmations/ConfirmationButtons';
+import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
 import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
 import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
 
@@ -30,10 +30,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-interface ConfirmationDetails {
+const ConfirmationBoxTypes = {
+    SIMPLE: 'simple',
+    BATCH: 'batch',
+    SWAP: 'swap'
+  };
+
+  interface ConfirmationDetails {
     action: () => Promise<void>;
     message: string;
-}
+    type: keyof typeof ConfirmationBoxTypes; // Using the keys of the enum as type
+  }
 
 const AgentChat = () => {
     const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
@@ -155,6 +162,7 @@ const AgentChat = () => {
                     setConfirmationDetails({
                         action: actions['Perform-Transfer'],
                         message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
+                        type: 'SIMPLE' as const // Assign the correct type
                     });
                     break;
                 case 'LiFi-Simulator':
@@ -163,7 +171,8 @@ const AgentChat = () => {
                 case 'LiFi-Transaction':
                     setConfirmationDetails({
                         action: actions['LiFi-Transaction'],
-                        message: 'Please confirm the LiFi transaction: ' + params.amount + ' to ' + params.recipient,
+                        message: 'Please confirm the LiFi transaction',
+                        type: 'SWAP' as const // Assign the correct type
                     });
                     break;
                 case 'Add-Operation-To-Batch':
@@ -173,6 +182,7 @@ const AgentChat = () => {
                     setConfirmationDetails({
                         action: actions['Execute-Batch-Operations'],
                         message: 'Please confirm the batch operations',
+                        type: 'BATCH' as const // Assign the correct type
                     });
                     break;
                 case 'Fetch-RSS3-Activities':
@@ -203,7 +213,7 @@ const AgentChat = () => {
         return () => {
             agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-    }, []);
+    }, [simulateTransfer, handleSend, simLiFiTx, sendLiFiTx, addToBatch, executeBatchOperations, fetchActivities, search, processInternalMessage]);
 
     const getLength = (length: number) => {
         setLength(length);
@@ -220,14 +230,20 @@ const AgentChat = () => {
 
     const renderConfirmationButtons = () => {
         if (confirmationDetails) {
-            return (
-                // <ConfirmationBox confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
-                // <ConfirmationBoxSimple confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
-                <ConfirmationBoxBatch confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
-            );
+            switch (confirmationDetails.type) {
+                case ConfirmationBoxTypes.SIMPLE:
+                    return <ConfirmationBoxSimple confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} amountToSend={100} tokenIn="USDC" recipient="0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD" gasCost={0.0001} />;
+                case ConfirmationBoxTypes.BATCH:
+                    return <ConfirmationBoxBatch confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} tokens={tokens} percentages={[0.5, 0.5]} priceImpact={0.01} networkCost={0.0001} maxSlippage={0.01} />;
+                case ConfirmationBoxTypes.SWAP:
+                    return <ConfirmationBoxSwap confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} exchangeRate={1000} priceImpact={0.01} networkCost={0.0001} maxSlippage={0.01} />;
+                default:
+                    return null; // Handle unknown type or provide a default fallback
+            }
         }
         return null;
     };
+      
 
     return (
         <main>

@@ -2,11 +2,39 @@ import React from 'react';
 import TxSummarySimple from './TxSimple';
 import ConfirmationButtons from './ConfirmationButtons';
 
-const ConfirmationBoxSimple = ({ confirmAction, rejectAction, isConfirmed }) => {
+// Define props interface for clarity
+interface ConfirmationBoxSimpleProps {
+  confirmAction: () => void;
+  rejectAction: () => void;
+  isConfirmed: boolean;
+  amountToSend: number;
+  tokenIn: string;
+  recipient: string;
+  gasCost: number;
+}
+
+const ConfirmationBoxSimple = ({
+  confirmAction,
+  rejectAction,
+  isConfirmed,
+  amountToSend,
+  tokenIn,
+  recipient,
+  gasCost
+}: ConfirmationBoxSimpleProps) => {
     return (
         <div className="space-y-4">
-            <TxSummarySimple amountToSend={100} tokenIn="USDC" recipient="0x1234567890" gasCost={50} />
-            <ConfirmationButtons confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
+            <TxSummarySimple 
+              amountToSend={amountToSend} 
+              tokenIn={tokenIn} 
+              recipient={recipient} 
+              gasCost={gasCost} 
+            />
+            <ConfirmationButtons 
+              confirmAction={confirmAction} 
+              rejectAction={rejectAction} 
+              isConfirmed={isConfirmed} 
+            />
         </div>
     );
 };
