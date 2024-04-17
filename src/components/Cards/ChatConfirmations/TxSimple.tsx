@@ -8,7 +8,7 @@ const TxSummarySimple = ({ amountToSend, tokenIn, recipient, gasCost }) => {
             <span>{amountToSend} {tokenIn} to {recipient}</span>
         </div>
         <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />
-        <p>
+        <p className="pr-4">
             <span>${gasCost}</span>
         </p>
     </div>

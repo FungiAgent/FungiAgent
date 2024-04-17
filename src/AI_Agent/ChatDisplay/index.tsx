@@ -9,7 +9,7 @@ const AvatarAndName: React.FC<{ type: 'human' | 'ai' }> = ({ type }) => {
   const name = type === 'human' ? 'You' : 'Fungi';
   return (
     <div className={styles.avatarContainer}>
-      <img src={avatarSrc} alt={`${name} avatar`} className={styles.avatar} />
+      <Image src={avatarSrc} alt={`${name} avatar`} width={40} height={40} />
       <span className={styles.name}>{name}</span>
       <br/>
     </div>

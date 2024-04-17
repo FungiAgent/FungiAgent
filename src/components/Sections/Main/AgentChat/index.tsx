@@ -23,6 +23,8 @@ import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
 import ConfirmationButtons from '@/components/Cards/ChatConfirmations/ConfirmationButtons';
 import ConfirmationBox from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
+import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
+import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
 
 import dotenv from "dotenv";
 
@@ -217,9 +219,11 @@ const AgentChat = () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
 
     const renderConfirmationButtons = () => {
-        if (!confirmationDetails) {
+        if (confirmationDetails) {
             return (
-                <ConfirmationBox confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
+                // <ConfirmationBox confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
+                // <ConfirmationBoxSimple confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
+                <ConfirmationBoxBatch confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} />
             );
         }
         return null;

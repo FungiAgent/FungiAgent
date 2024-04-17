@@ -2,7 +2,7 @@ import React from 'react';
 import TxSummary from './TxSummary';
 import ConfirmationButtons from './ConfirmationButtons';
 
-const ConfirmationBox = ({ confirmAction, rejectAction, isConfirmed }) => {
+const ConfirmationBoxSwap = ({ confirmAction, rejectAction, isConfirmed }) => {
     return (
         <div className="space-y-4">
             <TxSummary usdcToEthRate={0.01} priceImpact={0.5} networkCost={0.5} maxSlippage={0.5} />
@@ -11,4 +11,4 @@ const ConfirmationBox = ({ confirmAction, rejectAction, isConfirmed }) => {
     );
 };
 
-export default ConfirmationBox;
+export default ConfirmationBoxSwap;

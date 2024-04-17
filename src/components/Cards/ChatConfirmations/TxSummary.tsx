@@ -34,7 +34,7 @@ const TxSummaryHeader = ({ isExpanded, handleArrowClick, amountToSwap, amountToR
 const TxSummaryDetails = ({ isExpanded, priceImpact, networkCost, maxSlippage }) => {
   return (
     isExpanded && (
-      <div className="w-[454px] border-gray-300 pt-4 bg-white h-[129px] rounded-[15px]">
+      <div className="w-[454px] border-gray-300 pt-4 bg-white h-[129px] rounded-[20px]">
         <div className="flex justify-between pl-[15px] pr-[15px]">
           <span>Price Impact</span>
           <span>{priceImpact}%</span>

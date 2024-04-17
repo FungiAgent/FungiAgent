@@ -2,7 +2,7 @@ import React from 'react';
 import TxSummarySimple from './TxSimple';
 import ConfirmationButtons from './ConfirmationButtons';
 
-const ConfirmationBox = ({ confirmAction, rejectAction, isConfirmed }) => {
+const ConfirmationBoxSimple = ({ confirmAction, rejectAction, isConfirmed }) => {
     return (
         <div className="space-y-4">
             <TxSummarySimple amountToSend={100} tokenIn="USDC" recipient="0x1234567890" gasCost={50} />
@@ -11,4 +11,4 @@ const ConfirmationBox = ({ confirmAction, rejectAction, isConfirmed }) => {
     );
 };
 
-export default ConfirmationBox;
+export default ConfirmationBoxSimple;
