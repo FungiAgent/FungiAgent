@@ -7,10 +7,11 @@ interface ConfirmationBoxSimpleProps {
   confirmAction: () => void;
   rejectAction: () => void;
   isConfirmed: boolean;
-  amountToSend: number;
-  tokenIn: string;
-  recipient: string;
-  gasCost: number;
+  amountToSend: number | undefined;
+  tokenIn: string | undefined;
+  recipient: string | undefined;
+  gasCost: number | undefined;
+  logo?: string | undefined;
 }
 
 const ConfirmationBoxSimple = ({
@@ -20,7 +21,8 @@ const ConfirmationBoxSimple = ({
   amountToSend,
   tokenIn,
   recipient,
-  gasCost
+  gasCost,
+  logo,
 }: ConfirmationBoxSimpleProps) => {
     return (
         <div className="space-y-4">
@@ -29,6 +31,7 @@ const ConfirmationBoxSimple = ({
               tokenIn={tokenIn} 
               recipient={recipient} 
               gasCost={gasCost} 
+              logo={logo}
             />
             <ConfirmationButtons 
               confirmAction={confirmAction} 

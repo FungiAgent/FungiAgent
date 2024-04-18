@@ -8,6 +8,9 @@ const nextConfig = {
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     TAVILY_API_KEY: process.env.TAVILY_API_KEY,
   },
+  images: {
+    domains: ['static.alchemyapi.io'],
+  },
 }
 
 module.exports = nextConfig;

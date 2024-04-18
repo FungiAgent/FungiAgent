@@ -23,7 +23,7 @@ export const dynamicTools = [
   }),
   new DynamicStructuredTool({
     name: "Simulate-Transfer",
-    description: "Simulate a transfer of assets",
+    description: "Simulate a transfer of assets. This tool does not perform the actual transfer, it only simulates it. This tool will be used always before the actual transfer to check if the transfer is possible and to estimate the gas cost.",
     schema: z.object({
       tokenAddress: z.string().describe("The address of the token to transfer"),
       amount: z.string().describe("The amount of tokens to transfer"),
@@ -41,7 +41,7 @@ export const dynamicTools = [
   }),
   new DynamicStructuredTool({
     name: "Perform-Transfer",
-    description: "Perform a transfer of assets",
+    description: "Perform/make a transfer of assets. This tool is preceded by the Simulate-Transfer tool to check if the transfer is possible and to estimate the gas cost. This tool will perform the actual transfer of assets.",
     schema: z.object({
       tokenAddress: z.string().describe("The address of the token to transfer"),
       amount: z.number().describe("The amount of tokens to transfer"),
@@ -59,7 +59,7 @@ export const dynamicTools = [
   }),
   new DynamicStructuredTool({
     name: "LiFi-Simulator",
-    description: "Simulate a LiFi transaction (swap or bridge)",
+    description: "Simulate a LiFi operation (swap or bridge). This tool does not perform the actual operation, it only simulates it. This tool will be used always before the actual operation to check if the operation is possible and to estimate the gas cost.",
     schema: z.object({
       type: z.string().describe("The type of transaction (Swap or Bridge), it will depend on the prompt of the user"),
       fromChainId: z.number().describe("The ID of the source chain, by default use Arbitrum: 42161"),
@@ -107,7 +107,7 @@ export const dynamicTools = [
   }),
   new DynamicStructuredTool({
     name: "LiFi-Transaction",
-    description: "Perform a LiFi transaction (swap or bridge)",
+    description: "Perform/make a LiFi transaction (swap or bridge). This tool will perform the actual operation of the LiFi transaction.",
     schema: z.object({
       type: z.string().describe("The type of transaction (Swap or Bridge), it will depend on the prompt of the user"),
       fromChainId: z.number().describe("The ID of the source chain, by default use Arbitrum: 42161"),
