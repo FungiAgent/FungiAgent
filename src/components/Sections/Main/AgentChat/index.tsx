@@ -77,7 +77,9 @@ const AgentChat = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
     const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
-
+    const [readyForTransfer, setReadyForTransfer] = useState(false);
+    const [simulationSuccess, setSimulationSuccess] = useState(false);
+    
     const getCurrentDate = () => {
         return new Date().toISOString();
     };
@@ -188,22 +190,38 @@ const AgentChat = () => {
             switch (tool) {
                 /* Simulate-Transfer */
                 case 'Simulate-Transfer':
-                    simulateTransfer(params);
-                    break;
-                /* Send-Transfer */
-                case 'Perform-Transfer':
-                    setConfirmationDetails({
-                        action: async () => {
-                            await handleSend(params);
-                            // Ensure nothing is returned here, implicitly returning `undefined` (which is `void` in TypeScript terms)
-                        },
-                        message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
-                        type: ConfirmationType.Simple
+                    console.log('Received Simulate-Transfer', result);
+                    simulateTransfer(params).then(simulationResult => {
+                        // Assuming simulateTransfer returns a promise that resolves when the simulation is complete
+                        console.log('Simulation complete', simulationResult);
+                        setConfirmationDetails({
+                            action: async () => {
+                                await handleSend(params);
+                            },
+                            message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
+                            type: ConfirmationType.Simple
+                        });
                     });
-                    console.log('Perform-Transfer');
-                    handleSend(params);
-                    console.log('Perform-Transfer2');
                     break;
+                // case 'Perform-Transfer':
+                //     // This should not be automatically triggered; it should wait for user confirmation
+                //     console.log('Perform-Transfer prepared but not executed.');
+                //     break;
+                /* Send-Transfer */
+                // case 'Perform-Transfer':
+                //     console.log('Perform-Transfer');
+                //     setConfirmationDetails({
+                //         action: async () => {
+                //             await handleSend(params);
+                //             // Ensure nothing is returned here, implicitly returning `undefined` (which is `void` in TypeScript terms)
+                //         },
+                //         message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
+                //         type: ConfirmationType.Simple
+                //     });
+                //     console.log('Perform-Transfer');
+                //     handleSend(params);
+                //     console.log('Perform-Transfer2');
+                //     break;
                 /* LiFi-Simulator */
                 case 'LiFi-Simulator':
                     simLiFiTx(params);
@@ -260,7 +278,7 @@ const AgentChat = () => {
         return () => {
             agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-    }, [handleSend, sendLiFiTx, executeBatchOperations]);
+    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search]);
 
     const getLength = (length: number) => {
         setLength(length);

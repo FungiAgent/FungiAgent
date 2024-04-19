@@ -51,7 +51,7 @@ export const useHandleSend = () => {
     };
 
     return handleSendTransfer;
-  }, [showNotification, sendTransfer, sendUserOperations, setUpdatedSendTransfer]);
+  }, [sendTransfer, showNotification, addMessage, sendUserOperations]);
 
   return { updatedSendTransfer, handleSend };
 };

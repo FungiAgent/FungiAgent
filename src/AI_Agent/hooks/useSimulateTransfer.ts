@@ -33,7 +33,7 @@ export const useSimulateTransfer = () => {
 
       try {
         const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
-        console.log("RESULT TX", resultTx);
+        // console.log("RESULT TX", resultTx);
         const result: any = await simTransfer(resultTx);
 
         if (!result || result.error) {
@@ -41,7 +41,7 @@ export const useSimulateTransfer = () => {
         }
 
         setSimulationResult(result);
-        console.log("Simulation result", simResult);
+        // console.log("Simulation result", simResult);
 
         await addMessage(new SystemMessage(`Simulation result: ${JSON.stringify(result)}`));
         showNotification({
@@ -59,7 +59,7 @@ export const useSimulateTransfer = () => {
     };
 
     return handleSimulateTransfer;
-  }, [showNotification, simTransfer, sendTransfer, setSimulationResult]);
+  }, [sendTransfer, showNotification, simTransfer, addMessage]);
 
   return { simulationResult, simulateTransfer, simStatus };
 };

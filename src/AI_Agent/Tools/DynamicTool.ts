@@ -3,27 +3,9 @@ import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
 
 export const dynamicTools = [
-  
-  new DynamicStructuredTool({
-    name: "random-number-generator",
-    description: "generates a random number between two input numbers",
-    schema: z.object({
-      low: z.number().describe("The lower bound of the generated number"),
-      high: z.number().describe("The upper bound of the generated number"),
-    }),
-    func: async ({ low, high }) => {
-      const randomNumber = (Math.random() * (high - low) + low).toString();
-      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-        tool: 'random-number-generator',
-        params: { low, high },
-        result: randomNumber,
-      });
-      return randomNumber;
-    },
-  }),
   new DynamicStructuredTool({
     name: "Simulate-Transfer",
-    description: "Simulate a transfer of assets. This tool does not perform the actual transfer, it only simulates it. This tool will be used always before the actual transfer to check if the transfer is possible and to estimate the gas cost.",
+    description: "This simulates a transaction and renders the confirmation component for the user to approve it. This tool does not perform the actual transfer, it only simulates it and gives the user the capacity to approve it. If the user asks to make a transfer, this tool will be called.",
     schema: z.object({
       tokenAddress: z.string().describe("The address of the token to transfer"),
       amount: z.string().describe("The amount of tokens to transfer"),
@@ -31,6 +13,7 @@ export const dynamicTools = [
     }),
     func: async ({ tokenAddress, amount, recipient }) => {
       const result = `Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x403`;
+      console.log("Simulating Transfer... ")
       agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
         tool: 'Simulate-Transfer',
         params: { tokenAddress, amount, recipient },
@@ -39,24 +22,25 @@ export const dynamicTools = [
       return result;
     },
   }),
-  new DynamicStructuredTool({
-    name: "Perform-Transfer",
-    description: "Perform/make a transfer of assets. This tool is preceded by the Simulate-Transfer tool to check if the transfer is possible and to estimate the gas cost. This tool will perform the actual transfer of assets.",
-    schema: z.object({
-      tokenAddress: z.string().describe("The address of the token to transfer"),
-      amount: z.number().describe("The amount of tokens to transfer"),
-      recipient: z.string().describe("The address of the recipient"),
-    }),
-    func: async ({ tokenAddress, amount, recipient }) => {
-      const result = `Executed transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x505`;
-      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-        tool: 'Perform-Transfer',
-        params: { tokenAddress, amount, recipient },
-        result,
-      });
-      return result;
-    },
-  }),
+  // new DynamicStructuredTool({
+  //   name: "Perform-Transfer",
+  //   description: "Perform/make a transfer of assets. This tool is preceded by the Simulate-Transfer tool to check if the transfer is possible and to estimate the gas cost. This tool will perform the actual transfer of assets.",
+  //   schema: z.object({
+  //     tokenAddress: z.string().describe("The address of the token to transfer"),
+  //     amount: z.number().describe("The amount of tokens to transfer"),
+  //     recipient: z.string().describe("The address of the recipient"),
+  //   }),
+  //   func: async ({ tokenAddress, amount, recipient }) => {
+  //     const result = `Executed transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x505`;
+  //     console.log("Performing Transfer... ")
+  //     agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+  //       tool: 'Perform-Transfer',
+  //       params: { tokenAddress, amount, recipient },
+  //       result,
+  //     });
+  //     return result;
+  //   },
+  // }),
   new DynamicStructuredTool({
     name: "LiFi-Simulator",
     description: "Simulate a LiFi operation (swap or bridge). This tool does not perform the actual operation, it only simulates it. This tool will be used always before the actual operation to check if the operation is possible and to estimate the gas cost.",
