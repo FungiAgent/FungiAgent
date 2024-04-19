@@ -27,6 +27,7 @@ import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/Confirma
 import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
 
 import dotenv from "dotenv";
+import { set } from 'lodash';
 
 dotenv.config();
 
@@ -79,6 +80,8 @@ const AgentChat = () => {
     const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
     const [readyForTransfer, setReadyForTransfer] = useState(false);
     const [simulationSuccess, setSimulationSuccess] = useState(false);
+    const [showConfirmationBox, setShowConfirmationBox] = useState(false);
+
     
     const getCurrentDate = () => {
         return new Date().toISOString();
@@ -114,8 +117,13 @@ const AgentChat = () => {
         try {
             console.log('Attempting to send transaction');
             if (confirmationDetails) {
-                await confirmationDetails.action();
+                // await confirmationDetails.action();
+                await handleSend({ tokenAddress, amount, recipient });
+
+                console.log('Confirmation details:', confirmationDetails);
                 setIsConfirmed(true); // Set only on successful transaction
+                setShowConfirmationBox(false); // Hide the confirmation box
+                setConfirmationDetails(null); // Clear the confirmation details
                 console.log('Transaction successful');
             }
         } catch (error) {
@@ -201,6 +209,7 @@ const AgentChat = () => {
                             message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
                             type: ConfirmationType.Simple
                         });
+                        setShowConfirmationBox(true);
                     });
                     break;
                 // case 'Perform-Transfer':
@@ -294,7 +303,7 @@ const AgentChat = () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
 
     const renderConfirmationButtons = () => {
-        if (confirmationDetails) {
+        if (confirmationDetails && showConfirmationBox) {
             switch (confirmationDetails.type) {
                 case ConfirmationType.Simple:
                 return <ConfirmationBoxSimple
