@@ -7,19 +7,12 @@ import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition
 import Secondary from "./sidebar";
 
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
-import { useSimulateTransfer } from '@/AI_Agent/hooks/useSimulateTransfer';
-import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
-import { useSimLiFiTx } from '@/AI_Agent/hooks/useSimLiFiTx';
 import useWallet from "@/hooks/useWallet";
-import { useLiFiTx } from '@/AI_Agent/hooks/useLiFiTx';
-import { useLiFiBatch } from '@/AI_Agent/hooks/useLiFiBatch';
+import { useLiFiTx, useSimulateTransfer, useSimLiFiTx, useHandleSend, useLiFiBatch, useMind, useRSS3Activities, useTavilySearch } from '@/AI_Agent/hooks';
 import { TokenInfo } from '@/domain/tokens/types';
-import { useMind } from '@/AI_Agent/hooks/useMind';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
-import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
-import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
 import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
 import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
@@ -198,11 +191,8 @@ const AgentChat = () => {
                     try {
                         await search(params);
                         setAgentResponse(await processInternalMessage("Return the search results."));
-                        // await addMessage(new SystemMessage(`Search Results: ${JSON.stringify(searchResults)}`));
                     } catch (error) {
-                        // console.error('Search failed:', error);
                         setAgentResponse(await processInternalMessage('Search failed. Please try again.'));
-                        // await addMessage(new SystemMessage('Search failed. Please try again.'));
                     }
                     break;
                 default:

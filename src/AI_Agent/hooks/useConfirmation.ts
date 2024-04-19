@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useHandleSend } from '@/AI_Agent/hooks/useSendTransfer';
+import { useHandleSend } from '@/AI_Agent/hooks/useHandleSend';
 
 export enum ConfirmationType {
     Simple = 'Simple',

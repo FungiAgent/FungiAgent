@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SideModal from "@/components/Modals/SideModal";
+import Image from 'next/image';
 
 const Secondary = ({
   totalBalance,
@@ -66,12 +67,12 @@ const Secondary = ({
                 toggleModal();
               }}
             >
-              <img src="navbar/portfolio.svg" className="mr-2" width="20" height="20" />
+              <Image className={"pr-1"} src={"/navbar/portfolio.svg"} alt={"portfolio"} width={20} height={20}/>
               Portfolio
             </a>
             <br />
             <a href="/history" className="flex items-center">
-              <img src="navbar/history.svg" className="mr-2" width="20" height="20" />
+              <Image className={"pr-1"} src={"/navbar/history.svg"} alt={"history"} width={20} height={20} />
               History
             </a>
           </p>

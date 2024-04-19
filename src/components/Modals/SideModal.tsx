@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
 import LightSpotTable from '@/components/Tables/LightSpotTable';
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";  // Importing XIcon for the close button
+// import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";  // Importing XIcon for the close button
 import Loader from "../Loader/SpinnerLoader";
 import { Categories } from "../Cards/SideModal/Categories";
+import Image from 'next/image';
 
 type SideModalProps = {
   isOpen: boolean;
@@ -90,7 +91,8 @@ const SideModal: FC<SideModalProps> = ({
       <div className="h-full overflow-auto p-6">
         <div className="h-[100px]">
           <button onClick={onClose} className="absolute top-5 right-5 p-2">
-            <img src="navbar/CloseSideBar.svg" className="mr-2" alt="Close" />
+            {/* <img src="navbar/CloseSideBar.svg" className="mr-2" alt="Close" /> */}
+            <Image src="/navbar/CloseSideBar.svg" alt="Close" width={12} height={12} />
           </button>
         </div>
         <div className="mb-6 flex justify-center items-center h-[79px] pb-[16px]">
