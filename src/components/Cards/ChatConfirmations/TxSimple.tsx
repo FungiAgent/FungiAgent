@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-const TxSummarySimple = ({ amountToSend, tokenIn, recipient, gasCost, logo }) => {
+const TxSummarySimple = ({ amountWithDecimals, symbol, recipient, gasCost, logo }) => {
   // Function to shorten the recipient address
   const getShortAddress = (address) => {
     if (typeof address === 'string' && address.length > 10) { // Ensure it's a string and long enough
@@ -13,8 +13,8 @@ const TxSummarySimple = ({ amountToSend, tokenIn, recipient, gasCost, logo }) =>
   return (
     <div className="flex justify-between items-center h-[38px] rounded-full bg-white w-[454px] shadow">
         <div className="flex items-center pl-5">
-            {logo && <Image src={logo} width={20} height={20} alt={tokenIn} className="mr-2" />}
-            <span className="mr-4">{amountToSend} {tokenIn} to {getShortAddress(recipient)}</span>
+            {logo && <Image src={logo} width={20} height={20} alt={symbol} className="mr-2" />}
+            <span className="mr-4">{amountWithDecimals} {symbol} to {getShortAddress(recipient)}</span>
         </div>
         <div className="flex items-center">
             <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />

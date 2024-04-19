@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
 import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
@@ -21,38 +21,16 @@ import { BaseMessage } from '@langchain/core/messages';
 import { useRSS3Activities } from '@/AI_Agent/hooks/useRSS3Activities';
 import { useTavilySearch } from '@/AI_Agent/hooks/useTavilySearch';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
-// import ConfirmationButtons from '@/components/Cards/ChatConfirmations/ConfirmationButtons';
 import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
 import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
 import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
+import { useConfirmation, ConfirmationType } from '@/AI_Agent/hooks/useConfirmation';
 
 import dotenv from "dotenv";
-import { set } from 'lodash';
 
 dotenv.config();
 
-enum ConfirmationType {
-    Simple = 'Simple',
-    Batch = 'Batch',
-    Swap = 'Swap'
-}
-
-interface ConfirmationDetails {
-    action: () => Promise<void>;
-    message: string;
-    type: ConfirmationType; // Use the enum for type safety
-    recipient?: string | undefined;
-    gasCost?: number | undefined;
-    amountToSend?: number | undefined;
-    tokenIn?: string | undefined;
-    exchangeRate?: number | undefined;
-    priceImpact?: number | undefined;
-    logo?: string | undefined;
-  }
-
 const AgentChat = () => {
-    const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
-    const [isConfirmed, setIsConfirmed] = useState(false); // New state to track confirmation
     const { processChatMessage, processInternalMessage } = useMind();
     const { addMessage, getHistory } = useChatHistory();
     const [chatHistory, setChatHistory] = useState<BaseMessage[]>([]);
@@ -79,9 +57,11 @@ const AgentChat = () => {
     const { scAccount } = useWallet();
     const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
     const [readyForTransfer, setReadyForTransfer] = useState(false);
-    const [simulationSuccess, setSimulationSuccess] = useState(false);
-    const [showConfirmationBox, setShowConfirmationBox] = useState(false);
-
+    const { confirmationDetails, setConfirmationDetails, 
+            isConfirmed, setIsConfirmed, 
+            showConfirmationBox, setShowConfirmationBox, 
+            confirmAction, rejectAction  
+        } = useConfirmation();
     
     const getCurrentDate = () => {
         return new Date().toISOString();
@@ -112,56 +92,27 @@ const AgentChat = () => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     };
 
-    // Method to handle confirmation
-    const confirmAction = useCallback(async () => {
-        try {
-            console.log('Attempting to send transaction');
-            if (confirmationDetails) {
-                // await confirmationDetails.action();
-                await handleSend({ tokenAddress, amount, recipient });
-
-                console.log('Confirmation details:', confirmationDetails);
-                setIsConfirmed(true); // Set only on successful transaction
-                setShowConfirmationBox(false); // Hide the confirmation box
-                setConfirmationDetails(null); // Clear the confirmation details
-                console.log('Transaction successful');
-            }
-        } catch (error) {
-            console.error('Transaction failed:', error);
-            setIsConfirmed(false); // Ensure button is active if transaction fails
-        }
-    }, [confirmationDetails]);
-
-    // Method to handle rejection
-    const rejectAction = () => {
-        setIsConfirmed(false); // Reset confirmation state
-        setConfirmationDetails(null); // Clear the confirmation details
-    };
-
     useEffect(() => {
         if (simulationResult && simulationResult.changes && simulationResult.changes.length > 1) {
             const transfer = simulationResult.changes.find(change => change.changeType === "TRANSFER");
             const tokenDetails = simulationResult.changes.find(change => change.changeType !== "TRANSFER");
             if (transfer && tokenDetails) {
                 setConfirmationDetails({
-                    action: async () => {
-                        // Since this is a placeholder, you might need to implement actual transaction logic here.
-                    },
                     message: `Please confirm the transfer of ${tokenDetails.amount} ${tokenDetails.symbol} to ${transfer.to}`,
                     type: ConfirmationType.Simple,
-                    tokenIn: tokenDetails.symbol,
-                    amountToSend: parseFloat(tokenDetails.amount),
-                    logo: tokenDetails.logo,
-                    recipient: simulationResult.changes[1].to,
+                    tokenIn: simulationResult.changes[2].contractAddress,
+                    symbol: simulationResult.changes[2].symbol,
+                    amountToSend: simulationResult.changes[2].rawAmount,
+                    amountWithDecimals: parseFloat(simulationResult.changes[2].amount),
+                    logo: simulationResult.changes[2].logo,
+                    recipient: simulationResult.changes[2].to,
                     gasCost: simulationResult.changes[0].rawAmount // Assuming the first change is always the gas cost
                 });
             }
         }
         setIsConfirmed(false);
-    }, [simulationResult]);
+    }, [setConfirmationDetails, setIsConfirmed, simulationResult]);
     
-    
-
     useEffect(() => {
         setTokenAddress(tokenAddress);
         setAmount(amount);
@@ -203,34 +154,12 @@ const AgentChat = () => {
                         // Assuming simulateTransfer returns a promise that resolves when the simulation is complete
                         console.log('Simulation complete', simulationResult);
                         setConfirmationDetails({
-                            action: async () => {
-                                await handleSend(params);
-                            },
                             message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
                             type: ConfirmationType.Simple
                         });
                         setShowConfirmationBox(true);
                     });
                     break;
-                // case 'Perform-Transfer':
-                //     // This should not be automatically triggered; it should wait for user confirmation
-                //     console.log('Perform-Transfer prepared but not executed.');
-                //     break;
-                /* Send-Transfer */
-                // case 'Perform-Transfer':
-                //     console.log('Perform-Transfer');
-                //     setConfirmationDetails({
-                //         action: async () => {
-                //             await handleSend(params);
-                //             // Ensure nothing is returned here, implicitly returning `undefined` (which is `void` in TypeScript terms)
-                //         },
-                //         message: 'Please confirm the transfer: ' + params.amount + ' to ' + params.recipient,
-                //         type: ConfirmationType.Simple
-                //     });
-                //     console.log('Perform-Transfer');
-                //     handleSend(params);
-                //     console.log('Perform-Transfer2');
-                //     break;
                 /* LiFi-Simulator */
                 case 'LiFi-Simulator':
                     simLiFiTx(params);
@@ -287,7 +216,7 @@ const AgentChat = () => {
         return () => {
             agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search]);
+    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search, setConfirmationDetails, setShowConfirmationBox]);
 
     const getLength = (length: number) => {
         setLength(length);
@@ -310,8 +239,8 @@ const AgentChat = () => {
                     confirmAction={confirmAction}
                     rejectAction={rejectAction}
                     isConfirmed={isConfirmed}
-                    amountToSend={confirmationDetails.amountToSend}
-                    tokenIn={confirmationDetails.tokenIn}
+                    amountWithDecimals={confirmationDetails.amountWithDecimals}
+                    symbol={confirmationDetails.symbol}
                     recipient={confirmationDetails.recipient}
                     gasCost={confirmationDetails.gasCost}
                     logo={confirmationDetails.logo}
