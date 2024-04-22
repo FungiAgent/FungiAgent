@@ -8,10 +8,10 @@ interface ConfirmationBoxSimpleProps {
   rejectAction: () => void;
   isConfirmed: boolean;
   amountWithDecimals: number | undefined;
-  symbol: string | undefined;
+  tokenInSymbol: string | undefined;
   recipient: string | undefined;
   gasCost: number | undefined;
-  logo?: string | undefined;
+  tokenInLogo?: string | undefined;
 }
 
 const ConfirmationBoxSimple = ({
@@ -19,18 +19,18 @@ const ConfirmationBoxSimple = ({
   rejectAction,
   isConfirmed,
   amountWithDecimals,
-  symbol,
+  tokenInSymbol,
   recipient,
   gasCost,
-  logo,
+  tokenInLogo,
 }: ConfirmationBoxSimpleProps) => {
     return (
         <div className="space-y-4">
             <TxSummarySimple 
-              symbol={symbol} 
+              tokenInSymbol={tokenInSymbol} 
               recipient={recipient} 
               gasCost={gasCost} 
-              logo={logo}
+              tokenInLogo={tokenInLogo}
               amountWithDecimals={amountWithDecimals}
             />
             <ConfirmationButtons 

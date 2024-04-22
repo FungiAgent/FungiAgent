@@ -13,13 +13,22 @@ interface ConfirmationDetails {
     action?: () => Promise<void>;
     recipient?: string | undefined;
     gasCost?: number | undefined;
+    feeCost?: number | undefined;
     amountToSend?: number | undefined;
     amountWithDecimals?: number | undefined;
+    amountToReceive?: number | undefined;
+    amountToReceiveDecimals?: number | undefined;
     tokenIn?: string | undefined; // Token address
+    tokenInDecimals?: number | undefined;
+    tokenOut?: string | undefined; // Token address
+    tokenOutDecimals?: number | undefined;
     exchangeRate?: number | undefined;
-    priceImpact?: number | undefined;
-    logo?: string | undefined; // Logo URL
-    symbol?: string | undefined; // Token symbol e.g. USDC
+    maxSlippage?: number | undefined;
+    tokenInLogo?: string | undefined; // Logo URL
+    tokenOutLogo?: string | undefined; // Logo URL
+    tokenInSymbol?: string | undefined; // Token symbol e.g. USDC
+    tokenOutSymbol?: string | undefined; // Token symbol e.g. ETH
+    tool?: string | undefined; // Tool chosen for swapping. e.g. Uniswap
   }
 
 export const useConfirmation = () => {

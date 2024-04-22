@@ -7,33 +7,57 @@ interface ConfirmationBoxSwapProps {
   confirmAction: () => void;
   rejectAction: () => void;
   isConfirmed: boolean;
-  exchangeRate: number;
-  priceImpact: number;
-  networkCost: number;
-  maxSlippage: number;
+  amountToSwap: number | undefined;
+  amountToReceive: number | undefined;
+  tokenInSymbol: string | undefined; // Token symbol
+  tokenOutSymbol: string | undefined; // Token symbol
+  tokenInLogo: string | undefined; // Logo URL
+  tokenOutLogo: string | undefined; // Logo URL
+  tool: string | undefined;
+  gasCost: number | undefined;
+  feeCost?: number | undefined;
+  maxSlippage: number | undefined;
+  tokenInDecimals?: number | undefined;
+  tokenOutDecimals?: number | undefined;
 }
 
 const ConfirmationBoxSwap = ({
   confirmAction,
   rejectAction,
+  amountToSwap, 
+  amountToReceive, 
+  tokenInSymbol,
+  tokenOutSymbol,
+  tokenInLogo,
+  tokenOutLogo,
+  tool, 
+  gasCost, 
+  feeCost,
+  maxSlippage,
   isConfirmed,
-  exchangeRate,
-  priceImpact,
-  networkCost,
-  maxSlippage
+  tokenInDecimals,
+  tokenOutDecimals
 }: ConfirmationBoxSwapProps) => {
     return (
         <div className="space-y-4">
             <TxSummary 
-              exchangeRate={exchangeRate} 
-              priceImpact={priceImpact} 
-              networkCost={networkCost} 
-              maxSlippage={maxSlippage} 
+              amountToSwap={amountToSwap}
+              amountToReceive={amountToReceive}
+              tokenInSymbol={tokenInSymbol}
+              tokenOutSymbol={tokenOutSymbol}
+              tokenInLogo={tokenInLogo}
+              tokenOutLogo={tokenOutLogo}
+              tool={tool}
+              gasCost={gasCost}
+              feeCost={feeCost}
+              maxSlippage={maxSlippage}
+              tokenInDecimals={tokenInDecimals}
+              tokenOutDecimals={tokenOutDecimals}
             />
             <ConfirmationButtons 
               confirmAction={confirmAction} 
               rejectAction={rejectAction} 
-              isConfirmed={isConfirmed} 
+              isConfirmed={isConfirmed}
             />
         </div>
     );

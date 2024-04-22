@@ -35,7 +35,7 @@ const AgentChat = () => {
     const [agentResponse, setAgentResponse] = useState<string>("");
     const { simulationResult, simulateTransfer, simStatus } = useSimulateTransfer();
     const { updatedSendTransfer, handleSend } = useHandleSend();
-    const { status, simLiFiTx } = useSimLiFiTx();
+    const { status, simLiFiTx, quote, getQuote, extractConfirmationDetails } = useSimLiFiTx();
     const { sendLiFiTx } = useLiFiTx();
     const { addToBatch, batchedOperations, executeBatchOperations } = useLiFiBatch();
     const { totalBalance } = useScAccountPositions();
@@ -86,25 +86,51 @@ const AgentChat = () => {
     };
 
     useEffect(() => {
-        if (simulationResult && simulationResult.changes && simulationResult.changes.length > 1) {
-            const transfer = simulationResult.changes.find(change => change.changeType === "TRANSFER");
-            const tokenDetails = simulationResult.changes.find(change => change.changeType !== "TRANSFER");
-            if (transfer && tokenDetails) {
+        if ((simulationResult && simulationResult.changes && simulationResult.changes.length > 1) || quote) {
+            console.log("Setting confirmation details");
+            if (confirmationDetails?.type === ConfirmationType.Simple) {
+                const transfer = simulationResult.changes.find(change => change.changeType === "TRANSFER");
+                const tokenDetails = simulationResult.changes.find(change => change.changeType !== "TRANSFER");
                 setConfirmationDetails({
                     message: `Please confirm the transfer of ${tokenDetails.amount} ${tokenDetails.symbol} to ${transfer.to}`,
                     type: ConfirmationType.Simple,
                     tokenIn: simulationResult.changes[2].contractAddress,
-                    symbol: simulationResult.changes[2].symbol,
+                    tokenInSymbol: simulationResult.changes[2].symbol,
                     amountToSend: simulationResult.changes[2].rawAmount,
                     amountWithDecimals: parseFloat(simulationResult.changes[2].amount),
-                    logo: simulationResult.changes[2].logo,
+                    tokenInLogo: simulationResult.changes[2].logo,
                     recipient: simulationResult.changes[2].to,
                     gasCost: simulationResult.changes[0].rawAmount // Assuming the first change is always the gas cost
                 });
+            } else if (confirmationDetails?.type === ConfirmationType.Swap && quote) {
+                console.log("Quote details:", quote);
+                setConfirmationDetails({
+                    message: "Please confirm the swap",
+                    type: ConfirmationType.Swap,
+                    tokenIn: quote.action.fromToken.address,
+                    tokenInSymbol: quote.action.fromToken.symbol,
+                    tokenOutSymbol: quote.action.toToken.symbol,
+                    amountToSend: quote.estimate.fromAmount,
+                    amountWithDecimals: quote.estimate.fromAmount,
+                    amountToReceive: quote.estimate.toAmount,
+                    amountToReceiveDecimals: quote.estimate.toAmount,
+                    tokenInLogo: quote.action.fromToken.logoURI,
+                    recipient: quote.action.toAddress,
+                    gasCost: quote.estimate.gasCosts[0].amountUSD,
+                    feeCost: quote.estimate.feeCosts[0].amountUSD,
+                    maxSlippage: quote.action.slippage,
+                    tool: quote.estimate.tool,
+                    tokenInDecimals: quote.action.fromToken.decimals,
+                    tokenOutDecimals: quote.action.toToken.decimals,
+                });
+            } else {
+                console.log("No confirmation details set");
             }
         }
         setIsConfirmed(false);
-    }, [setConfirmationDetails, setIsConfirmed, simulationResult]);
+    }, [confirmationDetails?.type, quote, setConfirmationDetails, setIsConfirmed, simStatus.success, simulationResult]);
+    
+
     
     useEffect(() => {
         setTokenAddress(tokenAddress);
@@ -125,20 +151,6 @@ const AgentChat = () => {
         const handleToolRequest = async (data: { tool: string; params: any; result: string }) => {
             const { tool, params, result } = data;
 
-            // Define the actions for each tool request
-            const actions = {
-                'Perform-Transfer': async () => {
-                    await handleSend(params);
-                },
-                // Define other actions if needed
-                'LiFi-Transaction': async () => {
-                    await sendLiFiTx(params);
-                },
-                'Execute-Batch-Operations': async () => {
-                    await executeBatchOperations();
-                }
-            };
-
             switch (tool) {
                 /* Simulate-Transfer */
                 case 'Simulate-Transfer':
@@ -155,19 +167,43 @@ const AgentChat = () => {
                     break;
                 /* LiFi-Simulator */
                 case 'LiFi-Simulator':
-                    simLiFiTx(params);
-                    break;
-                /* LiFi-Transaction */
-                case 'LiFi-Transaction':
-                    console.log('LiFi-Transaction');
-                    setConfirmationDetails({
-                        action: async () => {
-                            await sendLiFiTx(params);
-                        },
-                        message: 'Please confirm the LiFi transaction: ' + params.amount + ' to ' + params.recipient,
-                        type: ConfirmationType.Swap
+                    simLiFiTx(params).then(quote => {
+                        // Assuming simLiFiTx returns a promise that resolves when the simulation is complete
+                        console.log('Simulation complete', quote);
+                        setConfirmationDetails({
+                            message: `Please confirm the transfer of ${params.fromAmount} ${params.fromToken.symbol} to ${params.toAddress}`,
+                            type: ConfirmationType.Swap
+                        });
+                        setShowConfirmationBox(true);
                     });
                     break;
+                /* LiFi-Transaction */
+                /* LiFi-Transaction */
+                case 'LiFi-Transaction':
+                    console.log('LiFi-Transaction initiated');
+                    getQuote(params).then(quote => {
+                        const confirmationData = extractConfirmationDetails(quote);
+                        setConfirmationDetails({
+                            message: `Please confirm the swap of ${confirmationData.amountToSend} ${confirmationData.inTokenSymbol} to at least ${confirmationData.amountToReceiveMin} ${confirmationData.outTokenSymbol}`,
+                            type: ConfirmationType.Swap,
+                            tokenIn: quote.action.fromToken.address,
+                            tokenInSymbol: confirmationData.inTokenSymbol,
+                            tokenOutSymbol: confirmationData.outTokenSymbol,
+                            amountToSend: confirmationData.amountToSend,
+                            amountWithDecimals: parseFloat(confirmationData.amountToSend),  // Assuming the amount is correctly formatted
+                            tokenInLogo: confirmationData.inTokenLogoURI,
+                            recipient: quote.action.toAddress,
+                            gasCost: confirmationData.gasCost,
+                            maxSlippage: confirmationData.slippage,
+                            tool: confirmationData.toolName
+                        });
+                        setShowConfirmationBox(true);
+                    }).catch(error => {
+                        console.error('Error fetching quote for LiFi transaction:', error);
+                        setAgentResponse('Failed to fetch transaction quote.');
+                    });
+                    break;
+
                 /* Add-Operation-To-Batch */
                 case 'Add-Operation-To-Batch':
                     addToBatch(params);
@@ -226,19 +262,35 @@ const AgentChat = () => {
             switch (confirmationDetails.type) {
                 case ConfirmationType.Simple:
                 return <ConfirmationBoxSimple
-                    confirmAction={confirmAction}
-                    rejectAction={rejectAction}
-                    isConfirmed={isConfirmed}
-                    amountWithDecimals={confirmationDetails.amountWithDecimals}
-                    symbol={confirmationDetails.symbol}
-                    recipient={confirmationDetails.recipient}
-                    gasCost={confirmationDetails.gasCost}
-                    logo={confirmationDetails.logo}
-                />;
+                        confirmAction={confirmAction}
+                        rejectAction={rejectAction}
+                        isConfirmed={isConfirmed}
+                        amountWithDecimals={confirmationDetails.amountWithDecimals}
+                        tokenInSymbol={confirmationDetails.tokenInSymbol}
+                        recipient={confirmationDetails.recipient}
+                        gasCost={confirmationDetails.gasCost}
+                        tokenInLogo={confirmationDetails.tokenInLogo}
+                    />;
                 case ConfirmationType.Batch:
                     return <ConfirmationBoxBatch confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} tokens={tokens} percentages={[0.5, 0.5]} priceImpact={0.01} networkCost={0.0001} maxSlippage={0.01} />;
                 case ConfirmationType.Swap:
-                    return <ConfirmationBoxSwap confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} exchangeRate={1000} priceImpact={0.01} networkCost={0.0001} maxSlippage={0.01} />;
+                    return <ConfirmationBoxSwap 
+                        confirmAction={confirmAction} 
+                        rejectAction={rejectAction} 
+                        isConfirmed={isConfirmed} 
+                        amountToSwap={confirmationDetails.amountWithDecimals} 
+                        amountToReceive={confirmationDetails.amountToReceiveDecimals} 
+                        tokenInSymbol={confirmationDetails.tokenInSymbol}
+                        tokenOutSymbol={confirmationDetails.tokenOutSymbol}
+                        tokenInLogo={confirmationDetails.tokenInLogo}
+                        tokenOutLogo={confirmationDetails.tokenOutLogo}
+                        tool={confirmationDetails.tool} 
+                        gasCost={confirmationDetails.gasCost}
+                        feeCost={confirmationDetails.feeCost}
+                        maxSlippage={confirmationDetails.maxSlippage}
+                        tokenInDecimals={confirmationDetails.tokenInDecimals}
+                        tokenOutDecimals={confirmationDetails.tokenOutDecimals}
+                    />;
                 default:
                     return null; // Handle unknown type or provide a default fallback
             }
