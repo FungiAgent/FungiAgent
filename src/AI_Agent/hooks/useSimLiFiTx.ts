@@ -9,7 +9,6 @@ import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from '@/context/NotificationContextProvider';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
-import { set } from "lodash";
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {

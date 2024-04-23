@@ -1,4 +1,33 @@
 /* ChatDisplay.module.css */
+
+/* Adjustments for the avatar and name alignment */
+.avatarNameRow {
+  display: flex;
+  align-items: center;
+}
+
+.avatarAndNameContainer {
+  width: 100%; /* Takes full width of the message container */
+}
+
+.message {
+  display: flex;
+  flex-direction: column; /* Stack avatar/name row and message content vertically */
+  align-items: flex-start; /* Align items to the start of the flex container */
+  margin-bottom: 16px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.messageContentContainer {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+/* Ensure you have CSS for .humanMessage, .aiMessage, and .name as needed */
+
+
 .chatContainer {
   border-radius: 8px;
   padding: 16px;
@@ -23,40 +52,10 @@
   height: 100%;
 }
 
-.message {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 16px;
-  max-width: 100%;
-  word-break: break-word;
-}
-
-.message:last-child {
-  margin-bottom: 0;
-}
-
-.systemMessage {
-  color: #333;
-}
-
-.humanMessage {
-  color: #1a1a1a;
-}
-
-.aiMessage {
-  color: #1a1a1a;
-}
-
 .chatDisplay {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.avatarContainer {
-  display: flex;
-  align-items: center;
-  margin-right: 8px;
 }
 
 .img {
@@ -71,12 +70,6 @@
   border-radius: 50%;
 }
 
-.name {
-  margin-left: 4px;
-  font-size: 0.9em;
-  color: #555;
-}
-
 .messageContentContainer {
   display: flex;
   flex-direction: column;
@@ -89,3 +82,42 @@
   max-width: 100%;
   word-break: break-word;
 }
+
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  /* margin-right: 10px; */
+}
+
+.message {
+  display: flex;
+  align-items: center; /* Aligns items vertically to the center */
+  margin-bottom: 16px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.messageContentContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 12px;
+  max-width: calc(100% - 50px); /* Adjust width based on avatar size to avoid overflow */
+}
+
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.humanMessage,
+.aiMessage {
+  color: #1a1a1a; /* Ensure text color is consistent */
+}
+
+.name {
+  margin-left: 4px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+

@@ -33,7 +33,8 @@ const AgentChat = () => {
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
-    const { simulationResult, simulateTransfer, simStatus } = useSimulateTransfer();
+    const { simulationResult, simulateTransfer } = useSimulateTransfer();
+    const [simStatus, setSimStatus] = useState<{ success: boolean }>({ success: false });
     const { updatedSendTransfer, handleSend } = useHandleSend();
     const { status, simLiFiTx, quote, getQuote, extractConfirmationDetails } = useSimLiFiTx();
     const { sendLiFiTx } = useLiFiTx();
@@ -86,52 +87,61 @@ const AgentChat = () => {
     };
 
     useEffect(() => {
-        if ((simulationResult && simulationResult.changes && simulationResult.changes.length > 1) || quote) {
-            console.log("Setting confirmation details");
-            if (confirmationDetails?.type === ConfirmationType.Simple) {
-                const transfer = simulationResult.changes.find(change => change.changeType === "TRANSFER");
-                const tokenDetails = simulationResult.changes.find(change => change.changeType !== "TRANSFER");
-                setConfirmationDetails({
-                    message: `Please confirm the transfer of ${tokenDetails.amount} ${tokenDetails.symbol} to ${transfer.to}`,
-                    type: ConfirmationType.Simple,
-                    tokenIn: simulationResult.changes[2].contractAddress,
-                    tokenInSymbol: simulationResult.changes[2].symbol,
-                    amountToSend: simulationResult.changes[2].rawAmount,
-                    amountWithDecimals: parseFloat(simulationResult.changes[2].amount),
-                    tokenInLogo: simulationResult.changes[2].logo,
-                    recipient: simulationResult.changes[2].to,
-                    gasCost: simulationResult.changes[0].rawAmount // Assuming the first change is always the gas cost
-                });
-            } else if (confirmationDetails?.type === ConfirmationType.Swap && quote) {
-                console.log("Quote details:", quote);
-                setConfirmationDetails({
-                    message: "Please confirm the swap",
-                    type: ConfirmationType.Swap,
-                    tokenIn: quote.action.fromToken.address,
-                    tokenInSymbol: quote.action.fromToken.symbol,
-                    tokenOutSymbol: quote.action.toToken.symbol,
-                    amountToSend: quote.estimate.fromAmount,
-                    amountWithDecimals: quote.estimate.fromAmount,
-                    amountToReceive: quote.estimate.toAmount,
-                    amountToReceiveDecimals: quote.estimate.toAmount,
-                    tokenInLogo: quote.action.fromToken.logoURI,
-                    recipient: quote.action.toAddress,
-                    gasCost: quote.estimate.gasCosts[0].amountUSD,
-                    feeCost: quote.estimate.feeCosts[0].amountUSD,
-                    maxSlippage: quote.action.slippage,
-                    tool: quote.estimate.tool,
-                    tokenInDecimals: quote.action.fromToken.decimals,
-                    tokenOutDecimals: quote.action.toToken.decimals,
-                    fromChainId: quote.action.fromChainId,
-                    toChainId: quote.action.toChainId
-                });
-            } else {
-                console.log("No confirmation details set");
+        try {
+            if ((simulationResult && simulationResult.changes && simulationResult.changes.length > 1) || quote) {
+                if (confirmationDetails?.type === ConfirmationType.Simple) {
+                    const transfer = simulationResult.changes.find(change => change.changeType === "TRANSFER");
+                    const tokenDetails = simulationResult.changes.find(change => change.changeType !== "TRANSFER");
+                    if (!transfer || !tokenDetails) {
+                        throw new Error("Missing transaction details for simple confirmation.");
+                    }
+                    setConfirmationDetails({
+                        message: `Please confirm the transfer of ${tokenDetails.amount} ${tokenDetails.symbol} to ${transfer.to}`,
+                        type: ConfirmationType.Simple,
+                        tokenIn: simulationResult.changes[2].contractAddress,
+                        tokenInSymbol: simulationResult.changes[2].symbol,
+                        amountToSend: simulationResult.changes[2].rawAmount,
+                        amountWithDecimals: parseFloat(simulationResult.changes[2].amount),
+                        tokenInLogo: simulationResult.changes[2].logo,
+                        recipient: simulationResult.changes[2].to,
+                        gasCost: simulationResult.changes[0].rawAmount // Assuming the first change is always the gas cost
+                    });
+                    setSimStatus({ success: true });
+                } else if (confirmationDetails?.type === ConfirmationType.Swap && quote) {
+                    console.log("Quote details:", quote);
+                    setConfirmationDetails({
+                        message: "Please confirm the swap",
+                        type: ConfirmationType.Swap,
+                        tokenIn: quote.action.fromToken.address,
+                        tokenInSymbol: quote.action.fromToken.symbol,
+                        tokenOutSymbol: quote.action.toToken.symbol,
+                        amountToSend: quote.estimate.fromAmount,
+                        amountWithDecimals: quote.estimate.fromAmount,
+                        amountToReceive: quote.estimate.toAmount,
+                        amountToReceiveDecimals: quote.estimate.toAmount,
+                        tokenInLogo: quote.action.fromToken.logoURI,
+                        recipient: quote.action.toAddress,
+                        gasCost: quote.estimate.gasCosts[0].amountUSD,
+                        feeCost: quote.estimate.feeCosts[0].amountUSD,
+                        maxSlippage: quote.action.slippage,
+                        tool: quote.estimate.tool,
+                        tokenInDecimals: quote.action.fromToken.decimals,
+                        tokenOutDecimals: quote.action.toToken.decimals,
+                        fromChainId: quote.action.fromChainId,
+                        toChainId: quote.action.toChainId
+                    });
+                    setSimStatus({ success: true });
+                } else {
+                    console.log("No confirmation details set due to missing required data.");
+                }
             }
+            setIsConfirmed(false);
+        } catch (error) {
+            console.error("Failed to set confirmation details:", error);
+            // Optionally reset confirmation state or handle error more explicitly here
         }
-        setIsConfirmed(false);
-    }, [confirmationDetails?.type, quote, setConfirmationDetails, setIsConfirmed, simStatus.success, simulationResult]);
-    
+    }, [confirmationDetails?.type, quote, setConfirmationDetails, setIsConfirmed, simulationResult]);
+     
 
     
     useEffect(() => {
@@ -142,7 +152,7 @@ const AgentChat = () => {
 
     useEffect(() => {
         const updateChatHistory = async () => {
-            const history: BaseMessage[] = await getHistory(); // Assume getHistory() returns a Promise
+            const history: BaseMessage[] = await getHistory();
             setChatHistory(history);
         };
 
@@ -158,7 +168,6 @@ const AgentChat = () => {
                 case 'Simulate-Transfer':
                     console.log('Received Simulate-Transfer', result);
                     simulateTransfer(params).then(simulationResult => {
-                        // Assuming simulateTransfer returns a promise that resolves when the simulation is complete
                         console.log('Simulation complete', simulationResult);
                         setConfirmationDetails({
                             message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
@@ -170,7 +179,6 @@ const AgentChat = () => {
                 /* LiFi-Simulator */
                 case 'LiFi-Simulator':
                     simLiFiTx(params).then(quote => {
-                        // Assuming simLiFiTx returns a promise that resolves when the simulation is complete
                         console.log('Simulation complete', quote);
                         setConfirmationDetails({
                             message: `Please confirm the transfer of ${params.fromAmount} ${params.fromToken.symbol} to ${params.toAddress}`,
@@ -180,7 +188,6 @@ const AgentChat = () => {
                     });
                     setParams(params);
                     break;
-                /* LiFi-Transaction */
                 /* LiFi-Transaction */
                 case 'LiFi-Transaction':
                     console.log('LiFi-Transaction initiated');
@@ -245,7 +252,7 @@ const AgentChat = () => {
         return () => {
             agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search, setConfirmationDetails, setShowConfirmationBox]);
+    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search, setConfirmationDetails, setShowConfirmationBox, setParams, getQuote, extractConfirmationDetails]);
 
     const getLength = (length: number) => {
         setLength(length);
@@ -261,45 +268,64 @@ const AgentChat = () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
 
     const renderConfirmationButtons = () => {
-        if (confirmationDetails && showConfirmationBox) {
-            switch (confirmationDetails.type) {
-                case ConfirmationType.Simple:
-                return <ConfirmationBoxSimple
-                        confirmAction={confirmAction}
-                        rejectAction={rejectAction}
-                        isConfirmed={isConfirmed}
-                        amountWithDecimals={confirmationDetails.amountWithDecimals}
-                        tokenInSymbol={confirmationDetails.tokenInSymbol}
-                        recipient={confirmationDetails.recipient}
-                        gasCost={confirmationDetails.gasCost}
-                        tokenInLogo={confirmationDetails.tokenInLogo}
-                    />;
-                case ConfirmationType.Batch:
-                    return <ConfirmationBoxBatch confirmAction={confirmAction} rejectAction={rejectAction} isConfirmed={isConfirmed} tokens={tokens} percentages={[0.5, 0.5]} priceImpact={0.01} networkCost={0.0001} maxSlippage={0.01} />;
-                case ConfirmationType.Swap:
-                    return <ConfirmationBoxSwap 
-                        confirmAction={confirmAction} 
-                        rejectAction={rejectAction} 
-                        isConfirmed={isConfirmed} 
-                        amountToSwap={confirmationDetails.amountWithDecimals} 
-                        amountToReceive={confirmationDetails.amountToReceiveDecimals} 
-                        tokenInSymbol={confirmationDetails.tokenInSymbol}
-                        tokenOutSymbol={confirmationDetails.tokenOutSymbol}
-                        tokenInLogo={confirmationDetails.tokenInLogo}
-                        tokenOutLogo={confirmationDetails.tokenOutLogo}
-                        tool={confirmationDetails.tool} 
-                        gasCost={confirmationDetails.gasCost}
-                        feeCost={confirmationDetails.feeCost}
-                        maxSlippage={confirmationDetails.maxSlippage}
-                        tokenInDecimals={confirmationDetails.tokenInDecimals}
-                        tokenOutDecimals={confirmationDetails.tokenOutDecimals}
-                    />;
-                default:
-                    return null; // Handle unknown type or provide a default fallback
+        // Check if the confirmationDetails are defined and if the confirmation box should be shown
+        if (confirmationDetails && showConfirmationBox && simStatus.success) {
+            // console.log("SimulationResult:", simulationResult);
+            try {
+                switch (confirmationDetails.type) {
+                    case ConfirmationType.Simple:
+                        return <ConfirmationBoxSimple
+                            confirmAction={confirmAction}
+                            rejectAction={rejectAction}
+                            isConfirmed={isConfirmed}
+                            amountWithDecimals={confirmationDetails.amountWithDecimals}
+                            tokenInSymbol={confirmationDetails.tokenInSymbol}
+                            recipient={confirmationDetails.recipient}
+                            gasCost={confirmationDetails.gasCost}
+                            tokenInLogo={confirmationDetails.tokenInLogo}
+                        />;
+                    case ConfirmationType.Batch:
+                        return <ConfirmationBoxBatch
+                            confirmAction={confirmAction}
+                            rejectAction={rejectAction}
+                            isConfirmed={isConfirmed}
+                            tokens={tokens}
+                            percentages={[0.5, 0.5]}
+                            priceImpact={0.01}
+                            networkCost={0.0001}
+                            maxSlippage={0.01}
+                        />;
+                    case ConfirmationType.Swap:
+                        return <ConfirmationBoxSwap
+                            confirmAction={confirmAction}
+                            rejectAction={rejectAction}
+                            isConfirmed={isConfirmed}
+                            amountToSwap={confirmationDetails.amountWithDecimals}
+                            amountToReceive={confirmationDetails.amountToReceiveDecimals}
+                            tokenInSymbol={confirmationDetails.tokenInSymbol}
+                            tokenOutSymbol={confirmationDetails.tokenOutSymbol}
+                            tokenInLogo={confirmationDetails.tokenInLogo}
+                            tokenOutLogo={confirmationDetails.tokenOutLogo}
+                            tool={confirmationDetails.tool}
+                            gasCost={confirmationDetails.gasCost}
+                            feeCost={confirmationDetails.feeCost}
+                            maxSlippage={confirmationDetails.maxSlippage}
+                            tokenInDecimals={confirmationDetails.tokenInDecimals}
+                            tokenOutDecimals={confirmationDetails.tokenOutDecimals}
+                        />;
+                    default:
+                        console.error("Unknown confirmation type:", confirmationDetails.type);
+                        return <p>Error: Unknown confirmation type. Please contact support.</p>;
+                }
+            } catch (error) {
+                console.error("Error rendering confirmation button:", error);
+                return <p>Error displaying confirmation details. Please try again or contact support.</p>;
             }
         }
+        simStatus.success = false;
         return null;
     };
+    
       
 
     return (

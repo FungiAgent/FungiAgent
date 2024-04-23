@@ -14,7 +14,7 @@ const TxSummaryHeader = ({ isExpanded, handleArrowClick, amountToSwap, amountToR
       </div>
       <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />
       <p>
-      <span>${Number(gasCost) + Number(feeCost)}</span>
+      <span>${(Number(gasCost) + Number(feeCost)).toFixed(2)}</span>
       </p>
       <div className="cursor-pointer pr-[15px]" onClick={handleArrowClick}>
         <svg
