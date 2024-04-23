@@ -52,7 +52,7 @@ export const dynamicTools = [
       toChainId: z.number().describe("The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Arbitrum: 42161), if it is a bridge, it will be the destination chain ID"),
       toToken: z.string().describe("The address of the token to receive on the destination chain"),
       fromAddress: z.string().describe("The address to transfer from on the source chain, specified in the prompt"),
-      fromSymbol: z.string().describe("The symbol of the token to transfer from the source chain"),
+      // fromSymbol: z.string().describe("The symbol of the token to transfer from the source chain"),
       toAddress: z.string().describe("The address to receive the tokens on the destination chain. By default use the same address as the source address"),
       slippage: z.string().describe("The maximum slippage allowed for the transaction, 0.01 as default"),
     }),
@@ -64,11 +64,11 @@ export const dynamicTools = [
       toChainId,
       toToken,
       fromAddress,
-      fromSymbol,
+      // fromSymbol,
       toAddress,
       slippage,
     }) => {
-      const result = `LiFi simulation of ${fromAmount} ${fromSymbol} tokens requested.`;
+      const result = `LiFi simulation requested.`;
       agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
         tool: 'LiFi-Simulator',
         params: {
@@ -79,7 +79,7 @@ export const dynamicTools = [
           toChainId,
           toToken,
           fromAddress,
-          fromSymbol,
+          // fromSymbol,
           toAddress,
           slippage,
         },

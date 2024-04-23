@@ -53,7 +53,7 @@ const AgentChat = () => {
     const { confirmationDetails, setConfirmationDetails, 
             isConfirmed, setIsConfirmed, 
             showConfirmationBox, setShowConfirmationBox, 
-            confirmAction, rejectAction  
+            confirmAction, rejectAction, setParams  
         } = useConfirmation();
     
     const getCurrentDate = () => {
@@ -122,6 +122,8 @@ const AgentChat = () => {
                     tool: quote.estimate.tool,
                     tokenInDecimals: quote.action.fromToken.decimals,
                     tokenOutDecimals: quote.action.toToken.decimals,
+                    fromChainId: quote.action.fromChainId,
+                    toChainId: quote.action.toChainId
                 });
             } else {
                 console.log("No confirmation details set");
@@ -176,6 +178,7 @@ const AgentChat = () => {
                         });
                         setShowConfirmationBox(true);
                     });
+                    setParams(params);
                     break;
                 /* LiFi-Transaction */
                 /* LiFi-Transaction */
