@@ -114,7 +114,7 @@ export default function LightSpotTable({
                 ))
               ) : (
                 <div>
-                  {[1, 2, 3].map((index) => (
+                  {[1, 2, 3, 4].map((index) => (
                     <SpotTableCardFallback key={index} />
                   ))}
                 </div>

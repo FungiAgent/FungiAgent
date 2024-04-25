@@ -17,7 +17,6 @@ const Secondary = ({
   ITEMS_PER_PAGE,
   length,
   onModalToggle,
-  isModalOpen,
 }) => {
   const [localIsModalOpen, setLocalIsModalOpen] = useState(false);
 

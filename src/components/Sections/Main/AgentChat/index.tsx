@@ -354,7 +354,6 @@ const AgentChat = () => {
                 ITEMS_PER_PAGE={ITEMS_PER_PAGE}
                 length={length}
                 onModalToggle={setIsModalOpen}
-                isModalOpen={isModalOpen}
               />
             }
             page="AI Agent Tester"
