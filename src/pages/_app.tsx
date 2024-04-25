@@ -1,6 +1,5 @@
 // React
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
 // import { cors } from "cors";
 
 // Next

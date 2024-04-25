@@ -19,11 +19,36 @@ export const useSimLiFiTx = () => {
     disabled: boolean;
     text: string | null;
   }>({ disabled: true, text: "Enter an amount" });
+  const [quote, setQuote] = useState<any>(null);
 
   const getQuote = async (params: { fromChain: string | null; fromAmount: any; fromToken: any; toChain: string | null; toToken: any; fromAddress: any; toAddress: any; slippage: any; order: string; }) => {
     const response = await axios.get("https://li.quest/v1/quote", { params });
     return response.data;
   };
+
+  const extractConfirmationDetails = (quote) => {
+    const { action, estimate, toolDetails } = quote;
+    const { inToken, outToken, fromAmount, slippage } = action;
+    const { toAmountMin, gasCosts, tool, feeCosts } = estimate;
+
+    const amountToSend = fromAmount; // Assume fromAmount is already in a user-friendly format
+    const amountToReceiveMin = ethers.utils.formatUnits(toAmountMin, outToken.decimals); // Convert raw amount to decimal format
+    const gasCost = gasCosts.amountUSD + feeCosts.amountUSD; // Sum gas costs and fee costs
+
+    return {
+        toolName: tool,
+        toolLogoURI: toolDetails.logoURI,
+        inTokenSymbol: inToken.symbol,
+        inTokenLogoURI: inToken.logoURI,
+        outTokenSymbol: outToken.symbol,
+        outTokenLogoURI: outToken.logoURI,
+        amountToSend,
+        amountToReceiveMin,
+        gasCost,
+        slippage: slippage * 100, // Convert to percentage
+    };
+  };
+
 
   const simLiFiTx = useMemo(() => {
     const handleLiFiTx = async (params: any) => {
@@ -92,6 +117,8 @@ export const useSimLiFiTx = () => {
         const amount: number = quote.estimate.fromAmount;
         console.log("quote", quote);
 
+        setQuote(quote);
+
         const userOps: UserOperation[] = [];
 
         if (tokenAddress != ethers.constants.AddressZero) {
@@ -126,6 +153,7 @@ export const useSimLiFiTx = () => {
         
         return result;
       } catch (error: any) {
+        setQuote(null);
         setStatus({ disabled: true, text: "Enter an amount" });
         showNotification({
           message: error.message,
@@ -139,5 +167,5 @@ export const useSimLiFiTx = () => {
     return handleLiFiTx;
   }, [addMessage, showNotification, simTransfer]);
 
-  return { status, simLiFiTx };
+  return { status, simStatus, simLiFiTx, quote, extractConfirmationDetails, getQuote };
 };

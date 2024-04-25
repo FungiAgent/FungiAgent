@@ -8,7 +8,7 @@ import { SystemMessage } from '@langchain/core/messages';
 
 export const useSimulateTransfer = () => {
   const { showNotification } = useNotification();
-  const { simStatus, simTransfer } = useSimUO();
+  const { simResult, simStatus, simTransfer } = useSimUO();
   const [simulationResult, setSimulationResult] = useState<any>(null);
   const [status, sendTransfer] = useERC20Transfer();
   const { addMessage } = useChatHistory();
@@ -33,7 +33,7 @@ export const useSimulateTransfer = () => {
 
       try {
         const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
-        console.log("RESULT TX", resultTx);
+        // console.log("RESULT TX", resultTx);
         const result: any = await simTransfer(resultTx);
 
         if (!result || result.error) {
@@ -41,6 +41,7 @@ export const useSimulateTransfer = () => {
         }
 
         setSimulationResult(result);
+        // console.log("Simulation result", simResult);
 
         await addMessage(new SystemMessage(`Simulation result: ${JSON.stringify(result)}`));
         showNotification({
@@ -58,7 +59,7 @@ export const useSimulateTransfer = () => {
     };
 
     return handleSimulateTransfer;
-  }, [showNotification, simTransfer, sendTransfer, setSimulationResult]);
+  }, [sendTransfer, showNotification, simTransfer, addMessage]);
 
-  return { simulationResult, simulateTransfer };
+  return { simulationResult, simulateTransfer, simStatus };
 };

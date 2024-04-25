@@ -26,6 +26,7 @@ export const useMind = () => {
     }, [addMessage, getHistory]);
 
     // A modified processChatMessage function that only receives the inputMessage, and passes it as a systemMessage to the agent
+    // This is a context feeding function
     const processInternalMessage = useCallback(async (inputMessage: string) => {
         // The chat history
         const chatHistory = await getHistory();

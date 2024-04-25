@@ -21,7 +21,8 @@ export default function AssetsTableCard({
   return (
     <div className="border-b border-gray-300 grid grid-cols-3 py-[22px] items-center fadeInAnimation border-l-4 hover:border-l-main border-l-white cursor-pointer" onClick={() => setTokenFrom(asset.token)}>
       <div className="col-span-1 flex items-center justify-start pl-[2vw]">
-        <img width={40} height={40} alt="Token Logo" src={asset.token.logoURI} className="ml-[10px] rounded-full" />
+        {/* <img width={40} height={40} alt="Token Logo" src={asset.token.logoURI} className="ml-[10px] rounded-full" /> */}
+        <Image src={asset.token.logoURI} width={40} height={40} alt="Token Logo" className="ml-[10px] rounded-full" />
         <div className="ml-[10px] text-lg">{asset.token.symbol}</div>
       </div>
       <div className="col-span-1 text-center">
