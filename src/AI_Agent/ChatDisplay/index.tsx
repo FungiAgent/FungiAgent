@@ -1,7 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import styles from './ChatDisplay.module.css';
 import Image from "next/image";
+import { marked } from 'marked'; // Import the marked library
 import Logo from "../../../public/profile/Logo.svg";
+
+const renderer = new marked.Renderer();
+renderer.image = (href, title, text) => {
+    return `<img src="${href}" alt="${text}" title="${title}" style="max-width: 100%; height: auto;">`;
+};
+
+marked.setOptions({ renderer });
 
 const AvatarAndName: React.FC<{ type: 'human' | 'ai' }> = ({ type }) => {
   const avatarSrc = type === 'human' ? '/profile/User.svg' : '/profile/Logo.svg';
@@ -29,7 +37,12 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
   const renderMessage = (msg, index) => {
     const messageType = msg?.lc_id?.[2];
     const content = msg?.content || 'Unknown message format';
+
+    // Define messageStyle based on messageType
     const messageStyle = messageType === 'HumanMessage' ? styles.humanMessage : styles.aiMessage;
+
+    // Parse Markdown content for AI messages
+    const htmlContent = messageType === 'AIMessage' ? marked(content) : content;
 
     return (
       <div key={index} className={`${styles.message} ${messageStyle}`}>
@@ -37,12 +50,17 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
           <AvatarAndName type={messageType === 'HumanMessage' ? 'human' : 'ai'} />
         </div>
         <div className={styles.messageContentContainer}>
-          <span className={styles.messageContent}>{content}</span>
+          {messageType === 'AIMessage' ? (
+            <span className={styles.messageContent} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+          ) : (
+            <span className={styles.messageContent}>{htmlContent}</span>
+          )}
         </div>
-        {index === nonSystemMessages.length - 1 && <div ref={endOfMessagesRef} />} {/* Attach ref to the last message */}
+        {index === nonSystemMessages.length - 1 && <div ref={endOfMessagesRef} />}
       </div>
     );
-  };
+};
+
 
   const renderPlaceholder = () => {
     return (

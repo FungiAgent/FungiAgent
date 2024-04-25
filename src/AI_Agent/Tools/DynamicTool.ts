@@ -2,11 +2,12 @@ import { z } from "zod";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
 import { getTokenInfo } from "@/lib/lifi/getLiFiTokenInfo";
+import { tavilySearch } from "./tavilySearch";
 
 export const dynamicTools = [
   new DynamicStructuredTool({
     name: "Get-Token-Info",
-    description: "This tool fetches and displays information about a specific token, including its USD price, from the Li.Fi API based on the chain and token address provided.",
+    description: "This tool is for fetching basic information about a token, e.g. address, decimals, and price in USD. Use this tool only when you are asked to fetch the token price or explicitly asked to fetch the address.",
     schema: z.object({
       chain: z.string().describe("The blockchain network chain ID or name where the token resides. By default: ARB"),
       token: z.string().describe("The symbol of the token to fetch information for. Use the token symbol. If asked to fetch the price of ETH, you will use 'WETH' as the token symbol."),
@@ -16,11 +17,6 @@ export const dynamicTools = [
       try {
         const tokenInfo = await getTokenInfo(chain, token);
         console.log(`Token Info: ${JSON.stringify(tokenInfo)}`);
-        agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-          tool: 'Get-Token-Info',
-          params: { chain, token },
-          result: tokenInfo,
-        });
         return JSON.stringify(tokenInfo);
       } catch (error) {
         console.error("Failed to fetch token information:", error);
@@ -178,38 +174,72 @@ export const dynamicTools = [
           return placeholderResult;
       },
   }),
+  // new DynamicStructuredTool({
+  //   name: "tavily-search",
+  //   description: "Search for data using the Tavily Search API tailored for LLM Agents.",
+  //   schema: z.object({
+  //     query: z.string().describe("The search query string."),
+  //     searchDepth: z.enum(['basic', 'advanced']).optional().describe("The depth of the search."),
+  //     includeImages: z.boolean().optional().describe("Include images in the search results. False by default."),
+  //     includeAnswer: z.boolean().optional().describe("Include an answer in the search results. False by default."),
+  //     includeRawContent: z.boolean().optional().describe("Include raw content in the search results. False by default."),
+  //     maxResults: z.number().optional().describe("The maximum number of search results. 5 by default."),
+  //     includeDomains: z.array(z.string()).optional().describe("Domains specifically included in the search."),
+  //     excludeDomains: z.array(z.string()).optional().describe("Domains specifically excluded from the search."),
+  //   }),
+  //   func: async ({ query, searchDepth, includeImages, includeAnswer, includeRawContent, maxResults, includeDomains, excludeDomains }) => {
+  //     // Since actual search is performed in AgentChat using useTavilySearch hook,
+  //     // here we just emit the tool request with provided parameters
+  //     agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+  //       tool: 'tavily-search',
+  //       params: {
+  //         query,
+  //         searchDepth,
+  //         includeImages,
+  //         includeAnswer,
+  //         includeRawContent,
+  //         maxResults,
+  //         includeDomains,
+  //         excludeDomains,
+  //       },
+  //       result: `Search request for: ${query}`,
+  //     });
+  
+  //     return `Search request initiated for query: "${query}" with parameters.`;
+  //   },
+  // }),
   new DynamicStructuredTool({
     name: "tavily-search",
-    description: "Search for data using the Tavily Search API tailored for LLM Agents.",
+    description: "Performs a detailed internet search through the Tavily API, fetching information based on various parameters such as search depth, inclusion of images, and domain filters.",
     schema: z.object({
-      query: z.string().describe("The search query string."),
-      searchDepth: z.enum(['basic', 'advanced']).optional().describe("The depth of the search."),
-      includeImages: z.boolean().optional().describe("Include images in the search results. False by default."),
-      includeAnswer: z.boolean().optional().describe("Include an answer in the search results. False by default."),
-      includeRawContent: z.boolean().optional().describe("Include raw content in the search results. False by default."),
-      maxResults: z.number().optional().describe("The maximum number of search results. 5 by default."),
-      includeDomains: z.array(z.string()).optional().describe("Domains specifically included in the search."),
-      excludeDomains: z.array(z.string()).optional().describe("Domains specifically excluded from the search."),
+      query: z.string().describe("The search query string"),
+      searchDepth: z.string().optional().default('basic').describe("The depth of the search, e.g., 'basic' or 'detailed'"),
+      includeImages: z.boolean().optional().default(false).describe("Whether to include images in the search results"),
+      includeAnswer: z.boolean().optional().default(false).describe("Whether to include a direct answer in the search results"),
+      includeRawContent: z.boolean().optional().default(false).describe("Whether to include raw content in the search results"),
+      maxResults: z.number().optional().default(5).describe("Maximum number of results to return"),
+      includeDomains: z.array(z.string()).optional().default([]).describe("Domains to specifically include in the search results"),
+      excludeDomains: z.array(z.string()).optional().default([]).describe("Domains to exclude from the search results"),
     }),
     func: async ({ query, searchDepth, includeImages, includeAnswer, includeRawContent, maxResults, includeDomains, excludeDomains }) => {
-      // Since actual search is performed in AgentChat using useTavilySearch hook,
-      // here we just emit the tool request with provided parameters
-      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-        tool: 'tavily-search',
-        params: {
+      console.log("Executing Tavily Search...");
+      try {
+        const results = await tavilySearch({
           query,
           searchDepth,
           includeImages,
           includeAnswer,
           includeRawContent,
           maxResults,
-          includeDomains,
-          excludeDomains,
-        },
-        result: `Search request for: ${query}`,
-      });
-  
-      return `Search request initiated for query: "${query}" with parameters.`;
+          includeDomains: includeDomains as never[],
+          excludeDomains: excludeDomains as never[],
+        });
+        console.log('Tavily Search Results:', results);
+        return JSON.stringify(results);
+      } catch (error) {
+        console.error("Failed to perform Tavily search:", error);
+        throw new Error('Failed to perform Tavily search');
+      }
     },
   }),
 ];
