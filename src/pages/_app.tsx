@@ -7,12 +7,12 @@ import type { AppProps } from "next/app";
 // Styles
 import "@/styles/globals.css";
 // Utils
-import { REFERRAL_CODE_QUERY_PARAM } from "@/utils/gmx/lib/legacy";
-import { encodeReferralCode } from "@/utils/gmx/domain/referrals";
-import { REFERRAL_CODE_KEY } from "@/utils/gmx/config/localStorage";
-import { SubaccountContextProvider } from "@/utils/gmx/context/SubaccountContext/SubaccountContext";
-import { SyntheticsEventsProvider } from "@/utils/gmx/context/SyntheticsEvents";
-import { SettingsContextProvider } from "@/utils/gmx/context/SettingsContext/SettingsContextProvider";
+// import { REFERRAL_CODE_QUERY_PARAM } from "@/utils/gmx/lib/legacy";
+// import { encodeReferralCode } from "@/utils/gmx/domain/referrals";
+// import { REFERRAL_CODE_KEY } from "@/utils/gmx/config/localStorage";
+// import { SubaccountContextProvider } from "@/utils/gmx/context/SubaccountContext/SubaccountContext";
+// import { SyntheticsEventsProvider } from "@/utils/gmx/context/SyntheticsEvents";
+// import { SettingsContextProvider } from "@/utils/gmx/context/SettingsContext/SettingsContextProvider";
 // Ethers
 import { ethers } from "ethers";
 // Swr
@@ -26,16 +26,16 @@ import { ModalContextProvider } from "@/context/ModalContextProvider";
 import { ChatHistoryProvider } from "@/AI_Agent/Context/ChatHistoryContext";
 
 export default function App({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    let referralCode = REFERRAL_CODE_QUERY_PARAM;
+  // useEffect(() => {
+    // let referralCode = REFERRAL_CODE_QUERY_PARAM;
 
-    if (referralCode && referralCode.length <= 20) {
-      const encodedReferralCode = encodeReferralCode(referralCode);
-      if (encodedReferralCode !== ethers.constants.HashZero) {
-        localStorage.setItem(REFERRAL_CODE_KEY, encodedReferralCode);
-      }
-    }
-  }, []);
+  //   if (referralCode && referralCode.length <= 20) {
+  //     const encodedReferralCode = encodeReferralCode(referralCode);
+  //     if (encodedReferralCode !== ethers.constants.HashZero) {
+  //       localStorage.setItem(REFERRAL_CODE_KEY, encodedReferralCode);
+  //     }
+  //   }
+  // }, []);
 
   return (
     <main>
@@ -50,19 +50,19 @@ export default function App({ Component, pageProps }: AppProps) {
               use: [swrGCMiddleware as any],
             }}
           >
-            <SettingsContextProvider>
-              <SubaccountContextProvider>
+            {/* <SettingsContextProvider> */}
+              {/* <SubaccountContextProvider> */}
                 <NotificationContextProvider>
                   <ModalContextProvider>
-                    <SyntheticsEventsProvider>
-                      <main className="font-dmSans">
+                    {/* <SyntheticsEventsProvider> */}
+                      {/* <main className="font-dmSans"> */}
                         <Component {...pageProps} />
-                      </main>
-                    </SyntheticsEventsProvider>{" "}
+                      {/* </main> */}
+                    {/* </SyntheticsEventsProvider>{" "} */}
                   </ModalContextProvider>
                 </NotificationContextProvider>
-              </SubaccountContextProvider>
-            </SettingsContextProvider>{" "}
+              {/* </SubaccountContextProvider> */}
+            {/* </SettingsContextProvider>{" "} */}
           </SWRConfig>
         </FungiContextProvider>
       </ChatHistoryProvider>

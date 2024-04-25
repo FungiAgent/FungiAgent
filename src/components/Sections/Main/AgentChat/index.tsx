@@ -25,7 +25,7 @@ dotenv.config();
 
 const AgentChat = () => {
     const { processChatMessage, processInternalMessage } = useMind();
-    const { addMessage, getHistory } = useChatHistory();
+    const { getHistory } = useChatHistory();
     const [chatHistory, setChatHistory] = useState<BaseMessage[]>([]);
     const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
     const [amount, setAmount] = useState<string>("1000000");
@@ -332,11 +332,11 @@ const AgentChat = () => {
         <main>
           <PageContainer
             main={
-              <div className="flex flex-col items-center justify-center p-4 rounded-lg shadow-sm">
-                <ChatDisplay chatHistory={chatHistory} />
-                {renderConfirmationButtons()}
-                <UserInput onSubmit={handleQuerySubmit} />
-              </div>
+                <div className="flex flex-col items-center justify-end pb-0 p-4 rounded-lg shadow-sm">
+                    <ChatDisplay chatHistory={chatHistory} />
+                    {renderConfirmationButtons()}
+                    <UserInput onSubmit={handleQuerySubmit} />
+                </div>
             }
             secondary={
               <Secondary

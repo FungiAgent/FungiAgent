@@ -3,10 +3,10 @@ import LightSpotTableCard from "../Cards/TableCards/LightSpotTableCard";
 import Loader from "../Loader/SpinnerLoader";
 import StartDepositBanner from "../Sections/Fallbacks/StartDepositBanner";
 import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
-import { TokenData, TokenInfo } from "@/domain/tokens/types";
+import { TokenInfo } from "@/domain/tokens/types";
 import { useTokenMarketData } from "@/hooks/useTokenMarketData";
 import { useTokensInfo } from "@/hooks/useTokensInfo";
-import { CHAIN_ID } from "@/utils/gmx/config/chains";
+// import { CHAIN_ID } from "@/utils/gmx/config/chains";
 
 type SpotTableProps = {
   startIndex: number;

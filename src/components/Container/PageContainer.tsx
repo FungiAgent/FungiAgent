@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode } from "react";
 import Image from "next/image";
-import useWallet from "@/utils/gmx/lib/wallets/useWallet";
+import useWallet from "@/hooks/useWallet";
 import Logo from "../../../public/profile/Logo.svg";
 
 type PageContainerProps = {

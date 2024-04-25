@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PositionInfo } from "./types";
 import useScAccountSpotPosition from "./useScAccountSpotPosition";
-import useScAccountPerpsPosition from "./useScAccountPerpsPosition";
 
 export default function useScAccountPositions() {
   const { spotPosition } = useScAccountSpotPosition();
-  const { perpsPosition } = useScAccountPerpsPosition();
+  // const { perpsPosition } = useScAccountPerpsPosition();
   const [positions, setPositions] = useState<PositionInfo[]>([]);
   const [totalBalance, setTotalBalance] = useState<number>();
 
@@ -19,9 +18,9 @@ export default function useScAccountPositions() {
     if (spotPosition && !checkExits("Spot")) {
       copy.push(spotPosition);
     }
-    if (perpsPosition && !checkExits("Perps")) {
-      copy.push(perpsPosition);
-    }
+    // if (perpsPosition && !checkExits("Perps")) {
+    //   copy.push(perpsPosition);
+    // }
 
     const totalBalance = copy.reduce((acc, prev) => {
       return acc + Number(Number(prev.totalValue));
@@ -40,7 +39,7 @@ export default function useScAccountPositions() {
     });
 
     setPositions(copy);
-  }, [spotPosition, perpsPosition]);
+  }, [spotPosition]);
 
   return { positions, totalBalance };
 }

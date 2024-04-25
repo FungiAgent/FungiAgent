@@ -1,8 +1,33 @@
 import { z } from "zod";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
+import { getTokenInfo } from "@/lib/lifi/getLiFiTokenInfo";
 
 export const dynamicTools = [
+  new DynamicStructuredTool({
+    name: "Get-Token-Info",
+    description: "This tool fetches and displays information about a specific token, including its USD price, from the Li.Fi API based on the chain and token address provided.",
+    schema: z.object({
+      chain: z.string().describe("The blockchain network chain ID or name where the token resides. By default: ARB"),
+      token: z.string().describe("The symbol of the token to fetch information for. Use the token symbol. If asked to fetch the price of ETH, you will use 'WETH' as the token symbol."),
+    }),
+    func: async ({ chain, token }): Promise<string> => {
+      console.log("Fetching Token Information...");
+      try {
+        const tokenInfo = await getTokenInfo(chain, token);
+        console.log(`Token Info: ${JSON.stringify(tokenInfo)}`);
+        agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+          tool: 'Get-Token-Info',
+          params: { chain, token },
+          result: tokenInfo,
+        });
+        return JSON.stringify(tokenInfo);
+      } catch (error) {
+        console.error("Failed to fetch token information:", error);
+        throw new Error('Failed to fetch token information');
+      }
+    },
+  }),
   new DynamicStructuredTool({
     name: "Simulate-Transfer",
     description: "This simulates a transaction and renders the confirmation component for the user to approve it. This tool does not perform the actual transfer, it only simulates it and gives the user the capacity to approve it. If the user asks to make a transfer, this tool will be called.",

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SubmitButton from 'public/SubmitButton.svg';
+import Image from 'next/image';
 
 interface UserInputProps {
   onSubmit: (query: string) => void;
@@ -27,7 +28,7 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
   };
 
   return (
-    <div className="flex items-center mt-4 w-[731px] relative">
+    <div className="pb-0 flex items-center mt-4 w-[731px] relative">
       <input
         value={input}
         onChange={handleInputChange}
@@ -41,10 +42,7 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
         disabled={!input.trim()}
         className={`absolute right-4 bottom-4 w-8 h-8 rounded-full text-white ${!input.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <img
-                src="SubmitButton.svg"
-                w-full h-full
-              />
+        <Image src={SubmitButton} alt="Submit" width={36} height={36} />
       </button>
     </div>
   );
