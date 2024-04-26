@@ -3,6 +3,7 @@ import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
 import { getTokenInfo } from "@/lib/lifi/getLiFiTokenInfo";
 import { tavilySearch } from "./tavilySearch";
+import { RSS3Search } from "./RSS3Search";
 
 export const dynamicTools = [
   new DynamicStructuredTool({
@@ -148,33 +149,6 @@ export const dynamicTools = [
     },
   }),
   new DynamicStructuredTool({
-      name: "Fetch-RSS3-Activities",
-      description: "Fetches on-chain activities for a specified account from the RSS3 network",
-      schema: z.object({
-          account: z.string().describe("The account to retrieve activities from. An EVM address"),
-          limit: z.number().optional().describe("Specify the number of activities to retrieve. An integer between 1 and 100. 1 by default"),
-          // action_limit: z.number().optional().describe("Specify the number of actions within the activity to retrieve. An integer between 1 and 20"),
-          since_timestamp: z.number().optional().describe("Retrieve activities starting from this timestamp"),
-          until_timestamp: z.number().optional().describe("Retrieve activities up to this timestamp"),
-          status: z.string().optional().describe("Retrieve activities with a specific status. 'successful' or 'failed'"),
-          direction: z.string().optional().describe("Retrieve activities with a specific direction. 'in' or 'out'"),
-          network: z.array(z.string()).optional().describe("Retrieve activities from specified network(s). Default: 'arbitrum_one'"),
-          tag: z.array(z.string()).optional().describe("Retrieve activities with specified tag(s). By default: 'transaction'"),
-          type: z.array(z.string()).optional().describe("Retrieve activities of a specified type(s). Default: 'transfer'"),
-      }),
-      func: async ({ account, direction, network, tag, type }) => {
-          // Placeholder function. The actual data fetching will be triggered in AgentChat
-          // and not directly executed here due to the hook's constraints.
-          const placeholderResult = `Request to fetch RSS3 activities for account ${account}`;
-          agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-              tool: 'Fetch-RSS3-Activities',
-              params: { account, direction, network, tag, type },
-              result: placeholderResult,
-          });
-          return placeholderResult;
-      },
-  }),
-  new DynamicStructuredTool({
     name: "tavily-search",
     description: "Performs a detailed internet search through the Tavily API, fetching information based on various parameters such as search depth, inclusion of images, and domain filters.",
     schema: z.object({
@@ -208,4 +182,54 @@ export const dynamicTools = [
       }
     },
   }),
+  new DynamicStructuredTool({
+    name: "RSS3-activities-search",
+    description: "Fetches activity data from the RSS3 network for a specific account, filtering by network, direction, tags, types, and other parameters. It is used for getting transaction information.",
+    schema: z.object({
+      account: z.string().describe("The account identifier for which to fetch activities."),
+      network: z.array(z.string()).optional().describe("List of networks to include in the search."),
+      direction: z.union([z.literal('in'), z.literal('out')]).optional().describe("Direction of activities: 'in' for incoming, 'out' for outgoing."),
+      tag: z.array(z.string()).optional().describe("Tags associated with the activities."),
+      type: z.array(z.string()).optional().describe("Types of activities to include."),
+      limit: z.number().optional().default(2).describe("Limit the number of results returned."),
+      since_timestamp: z.number().optional().describe("Start timestamp for filtering activities."),
+      until_timestamp: z.number().optional().describe("End timestamp for filtering activities."),
+      status: z.array(z.union([z.literal('failed'), z.literal('successful')])).optional().describe("Filter activities by status: 'failed' or 'successful'."),
+    }),
+    func: async ({
+        account,
+        network,
+        direction,
+        tag,
+        type,
+        limit,
+        since_timestamp,
+        until_timestamp,
+        status
+    }) => {
+        console.log("Fetching RSS3 activities...");
+        try {
+            const results = await RSS3Search({
+                account,
+                network,
+                direction,
+                tag,
+                type,
+                limit,
+                since_timestamp,
+                until_timestamp,
+                status
+            }, {
+                onLoading: () => console.log("Loading RSS3 activities..."),
+                onResult: result => console.log("Fetched RSS3 data:", result),
+                onError: error => console.error("Error fetching RSS3 data:", error),
+            });
+            console.log('RSS3 Activities Results:', results);
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch RSS3 activities:", error);
+            throw new Error('Failed to fetch RSS3 activities');
+        }
+    },
+}),
 ];

@@ -48,41 +48,41 @@ export const useLiFiTx = () => {
             let quote: any;
 
             try {
-            const fromChainLifi = getChainIdLifi(fromChainId);
-            const toChainLifi = getChainIdLifi(toChainId || 0);
-            const responses = await Promise.all(
-                orders.map((order) => {
-                return getQuote({
-                    fromChain: fromChainLifi,
-                    fromAmount,
-                    fromToken,
-                    toChain: toChainLifi,
-                    toToken,
-                    fromAddress,
-                    toAddress,
-                    slippage,
-                    order,
-                });
-                })
-            );
-
-            const filteredResponses = responses.filter(
-                (response) => response.estimate.executionDuration < 300
-            );
-
-            quote = filteredResponses.reduce(
-                (maxResponse, response) => {
-                return (
-                    response.estimate.toAmountUSD -
-                    response.estimate.gasCosts[0].toAmountUSD >
-                    maxResponse.estimate.toAmountUSD -
-                    maxResponse.estimate.gasCosts[0].toAmountUSD
-                    ? response
-                    : maxResponse
+                const fromChainLifi = getChainIdLifi(fromChainId);
+                const toChainLifi = getChainIdLifi(toChainId || 0);
+                const responses = await Promise.all(
+                    orders.map((order) => {
+                    return getQuote({
+                        fromChain: fromChainLifi,
+                        fromAmount,
+                        fromToken,
+                        toChain: toChainLifi,
+                        toToken,
+                        fromAddress,
+                        toAddress,
+                        slippage,
+                        order,
+                    });
+                    })
                 );
-                },
-                filteredResponses[0]
-            );
+
+                const filteredResponses = responses.filter(
+                    (response) => response.estimate.executionDuration < 300
+                );
+
+                quote = filteredResponses.reduce(
+                    (maxResponse, response) => {
+                    return (
+                        response.estimate.toAmountUSD -
+                        response.estimate.gasCosts[0].toAmountUSD >
+                        maxResponse.estimate.toAmountUSD -
+                        maxResponse.estimate.gasCosts[0].toAmountUSD
+                        ? response
+                        : maxResponse
+                    );
+                    },
+                    filteredResponses[0]
+                );
             } catch (error) {
                 await addMessage(new SystemMessage(`Error: ${error}`)); 
                 console.error("Error obtaining quotes:", error);

@@ -8,7 +8,7 @@ export function useSimUO() {
     const [simStatus, setSimStatus] = useState<{ loading: boolean, error: string | null, success: string | null, result: any }>({ loading: false, error: null, success: null, result: null });
     const { alchemyScaProvider } = useGlobalContext();
     const [simResult, setSimResult] = useState<any>(null);
-    const { addMessage } = useChatHistory();
+    // const { addMessage } = useChatHistory();
 
     const simTransfer = async (userOperations: UserOperation[]) => {
       try {
@@ -22,7 +22,7 @@ export function useSimUO() {
           });
           console.log("SIM", result);
           setSimResult(result);
-          await addMessage(new SystemMessage('The simulation result is the following, where the amount in index 0 represents the gas cost:', result)); // Add a system message to the chat history
+          // await addMessage(new SystemMessage('The simulation result is the following, where the amount in index 0 represents the gas cost:', result)); // Add a system message to the chat history
           
           setSimStatus({ loading: false, error: null, success: 'Transfer simulated successfully!', result });
           return result; // Directly return the result for immediate use

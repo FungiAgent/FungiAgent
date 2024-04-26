@@ -8,7 +8,7 @@ import Secondary from "./sidebar";
 
 import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import useWallet from "@/hooks/useWallet";
-import { useLiFiTx, useSimulateTransfer, useSimLiFiTx, useHandleSend, useLiFiBatch, useMind, useRSS3Activities, useTavilySearch } from '@/AI_Agent/hooks';
+import { useLiFiTx, useSimulateTransfer, useSimLiFiTx, useHandleSend, useLiFiBatch, useMind } from '@/AI_Agent/hooks';
 import { TokenInfo } from '@/domain/tokens/types';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
@@ -46,10 +46,9 @@ const AgentChat = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [forceTableReload, setForceTableReload] = useState(false);
     const [isInputEmpty, setIsInputEmpty] = useState(true);
-    const { fetchActivities, fetchedData } = useRSS3Activities();
+    // const { fetchActivities, fetchedData } = useRSS3Activities();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
-    const { search } = useTavilySearch(process.env.TAVILY_API_KEY);
     const [readyForTransfer, setReadyForTransfer] = useState(false);
     const { confirmationDetails, setConfirmationDetails, 
             isConfirmed, setIsConfirmed, 
@@ -227,20 +226,11 @@ const AgentChat = () => {
                     });
                     break;
                 /* Fetch-RSS3-Activities */
-                case 'Fetch-RSS3-Activities':
-                    await fetchActivities(params);
-                    // Ensure that the agent answers after fetching the data
-                    setAgentResponse(await processInternalMessage("Analyse the fetched data and give a brief summary (DO NOT USE ANOTHER TOOL FOR THE NEXT RESPONSE)"));
-                    break;
-                /* Tavily-Search */
-                case 'tavily-search':
-                    try {
-                        await search(params);
-                        setAgentResponse(await processInternalMessage("Return the search results."));
-                    } catch (error) {
-                        setAgentResponse(await processInternalMessage('Search failed. Please try again.'));
-                    }
-                    break;
+                // case 'Fetch-RSS3-Activities':
+                //     await fetchActivities(params);
+                //     // Ensure that the agent answers after fetching the data
+                //     setAgentResponse(await processInternalMessage("Analyse the fetched data and give a brief summary (DO NOT USE ANOTHER TOOL FOR THE NEXT RESPONSE)"));
+                //     break;
                 default:
                     console.log('Unknown tool:', tool);
             }
@@ -252,7 +242,7 @@ const AgentChat = () => {
         return () => {
             agentCommunicationChannel.off(EVENT_TYPES.TOOL_REQUEST, handleToolRequest);
         };
-    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, fetchActivities, processInternalMessage, search, setConfirmationDetails, setShowConfirmationBox, setParams, getQuote, extractConfirmationDetails]);
+    }, [handleSend, sendLiFiTx, executeBatchOperations, readyForTransfer, simulateTransfer, simLiFiTx, addToBatch, processInternalMessage, setConfirmationDetails, setShowConfirmationBox, setParams, getQuote, extractConfirmationDetails]);
 
     const getLength = (length: number) => {
         setLength(length);

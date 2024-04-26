@@ -10,7 +10,7 @@ export const useSimulateTransfer = () => {
   const { showNotification } = useNotification();
   const { simResult, simStatus, simTransfer } = useSimUO();
   const [simulationResult, setSimulationResult] = useState<any>(null);
-  const [status, sendTransfer] = useERC20Transfer();
+  const [status, sendTransferUO] = useERC20Transfer();
   const { addMessage } = useChatHistory();
 
   const simulateTransfer = useMemo(() => {
@@ -22,7 +22,7 @@ export const useSimulateTransfer = () => {
         tokenAddress === undefined ||
         amount === undefined ||
         recipient === undefined ||
-        typeof sendTransfer !== "function"
+        typeof sendTransferUO !== "function"
       ) {
         showNotification({
           message: "Error simulating transfer",
@@ -32,7 +32,7 @@ export const useSimulateTransfer = () => {
       }
 
       try {
-        const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
+        const resultTx: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
         // console.log("RESULT TX", resultTx);
         const result: any = await simTransfer(resultTx);
 
@@ -59,7 +59,7 @@ export const useSimulateTransfer = () => {
     };
 
     return handleSimulateTransfer;
-  }, [sendTransfer, showNotification, simTransfer, addMessage]);
+  }, [sendTransferUO, showNotification, simTransfer, addMessage]);
 
   return { simulationResult, simulateTransfer, simStatus };
 };
