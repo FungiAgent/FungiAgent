@@ -1,6 +1,5 @@
 import { TokenInfo, TokenData } from "./types";
 import { getCoinGeckoTokensId } from "@/lib/coingecko/getTokenList";
-import { getTokensMarketData } from "@/lib/coingecko/getMarketData";
 
 export async function fillCoinGeckoTokenId(
   chainId: number,

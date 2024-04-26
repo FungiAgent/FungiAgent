@@ -1,8 +1,8 @@
 import { useGlobalContext } from "@/context/FungiContextProvider";
 import { TokenInfo } from "@/domain/tokens/types";
 import { getAllTokensWithBalances } from "@/domain/tokens/useInfoTokens";
-import useWallet from "@/utils/gmx/lib/wallets/useWallet";
-import React, { useEffect, useState } from "react";
+import useWallet from "@/hooks/useWallet";
+import { useEffect, useState } from "react";
 
 export default function useTokensWithBalance() {
   const { chainId, scAccount } = useWallet();

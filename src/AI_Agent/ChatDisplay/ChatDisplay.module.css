@@ -31,8 +31,8 @@
 .chatContainer {
   border-radius: 8px;
   padding: 16px;
-  min-height: 60vh;
-  max-height: 60vh;
+  min-height: 56vh;
+  max-height: 56vh;
   min-width: 731px;
   max-width: 731px;
   display: flex;
@@ -120,4 +120,54 @@
   color: #555;
 }
 
+/* Increase the visibility and distinction of headers within message content */
+.messageContent h1,
+.messageContent h2,
+.messageContent h3,
+.messageContent h4,
+.messageContent h5,
+.messageContent h6 {
+    color: #333; /* Dark color for visibility */
+    font-weight: bold; /* Ensure headers are bold */
+    margin-top: 8px; /* Add spacing to separate headers from other text */
+    margin-bottom: 8px;
+}
 
+.messageContent h6 {
+    font-size: 1em; /* Ensure even smaller headers are visible */
+}
+
+.messageContent p {
+  margin: 4px 0; /* Add vertical spacing for paragraphs */
+}
+
+.messageContent ul,
+.messageContent ol {
+  padding-left: 20px; /* Proper indentation for lists */
+  margin: 4px 0;
+}
+
+.messageContent li {
+  margin-bottom: 2px; /* Spacing between list items */
+}
+
+.messageContent strong {
+  font-weight: bold;
+}
+
+.messageContent em {
+  font-style: italic;
+}
+
+.messageContent blockquote {
+  border-left: 3px solid #ccc; /* Styling for blockquotes */
+  padding-left: 10px;
+  margin-left: 0;
+  color: #666; /* Dimmed color for quotes */
+}
+
+.messageContent img {
+  max-width: 40%; /* ensure images are not wider than their container */
+  height: auto; /* maintain aspect ratio */
+  border-radius: 8px; /* optional: adds rounded corners to images */
+}

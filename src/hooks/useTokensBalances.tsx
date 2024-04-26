@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/context/FungiContextProvider";
-import useWallet from "@/utils/gmx/lib/wallets/useWallet";
+import useWallet from "@/hooks/useWallet";
 import useSWR from "swr";
 import { getTokenBalances } from "@/domain/tokens/useBalances";
 

@@ -1,7 +1,7 @@
-import ExternalLink from "@/components/Gmx/common/ExternalLink/ExternalLink";
-import { getExplorerUrl } from "@/utils/gmx/config/chains";
+// import ExternalLink from "@/components/Gmx/common/ExternalLink/ExternalLink";
+// import { getExplorerUrl } from "@/utils/gmx/config/chains";
 import { UserOperation } from "@/lib/userOperations/types";
-import useWallet from "@/utils/gmx/lib/wallets/useWallet";
+import useWallet from "@/hooks/useWallet";
 import { sendUserOperations as sendUserOperationAlchemy } from "@/lib/userOperations/sendUserOperations";
 import { useGlobalContext } from "@/context/FungiContextProvider";
 import { useNotification } from "@/context/NotificationContextProvider";
@@ -23,12 +23,12 @@ export function useUserOperations() {
         alchemyScaProvider,
         userOperations
       );
-      const txUrl = getExplorerUrl(chainId!) + "tx/" + txHash;
-      const sentMsg = `Transaction sent.`;
+      // const txUrl = getExplorerUrl(chainId!) + "tx/" + txHash;
+      // const sentMsg = `Transaction sent.`;
       showNotification({
         message: (
           <div>
-            {sentMsg} <ExternalLink href={txUrl}>View status.</ExternalLink>
+            {/* {sentMsg} <ExternalLink href={txUrl}>View status.</ExternalLink> */}
             <br />
             {successMessage && <br />}
             {successMessage}
