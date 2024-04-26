@@ -174,40 +174,6 @@ export const dynamicTools = [
           return placeholderResult;
       },
   }),
-  // new DynamicStructuredTool({
-  //   name: "tavily-search",
-  //   description: "Search for data using the Tavily Search API tailored for LLM Agents.",
-  //   schema: z.object({
-  //     query: z.string().describe("The search query string."),
-  //     searchDepth: z.enum(['basic', 'advanced']).optional().describe("The depth of the search."),
-  //     includeImages: z.boolean().optional().describe("Include images in the search results. False by default."),
-  //     includeAnswer: z.boolean().optional().describe("Include an answer in the search results. False by default."),
-  //     includeRawContent: z.boolean().optional().describe("Include raw content in the search results. False by default."),
-  //     maxResults: z.number().optional().describe("The maximum number of search results. 5 by default."),
-  //     includeDomains: z.array(z.string()).optional().describe("Domains specifically included in the search."),
-  //     excludeDomains: z.array(z.string()).optional().describe("Domains specifically excluded from the search."),
-  //   }),
-  //   func: async ({ query, searchDepth, includeImages, includeAnswer, includeRawContent, maxResults, includeDomains, excludeDomains }) => {
-  //     // Since actual search is performed in AgentChat using useTavilySearch hook,
-  //     // here we just emit the tool request with provided parameters
-  //     agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-  //       tool: 'tavily-search',
-  //       params: {
-  //         query,
-  //         searchDepth,
-  //         includeImages,
-  //         includeAnswer,
-  //         includeRawContent,
-  //         maxResults,
-  //         includeDomains,
-  //         excludeDomains,
-  //       },
-  //       result: `Search request for: ${query}`,
-  //     });
-  
-  //     return `Search request initiated for query: "${query}" with parameters.`;
-  //   },
-  // }),
   new DynamicStructuredTool({
     name: "tavily-search",
     description: "Performs a detailed internet search through the Tavily API, fetching information based on various parameters such as search depth, inclusion of images, and domain filters.",
