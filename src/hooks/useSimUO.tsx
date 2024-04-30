@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { UserOperation } from "@/lib/userOperations/types"; // Import UserOperation type
 import { useGlobalContext } from "@/context/FungiContextProvider";
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
-import { SystemMessage } from '@langchain/core/messages';
 
 export function useSimUO() {
     const [simStatus, setSimStatus] = useState<{ loading: boolean, error: string | null, success: string | null, result: any }>({ loading: false, error: null, success: null, result: null });

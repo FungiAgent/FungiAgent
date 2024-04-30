@@ -21,10 +21,21 @@ export const useSimLiFiTx = () => {
   }>({ disabled: true, text: "Enter an amount" });
   const [quote, setQuote] = useState<any>(null);
 
-  const getQuote = async (params: { fromChain: string | null; fromAmount: any; fromToken: any; toChain: string | null; toToken: any; fromAddress: any; toAddress: any; slippage: any; order: string; }) => {
-    const response = await axios.get("https://li.quest/v1/quote", { params });
-    return response.data;
-  };
+  const getQuote = async (params: { fromChain: string | null; fromAmount: string; fromToken: string; toChain: string | null; toToken: string; fromAddress: string; toAddress: string; slippage: string;}): Promise<any> => {
+    try {
+      const response = await axios.get("https://li.quest/v1/quote", { params });
+      
+      // Check if the response indicates success
+      if (response.status === 200 && response.data) {
+        return response.data;
+    } else {
+        throw new Error(`Failed to fetch quote: ${response.statusText}`);
+    }
+    } catch (error) {
+      console.error("Error fetching LiFi quote:", error);
+      throw error;
+    }
+  }
 
   const extractConfirmationDetails = (quote) => {
     const { action, estimate, toolDetails } = quote;
@@ -69,33 +80,32 @@ export const useSimLiFiTx = () => {
           text: `${type === "Swap" ? "Swapping" : "Bridging"}`,
         });
 
-        const orders = ["FASTEST", "CHEAPEST", "SAFEST", "RECOMMENDED"];
+        const orders = ["CHEAPEST", "RECOMMENDED"];
         let quote: any;
 
         try {
-          const fromChainLifi = getChainIdLifi(fromChainId);
-          const toChainLifi = getChainIdLifi(toChainId || 0);
+          // const fromChainLifi = getChainIdLifi(fromChainId);
+          // const toChainLifi = getChainIdLifi(toChainId || 0);
           const responses = await Promise.all(
-            orders.map((order) => {
+            orders.map(() => {
               return getQuote({
-                fromChain: fromChainLifi,
+                fromChain: fromChainId,
                 fromAmount,
                 fromToken,
-                toChain: toChainLifi,
+                toChain: toChainId,
                 toToken,
                 fromAddress,
                 toAddress,
                 slippage,
-                order,
               });
             })
           );
 
-          const filteredResponses = responses.filter(
-            (response) => response.estimate.executionDuration < 300
-          );
+          // const filteredResponses = responses.filter(
+          //   (response) => response.estimate.executionDuration < 300
+          // );
 
-          quote = filteredResponses.reduce(
+          quote = responses.reduce(
             (maxResponse, response) => {
               return (
                 response.estimate.toAmountUSD -
@@ -106,10 +116,11 @@ export const useSimLiFiTx = () => {
                   : maxResponse
               );
             },
-            filteredResponses[0]
+            responses[0]
           );
         } catch (error) {
           console.error("Error obtaining quotes:", error);
+          console.log("Error obtaining quotes:", error);
         }
 
         const spender: Hex = quote.transactionRequest.to;
@@ -143,11 +154,11 @@ export const useSimLiFiTx = () => {
 
         setStatus({ disabled: true, text: "Enter an amount" });
         console.log("userOps", userOps);
-        await addMessage(new SystemMessage(`LiFi transaction details: ${JSON.stringify(quote)}`));
+        // await addMessage(new SystemMessage(`LiFi transaction details: ${JSON.stringify(quote)}`));
         const result = await simTransfer(userOps);
         
         showNotification({
-          message: "Transfer simulated successfully",
+          message: "LiFi transaction simulated successfully",
           type: "success",
       });
         
@@ -160,12 +171,13 @@ export const useSimLiFiTx = () => {
           type: "error",
         });
         console.error(error);
-        await addMessage(new SystemMessage(`Error simulating LiFi transaction: ${error.message}`));
+        console.log("error", error);
+        // await addMessage(new SystemMessage(`Error simulating LiFi transaction: ${error.message}`));
       }
     };
 
     return handleLiFiTx;
-  }, [addMessage, showNotification, simTransfer]);
+  }, [showNotification, simTransfer]);
 
   return { status, simStatus, simLiFiTx, quote, extractConfirmationDetails, getQuote };
 };

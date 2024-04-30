@@ -63,7 +63,7 @@ export const useConfirmation = () => {
                 setIsConfirmed(false);
             }
         }
-    }, [confirmationDetails, handleSend, sendLiFiTx]);
+    }, [confirmationDetails, handleSend, params, sendLiFiTx]);
     
 
     const rejectAction = useCallback(() => {

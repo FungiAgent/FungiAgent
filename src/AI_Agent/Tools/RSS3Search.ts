@@ -1,5 +1,4 @@
 import { dataClient } from '@rss3/js-sdk';
-import { SystemMessage } from '@langchain/core/messages';
 
 type RSS3SearchParams = {
     account: string;
@@ -17,7 +16,6 @@ type RSS3SearchCallbacks = {
     onLoading: (loading: boolean) => void;
     onResult: (data: string) => void;
     onError: (error: Error) => void;
-    // addMessage: (message: SystemMessage) => Promise<void>;
 };
 
 export async function RSS3Search(params: RSS3SearchParams, callbacks: RSS3SearchCallbacks): Promise<string> {

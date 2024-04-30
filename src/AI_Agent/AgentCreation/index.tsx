@@ -28,7 +28,7 @@ const agent = await createOpenAIFunctionsAgent({
   prompt,
 });
 
-export const agentExecutor = new AgentExecutor({
+const agentExecutor = new AgentExecutor({
   agent,
   tools,
   // verbose: true,

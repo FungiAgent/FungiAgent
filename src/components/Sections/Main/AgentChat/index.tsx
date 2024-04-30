@@ -53,7 +53,7 @@ const AgentChat = () => {
     const { confirmationDetails, setConfirmationDetails, 
             isConfirmed, setIsConfirmed, 
             showConfirmationBox, setShowConfirmationBox, 
-            confirmAction, rejectAction, setParams  
+            confirmAction, rejectAction, setParams
         } = useConfirmation();
     
     const getCurrentDate = () => {
@@ -161,6 +161,7 @@ const AgentChat = () => {
     useEffect(() => {
         const handleToolRequest = async (data: { tool: string; params: any; result: string }) => {
             const { tool, params, result } = data;
+            console.log('Received tool request:', tool, params);
 
             switch (tool) {
                 /* Simulate-Transfer */
@@ -187,31 +188,6 @@ const AgentChat = () => {
                     });
                     setParams(params);
                     break;
-                /* LiFi-Transaction */
-                case 'LiFi-Transaction':
-                    console.log('LiFi-Transaction initiated');
-                    getQuote(params).then(quote => {
-                        const confirmationData = extractConfirmationDetails(quote);
-                        setConfirmationDetails({
-                            message: `Please confirm the swap of ${confirmationData.amountToSend} ${confirmationData.inTokenSymbol} to at least ${confirmationData.amountToReceiveMin} ${confirmationData.outTokenSymbol}`,
-                            type: ConfirmationType.Swap,
-                            tokenIn: quote.action.fromToken.address,
-                            tokenInSymbol: confirmationData.inTokenSymbol,
-                            tokenOutSymbol: confirmationData.outTokenSymbol,
-                            amountToSend: confirmationData.amountToSend,
-                            amountWithDecimals: parseFloat(confirmationData.amountToSend),  // Assuming the amount is correctly formatted
-                            tokenInLogo: confirmationData.inTokenLogoURI,
-                            recipient: quote.action.toAddress,
-                            gasCost: confirmationData.gasCost,
-                            maxSlippage: confirmationData.slippage,
-                            tool: confirmationData.toolName
-                        });
-                        setShowConfirmationBox(true);
-                    }).catch(error => {
-                        console.error('Error fetching quote for LiFi transaction:', error);
-                        setAgentResponse('Failed to fetch transaction quote.');
-                    });
-                    break;
 
                 /* Add-Operation-To-Batch */
                 case 'Add-Operation-To-Batch':
@@ -225,12 +201,6 @@ const AgentChat = () => {
                         type: ConfirmationType.Batch
                     });
                     break;
-                /* Fetch-RSS3-Activities */
-                // case 'Fetch-RSS3-Activities':
-                //     await fetchActivities(params);
-                //     // Ensure that the agent answers after fetching the data
-                //     setAgentResponse(await processInternalMessage("Analyse the fetched data and give a brief summary (DO NOT USE ANOTHER TOOL FOR THE NEXT RESPONSE)"));
-                //     break;
                 default:
                     console.log('Unknown tool:', tool);
             }
