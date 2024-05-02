@@ -87,7 +87,7 @@ const TxSummary = ({ amountToSwap, amountToReceive, tokenInSymbol, tokenOutSymbo
                 isExpanded={isExpanded}
                 tool={tool}
                 gasCost={gasCost}
-                maxSlippage
+                maxSlippage={maxSlippage}
             />
         </div>
     );

@@ -28,21 +28,21 @@ export const useToolRequestListener = ({ setConfirmationDetails, setParams, setS
         const handleToolRequest = async (data) => {
             const { tool, params } = data;
             const { tokenAddress, amount, recipient } = params;
-            if (
-                tokenAddress === undefined ||
-                amount === undefined ||
-                recipient === undefined ||
-                typeof sendTransferUO !== "function"
-            ) {
-                showNotification({
-                    message: "Error simulating transfer",
-                    type: "error",
-                });
-                return Promise.resolve();
-            }
-
+        
             switch (tool) {
                 case 'Simulate-Transfer': {
+                    if (
+                        tokenAddress === undefined ||
+                        amount === undefined ||
+                        recipient === undefined ||
+                        typeof sendTransferUO !== "function"
+                    ) {
+                        showNotification({
+                            message: "Error simulating transfer",
+                            type: "error",
+                        });
+                        return Promise.resolve();
+                    }
                     const userOp: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
                     console.log("User Operation:", userOp);
                     const simulationResult = await simTransfer(userOp);
@@ -69,6 +69,7 @@ export const useToolRequestListener = ({ setConfirmationDetails, setParams, setS
                 }
                 case 'LiFi-Simulator': {
                     const quote = await getQuote(params);
+                    console.log("Quote:", quote);
                     const confirmationDetails = extractConfirmationDetails(quote);
                     setConfirmationDetails(confirmationDetails);
                     console.log("Confirmation Details:", confirmationDetails);
