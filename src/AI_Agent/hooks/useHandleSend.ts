@@ -9,7 +9,7 @@ import { SystemMessage } from '@langchain/core/messages';
 export const useHandleSend = () => {
   const { showNotification } = useNotification();
   const [updatedSendTransfer, setUpdatedSendTransfer] = useState<any>(null);
-  const [status, sendTransfer] = useERC20Transfer();
+  const [status, sendTransferUO] = useERC20Transfer();
   const { sendUserOperations } = useUserOperations();
   const { addMessage } = useChatHistory();
 
@@ -21,7 +21,7 @@ export const useHandleSend = () => {
         tokenAddress === undefined ||
         amount === undefined ||
         recipient === undefined ||
-        typeof sendTransfer !== "function"
+        typeof sendTransferUO !== "function"
       ) {
         showNotification({
           message: "Error sending tokens",
@@ -31,7 +31,7 @@ export const useHandleSend = () => {
       }
 
       try {
-        const resultTx: any = await sendTransfer(tokenAddress, BigNumber.from(amount), recipient);
+        const resultTx: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
         console.log("RESULT TX", resultTx);
         await addMessage(new SystemMessage(`Sending ${amount} tokens of ${tokenAddress} to ${recipient}`));
         const result: any = await sendUserOperations(resultTx);
@@ -51,7 +51,7 @@ export const useHandleSend = () => {
     };
 
     return handleSendTransfer;
-  }, [sendTransfer, showNotification, addMessage, sendUserOperations]);
+  }, [sendTransferUO, showNotification, addMessage, sendUserOperations]);
 
   return { updatedSendTransfer, handleSend };
 };

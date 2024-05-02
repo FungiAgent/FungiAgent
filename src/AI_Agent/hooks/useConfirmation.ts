@@ -1,10 +1,9 @@
 // useConfirmation.ts
-import { useState, useCallback, use } from 'react';
+import { useState, useCallback } from 'react';
 import { useHandleSend } from '@/AI_Agent/hooks/useHandleSend';
 import { useSimLiFiTx } from '@/AI_Agent/hooks';
 import { useUserOpContext } from '@/AI_Agent/Context/UserOpContext';
 import { useUserOperations } from '@/hooks/useUserOperations';
-// import { ConfirmationType } from '@/AI_Agent/hooks/useConfirmation';
 
 export enum ConfirmationType {
     Simple = 'Simple',
@@ -44,20 +43,21 @@ export const useConfirmation = () => {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [showConfirmationBox, setShowConfirmationBox] = useState(false);
     const { handleSend } = useHandleSend();
-    const { executeLifiTx } = useSimLiFiTx();
     const { sendUserOperations } = useUserOperations();
     const { userOp, setUserOp } = useUserOpContext(); // Get the shared state
 
     const confirmAction = useCallback(async () => {
         if (confirmationDetails && userOp) {
             setIsConfirmed(true);
+            console.log("Confirmation Details:", confirmationDetails);
             try {
                 if (confirmationDetails.type === ConfirmationType.Simple) {
-                    await handleSend({
-                        tokenAddress: confirmationDetails.tokenIn,
-                        amount: confirmationDetails.amountToSend,
-                        recipient: confirmationDetails.recipient,
-                    });
+                    // await handleSend({
+                    //     tokenAddress: confirmationDetails.tokenIn,
+                    //     amount: confirmationDetails.amountToSend,
+                    //     recipient: confirmationDetails.recipient,
+                    // });
+                    await sendUserOperations(userOp);
                 } else if (confirmationDetails.type === ConfirmationType.Swap) {
                     console.log("User Operations to Execute:", userOp);
                     await sendUserOperations(userOp);

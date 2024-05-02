@@ -1,3 +1,4 @@
+// useSimulateTransfer.ts
 import { useState, useMemo } from "react";
 import { BigNumber } from "ethers";
 import { useNotification } from '@/context/NotificationContextProvider';
@@ -7,59 +8,55 @@ import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 
 export const useSimulateTransfer = () => {
-  const { showNotification } = useNotification();
-  const { simResult, simStatus, simTransfer } = useSimUO();
-  const [simulationResult, setSimulationResult] = useState<any>(null);
-  const [status, sendTransferUO] = useERC20Transfer();
-  const { addMessage } = useChatHistory();
+    const { showNotification } = useNotification();
+    const { simResult, simStatus, simTransfer } = useSimUO();
+    const [simulationResult, setSimulationResult] = useState<any>(null);
+    const [status, sendTransferUO] = useERC20Transfer();
+    const { addMessage } = useChatHistory();
 
-  const simulateTransfer = useMemo(() => {
-    const handleSimulateTransfer = async (params: any) => {
-      const { tokenAddress, amount, recipient } = params;
-      console.log(`Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}`);
+    const simulateTransfer = useMemo(() => {
+        const handleSimulateTransfer = async (params: any) => {
+            const { tokenAddress, amount, recipient } = params;
 
-      if (
-        tokenAddress === undefined ||
-        amount === undefined ||
-        recipient === undefined ||
-        typeof sendTransferUO !== "function"
-      ) {
-        showNotification({
-          message: "Error simulating transfer",
-          type: "error",
-        });
-        return Promise.resolve();
-      }
+            if (
+                tokenAddress === undefined ||
+                amount === undefined ||
+                recipient === undefined ||
+                typeof sendTransferUO !== "function"
+            ) {
+                showNotification({
+                    message: "Error simulating transfer",
+                    type: "error",
+                });
+                return Promise.resolve();
+            }
 
-      try {
-        const resultTx: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
-        // console.log("RESULT TX", resultTx);
-        const result: any = await simTransfer(resultTx);
+            try {
+                const resultTx: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
+                const result: any = await simTransfer(resultTx);
 
-        if (!result || result.error) {
-          throw new Error(result?.error || "Simulation failed. No result returned.");
-        }
+                if (!result || result.error) {
+                    throw new Error(result?.error || "Simulation failed. No result returned.");
+                }
 
-        setSimulationResult(result);
-        // console.log("Simulation result", simResult);
+                setSimulationResult(result);
+                await addMessage(new SystemMessage(`Simulation result: ${JSON.stringify(result)}`));
+                showNotification({
+                    message: "Transfer simulated successfully",
+                    type: "success",
+                });
+            } catch (error: any) {
+                showNotification({
+                    message: error.message,
+                    type: "error",
+                });
+                setSimulationResult(null);
+                await addMessage(new SystemMessage(error.message));
+            }
+        };
 
-        await addMessage(new SystemMessage(`Simulation result: ${JSON.stringify(result)}`));
-        showNotification({
-          message: "Transfer simulated successfully",
-          type: "success",
-        });
-      } catch (error: any) {
-        showNotification({
-          message: error.message,
-          type: "error",
-        });
-        setSimulationResult(null); // Clear previous simulation results
-        await addMessage(new SystemMessage(error.message));
-      }
-    };
+        return handleSimulateTransfer;
+    }, [sendTransferUO, showNotification, simTransfer, addMessage]);
 
-    return handleSimulateTransfer;
-  }, [sendTransferUO, showNotification, simTransfer, addMessage]);
-
-  return { simulationResult, simulateTransfer, simStatus };
+    return { simulationResult, simulateTransfer, simStatus };
 };

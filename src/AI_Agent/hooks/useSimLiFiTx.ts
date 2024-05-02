@@ -4,18 +4,14 @@ import { Hex } from "viem";
 import axios from "axios";
 import { BigNumber, ethers } from "ethers";
 import { UserOperation } from "@/lib/userOperations/types";
-import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from '@/context/NotificationContextProvider';
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
-import { SystemMessage } from '@langchain/core/messages';
 import { ConfirmationType } from "@/AI_Agent/hooks/useConfirmation";
 import { useUserOperations } from "@/hooks/useUserOperations";
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {
   const { simStatus, simTransfer } = useSimUO();
-  const { addMessage } = useChatHistory();
   const { showNotification } = useNotification();
   const { sendUserOperations } = useUserOperations();
   const [status, setStatus] = useState<{

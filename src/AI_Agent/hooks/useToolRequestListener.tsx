@@ -4,22 +4,67 @@ import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunic
 import { useUserOpContext } from '@/AI_Agent/Context/UserOpContext';
 import { useSimLiFiTx } from '@/AI_Agent/hooks';
 import { ConfirmationType } from '@/AI_Agent/hooks/useConfirmation';
+import { useHandleSend } from '@/AI_Agent/hooks';
+import { useERC20Transfer } from '@/hooks/useERC20Transfer';
+import { UserOperation } from "@/lib/userOperations/types";
+import { BigNumber } from "ethers";
+import { useNotification } from '@/context/NotificationContextProvider';
+import { useSimUO } from "@/hooks/useSimUO";
+// import { useSimulateTransfer } from '@/AI_Agent/hooks';
+import { useCreateUserOp } from './useCreateUserOp';
 
 export const useToolRequestListener = ({ setConfirmationDetails, setParams, setShowConfirmationBox }) => {
     const { getQuote, extractConfirmationDetails, createUserOpFromQuote, simulateLifiTx } = useSimLiFiTx();
     const { setUserOp } = useUserOpContext(); // Get the setUserOp function
+    const { handleSend } = useHandleSend();
+    const [status, sendTransferUO] = useERC20Transfer();
+    const { showNotification } = useNotification();
+    const { simStatus, simTransfer } = useSimUO();
+    const { createUserOp } = useCreateUserOp();
+    // const { simulateTransfer, simulationResult } = useSimulateTransfer();
+
 
     useEffect(() => {
         const handleToolRequest = async (data) => {
-            const { tool, params, result } = data;
+            const { tool, params } = data;
+            const { tokenAddress, amount, recipient } = params;
+            if (
+                tokenAddress === undefined ||
+                amount === undefined ||
+                recipient === undefined ||
+                typeof sendTransferUO !== "function"
+            ) {
+                showNotification({
+                    message: "Error simulating transfer",
+                    type: "error",
+                });
+                return Promise.resolve();
+            }
 
             switch (tool) {
                 case 'Simulate-Transfer': {
-                    setConfirmationDetails({
-                        message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
-                        type: ConfirmationType.Simple,
-                    });
-                    setShowConfirmationBox(true);
+                    const userOp: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
+                    console.log("User Operation:", userOp);
+                    const simulationResult = await simTransfer(userOp);
+                    console.log("Simulation Result:", simulationResult);
+                    if (userOp) {
+                        // setUserOp(userOp);
+                        setConfirmationDetails({
+                            message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
+                            type: ConfirmationType.Simple,
+                            amountToSend: simulationResult.changes[1].rawAmount,
+                            tokenAddress: simulationResult.changes[1].contractAddress,
+                            recipient: simulationResult.changes[1].to,
+                            amountWithDecimals: simulationResult.changes[1].amount,
+                            tokenInSymbol: simulationResult.changes[1].symbol,
+                            tokenInLogo: simulationResult.changes[1].logo,
+                            gasCost: simulationResult.changes[0].amount,
+                        });
+                        setUserOp(userOp); // Set the userOp in the global state
+                        setShowConfirmationBox(true);
+                    } else {
+                        console.error("Simulation failed or returned an invalid result.");
+                    }
                     break;
                 }
                 case 'LiFi-Simulator': {
