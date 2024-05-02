@@ -27,7 +27,7 @@ export const dynamicTools = [
   }),
   new DynamicStructuredTool({
     name: "LiFi-Simulator",
-    description: "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0xaf88d065e77c8cC2239327C5EDb3A432268e5831).",
+    description: "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0xaf88d065e77c8cC2239327C5EDb3A432268e5831) and for DAI use: 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1.",
     schema: z.object({
       type: z.string().describe("The type of transaction (Swap or Bridge), it will depend on the prompt of the user"),
       fromChain: z.string().describe("The ID of the source chain, by default use Arbitrum: 42161"),

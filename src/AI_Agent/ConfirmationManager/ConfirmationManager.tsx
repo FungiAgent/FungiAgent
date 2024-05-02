@@ -4,7 +4,7 @@ import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/Confirma
 import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
 import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
 
-export const ConfirmationManager = ({ confirmationDetails, confirmAction, rejectAction, showConfirmationBox }) => {
+export const ConfirmationManager = ({ confirmationDetails, confirmAction, rejectAction, showConfirmationBox, isConfirmed, setIsConfirmed }) => {
     if (!confirmationDetails || !showConfirmationBox) {
         return null;
     }
@@ -16,7 +16,7 @@ export const ConfirmationManager = ({ confirmationDetails, confirmAction, reject
                     <ConfirmationBoxSimple
                         confirmAction={confirmAction}
                         rejectAction={rejectAction}
-                        isConfirmed={false}
+                        isConfirmed={isConfirmed}
                         amountWithDecimals={confirmationDetails.amountWithDecimals}
                         tokenInSymbol={confirmationDetails.tokenInSymbol}
                         recipient={confirmationDetails.recipient}
@@ -24,12 +24,13 @@ export const ConfirmationManager = ({ confirmationDetails, confirmAction, reject
                         tokenInLogo={confirmationDetails.tokenInLogo}
                     />
                 );
+                
             case ConfirmationType.Batch:
                 return (
                     <ConfirmationBoxBatch
                         confirmAction={confirmAction}
                         rejectAction={rejectAction}
-                        isConfirmed={false}
+                        isConfirmed={isConfirmed}
                         tokens={[] /* Populate appropriately */}
                         percentages={[0.5, 0.5]}
                         priceImpact={0.01}
@@ -42,7 +43,7 @@ export const ConfirmationManager = ({ confirmationDetails, confirmAction, reject
                     <ConfirmationBoxSwap
                         confirmAction={confirmAction}
                         rejectAction={rejectAction}
-                        isConfirmed={false}
+                        isConfirmed={isConfirmed}
                         amountToSwap={confirmationDetails.amountToSend}
                         amountToReceive={confirmationDetails.amountToReceiveMin}
                         tokenInSymbol={confirmationDetails.fromTokenSymbol}

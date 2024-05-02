@@ -64,6 +64,7 @@ export const useConfirmation = () => {
                 }
                 setShowConfirmationBox(false);
                 setConfirmationDetails(null);
+                setIsConfirmed(false);
             } catch (error) {
                 console.error(`${confirmationDetails.type} transaction failed:`, error);
                 setIsConfirmed(false);

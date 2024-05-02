@@ -6,18 +6,14 @@ import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
 import Secondary from "./sidebar";
 
-import { agentCommunicationChannel, EVENT_TYPES } from '@/AI_Agent/AgentCommunicationChannel';
 import useWallet from "@/hooks/useWallet";
-import { useLiFiTx, useSimulateTransfer, useSimLiFiTx, useHandleSend, useLiFiBatch, useMind } from '@/AI_Agent/hooks';
+import { useMind } from '@/AI_Agent/hooks';
 import { TokenInfo } from '@/domain/tokens/types';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import ChatDisplay from '@/AI_Agent/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
-import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
-import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
-import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
-import { useConfirmation, ConfirmationType } from '@/AI_Agent/hooks/useConfirmation';
+import { useConfirmation } from '@/AI_Agent/hooks/useConfirmation';
 
 import dotenv from "dotenv";
 import { ConfirmationManager } from '@/AI_Agent/ConfirmationManager/ConfirmationManager';
@@ -35,12 +31,6 @@ const AgentChat = () => {
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
-    const { simulationResult, simulateTransfer } = useSimulateTransfer();
-    const [simStatus, setSimStatus] = useState<{ success: boolean }>({ success: false });
-    const { updatedSendTransfer, handleSend } = useHandleSend();
-    const { status, simLiFiTx, quote, getQuote, extractConfirmationDetails } = useSimLiFiTx();
-    const { sendLiFiTx } = useLiFiTx();
-    const { addToBatch, batchedOperations, executeBatchOperations } = useLiFiBatch();
     const { totalBalance } = useScAccountPositions();
     const { totalCash } = useScAccountSpotPosition();
     const [length, setLength] = useState(tokens.length);
@@ -51,7 +41,6 @@ const AgentChat = () => {
     // const { fetchActivities, fetchedData } = useRSS3Activities();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
-    const [readyForTransfer, setReadyForTransfer] = useState(false);
     const {
         confirmationDetails, setConfirmationDetails, 
         isConfirmed, setIsConfirmed, 
@@ -124,10 +113,11 @@ const AgentChat = () => {
             main={
                 <div className="flex flex-col items-center justify-end pb-0 p-4 rounded-lg shadow-sm">
                     <ChatDisplay chatHistory={chatHistory} />
-                    {/* {renderConfirmationButtons()} */}
                     <ConfirmationManager
                             confirmationDetails={confirmationDetails}
                             confirmAction={confirmAction}
+                            isConfirmed={isConfirmed}
+                            setIsConfirmed={setIsConfirmed}
                             rejectAction={rejectAction}
                             showConfirmationBox={showConfirmationBox}
                         />
