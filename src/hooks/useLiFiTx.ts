@@ -7,7 +7,7 @@ import { UserOperation } from "@/lib/userOperations/types";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useUserOperations } from "@/hooks/useUserOperations";
 import { useNotification } from '@/context/NotificationContextProvider';
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { useChatHistory } from '@/context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and performs the transaction

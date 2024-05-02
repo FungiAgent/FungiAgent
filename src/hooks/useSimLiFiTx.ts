@@ -6,7 +6,7 @@ import { BigNumber, ethers } from "ethers";
 import { UserOperation } from "@/lib/userOperations/types";
 import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from '@/context/NotificationContextProvider';
-import { ConfirmationType } from "@/AI_Agent/hooks/useConfirmation";
+import { ConfirmationType } from "@/hooks/useConfirmation";
 import { useUserOperations } from "@/hooks/useUserOperations";
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction

@@ -1,8 +1,8 @@
 // useConfirmation.ts
 import { useState, useCallback } from 'react';
-import { useHandleSend } from '@/AI_Agent/hooks/useHandleSend';
-import { useSimLiFiTx } from '@/AI_Agent/hooks';
-import { useUserOpContext } from '@/AI_Agent/Context/UserOpContext';
+import { useHandleSend } from '@/hooks/useHandleSend';
+import { useSimLiFiTx } from '@/hooks';
+import { useUserOpContext } from '@/context/UserOpContext';
 import { useUserOperations } from '@/hooks/useUserOperations';
 
 export enum ConfirmationType {

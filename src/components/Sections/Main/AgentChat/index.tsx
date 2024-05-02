@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/Container/PageContainer';
 import { useTokensInfo } from '@/hooks/useTokensInfo';
-import { generateQueryFromPortfolio } from '../../../../AI_Agent/Utils/generateQueryFromPortfolio';
+import { generateQueryFromPortfolio } from '@/utils/generateQueryFromPortfolio';
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
 import Secondary from "./sidebar";
 
 import useWallet from "@/hooks/useWallet";
-import { useMind } from '@/AI_Agent/hooks';
+import { useMind } from '@/hooks';
 import { TokenInfo } from '@/domain/tokens/types';
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
-import ChatDisplay from '@/AI_Agent/ChatDisplay';
+import { useChatHistory } from '@/context/ChatHistoryContext';
+import ChatDisplay from '@/components/ChatDisplay';
 import { BaseMessage } from '@langchain/core/messages';
 import  { UserInput }   from '@/components/TextInputs/UserInput';
-import { useConfirmation } from '@/AI_Agent/hooks/useConfirmation';
+import { useConfirmation } from '@/hooks/useConfirmation';
 
 import dotenv from "dotenv";
-import { ConfirmationManager } from '@/AI_Agent/ConfirmationManager/ConfirmationManager';
-import { useToolRequestListener } from '@/AI_Agent/hooks/useToolRequestListener';
+import { ConfirmationManager } from '@/components/ConfirmationManager/ConfirmationManager';
+import { useToolRequestListener } from '@/hooks/useToolRequestListener';
 
 dotenv.config();
 

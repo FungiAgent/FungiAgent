@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 import { useNotification } from '@/context/NotificationContextProvider';
 import { useERC20Transfer } from "@/hooks/useERC20Transfer";
 import { useUserOperations } from "@/hooks/useUserOperations";
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { useChatHistory } from '@/context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 
 export const useHandleSend = () => {

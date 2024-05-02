@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConfirmationType } from '@/AI_Agent/hooks/useConfirmation';
+import { ConfirmationType } from '@/hooks/useConfirmation';
 import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
 import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
 import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
