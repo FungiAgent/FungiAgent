@@ -24,6 +24,7 @@ import { FungiContextProvider } from "@/context/FungiContextProvider";
 import { NotificationContextProvider } from "@/context/NotificationContextProvider";
 import { ModalContextProvider } from "@/context/ModalContextProvider";
 import { ChatHistoryProvider } from "@/AI_Agent/Context/ChatHistoryContext";
+import { UserOpProvider } from "@/AI_Agent/Context/UserOpContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   // useEffect(() => {
@@ -42,28 +43,30 @@ export default function App({ Component, pageProps }: AppProps) {
       {" "}
       <ChatHistoryProvider>
         <FungiContextProvider>
-          <SWRConfig
-            value={{
-              refreshInterval: 50000,
-              refreshWhenHidden: false,
-              refreshWhenOffline: false,
-              use: [swrGCMiddleware as any],
-            }}
-          >
-            {/* <SettingsContextProvider> */}
-              {/* <SubaccountContextProvider> */}
-                <NotificationContextProvider>
-                  <ModalContextProvider>
-                    {/* <SyntheticsEventsProvider> */}
-                      {/* <main className="font-dmSans"> */}
-                        <Component {...pageProps} />
-                      {/* </main> */}
-                    {/* </SyntheticsEventsProvider>{" "} */}
-                  </ModalContextProvider>
-                </NotificationContextProvider>
-              {/* </SubaccountContextProvider> */}
-            {/* </SettingsContextProvider>{" "} */}
-          </SWRConfig>
+          <UserOpProvider>
+            <SWRConfig
+              value={{
+                refreshInterval: 50000,
+                refreshWhenHidden: false,
+                refreshWhenOffline: false,
+                use: [swrGCMiddleware as any],
+              }}
+            >
+              {/* <SettingsContextProvider> */}
+                {/* <SubaccountContextProvider> */}
+                  <NotificationContextProvider>
+                    <ModalContextProvider>
+                      {/* <SyntheticsEventsProvider> */}
+                        {/* <main className="font-dmSans"> */}
+                          <Component {...pageProps} />
+                        {/* </main> */}
+                      {/* </SyntheticsEventsProvider>{" "} */}
+                    </ModalContextProvider>
+                  </NotificationContextProvider>
+                {/* </SubaccountContextProvider> */}
+              {/* </SettingsContextProvider>{" "} */}
+            </SWRConfig>
+          </UserOpProvider>
         </FungiContextProvider>
       </ChatHistoryProvider>
       <script

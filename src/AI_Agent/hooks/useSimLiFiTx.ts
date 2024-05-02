@@ -9,66 +9,175 @@ import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from '@/context/NotificationContextProvider';
 import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
+import { ConfirmationType } from "@/AI_Agent/hooks/useConfirmation";
+import { useUserOperations } from "@/hooks/useUserOperations";
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {
   const { simStatus, simTransfer } = useSimUO();
   const { addMessage } = useChatHistory();
   const { showNotification } = useNotification();
+  const { sendUserOperations } = useUserOperations();
   const [status, setStatus] = useState<{
     disabled: boolean;
     text: string | null;
   }>({ disabled: true, text: "Enter an amount" });
   const [quote, setQuote] = useState<any>(null);
 
-  const getQuote = async (params: { fromChain: string | null; fromAmount: string; fromToken: string; toChain: string | null; toToken: string; fromAddress: string; toAddress: string; slippage: string;}): Promise<any> => {
+  const getQuote = async (params: { fromChain: string; fromAmount: string; fromToken: string; toChain: string; toToken: string; fromAddress: string; toAddress: string; slippage: string; }): Promise<any> => {
     try {
-      const response = await axios.get("https://li.quest/v1/quote", { params });
-      
-      // Check if the response indicates success
-      if (response.status === 200 && response.data) {
-        return response.data;
-    } else {
-        throw new Error(`Failed to fetch quote: ${response.statusText}`);
-    }
-    } catch (error) {
+        const response = await axios.get("https://li.quest/v1/quote", { params });
+
+        if (response.status === 200 && response.data) {
+            return response.data;
+        } else {
+            throw new Error(`Failed to fetch quote: ${response.statusText}`);
+        }
+    } catch (error: any) {
       console.error("Error fetching LiFi quote:", error);
-      throw error;
+
+      if (error.response) {
+        console.log("Response Data:", error.response.data); // Log response details
+        console.log("Status:", error.response.status); // Log status code
+        console.log("Headers:", error.response.headers); // Log response headers
+      } else if (error.request) {
+        console.log("No response received. Request:", error.request); // Log request if no response
+      } else {
+        console.log("Error Message:", error.message); // Log general error message
+      }
+
+      throw error; // Re-throw the error for further handling
     }
-  }
+};
 
-  const extractConfirmationDetails = (quote) => {
+const extractConfirmationDetails = (quote) => {
+    if (!quote || !quote.action) {
+        console.error("Quote or its action is undefined.");
+        return null;
+    }
+
     const { action, estimate, toolDetails } = quote;
-    const { inToken, outToken, fromAmount, slippage } = action;
-    const { toAmountMin, gasCosts, tool, feeCosts } = estimate;
+    const fromToken = action.fromToken;
+    const toToken = action.toToken;
 
-    const amountToSend = fromAmount; // Assume fromAmount is already in a user-friendly format
-    const amountToReceiveMin = ethers.utils.formatUnits(toAmountMin, outToken.decimals); // Convert raw amount to decimal format
-    const gasCost = gasCosts.amountUSD + feeCosts.amountUSD; // Sum gas costs and fee costs
+    if (!fromToken || !toToken) {
+        console.error("Tokens are missing from the quote.");
+        return null;
+    }
+
+    const fromAmountRaw = action.fromAmount;
+    const toAmountMinRaw = estimate.toAmountMin;
+    const toAmountRaw = estimate.toAmount;
+
+    const fromTokenDecimals = fromToken.decimals;
+    const toTokenDecimals = toToken.decimals;
+
+    const amountToSend = ethers.utils.formatUnits(fromAmountRaw, fromTokenDecimals);
+    const amountToReceiveMin = ethers.utils.formatUnits(toAmountMinRaw, toTokenDecimals);
+    const amountToReceive = ethers.utils.formatUnits(toAmountRaw, toTokenDecimals);
+
+    const gasCostsUSD = estimate.gasCosts.reduce((sum, cost) => sum + parseFloat(cost.amountUSD), 0);
+    const feeCostsUSD = estimate.feeCosts.reduce((sum, cost) => sum + parseFloat(cost.amountUSD), 0);
+    const totalGasAndFeeCostsUSD = gasCostsUSD + feeCostsUSD;
 
     return {
-        toolName: tool,
+        toolName: toolDetails.name,
         toolLogoURI: toolDetails.logoURI,
-        inTokenSymbol: inToken.symbol,
-        inTokenLogoURI: inToken.logoURI,
-        outTokenSymbol: outToken.symbol,
-        outTokenLogoURI: outToken.logoURI,
+        fromTokenSymbol: fromToken.symbol,
+        fromTokenLogoURI: fromToken.logoURI,
+        toTokenSymbol: toToken.symbol,
+        toTokenLogoURI: toToken.logoURI,
         amountToSend,
+        amountToReceive,
         amountToReceiveMin,
-        gasCost,
-        slippage: slippage * 100, // Convert to percentage
+        gasCost: totalGasAndFeeCostsUSD,
+        slippage: action.slippage * 100, // Convert to percentage
+        tokenInDecimals: fromTokenDecimals,
+        tokenOutDecimals: toTokenDecimals,
+        type: ConfirmationType.Swap,
     };
-  };
+};
 
+const createUserOpFromQuote = (quote) => {
+  const { action, estimate } = quote;
+  const tokenAddress: Hex = action.fromToken.address;
+  const spender: Hex = quote.transactionRequest.to;
+  const amount: number = quote.estimate.fromAmount;
+
+  const userOps: UserOperation[] = [];
+
+  if (tokenAddress !== ethers.constants.AddressZero) {
+      userOps.push(
+          createApproveTokensUserOp({
+              tokenAddress,
+              spender,
+              amount: BigNumber.from(amount),
+          })
+      );
+
+      userOps.push({
+          target: quote.transactionRequest.to,
+          data: quote.transactionRequest.data,
+      });
+  } else {
+      userOps.push({
+          target: quote.transactionRequest.to,
+          data: quote.transactionRequest.data,
+          value: BigInt(amount),
+      });
+  }
+
+  return userOps;
+};
+
+const simulateLifiTx = async (userOps: UserOperation[]) => {
+  try {
+      const result = await simTransfer(userOps);
+
+      showNotification({
+          message: "LiFi transaction simulated successfully",
+          type: "success",
+      });
+
+      return result;
+  } catch (error: any) {
+      showNotification({
+          message: error.message,
+          type: "error",
+      });
+
+      console.error(error);
+  }
+};
+
+const executeLifiTx = async (userOps: UserOperation[]) => {
+  try {
+      const result = await sendUserOperations(userOps);
+
+      showNotification({
+          message: "LiFi transaction executed successfully",
+          type: "success",
+      });
+
+      return result;
+  } catch (error: any) {
+      showNotification({
+          message: error.message,
+          type: "error",
+      });
+
+      console.error(error);
+  }
+};
 
   const simLiFiTx = useMemo(() => {
     const handleLiFiTx = async (params: any) => {
       const {
         type,
-        fromChainId,
+        fromChain,
         fromAmount,
         fromToken,
-        toChainId,
+        toChain,
         toToken,
         fromAddress,
         toAddress,
@@ -89,10 +198,10 @@ export const useSimLiFiTx = () => {
           const responses = await Promise.all(
             orders.map(() => {
               return getQuote({
-                fromChain: fromChainId,
+                fromChain,
                 fromAmount,
                 fromToken,
-                toChain: toChainId,
+                toChain,
                 toToken,
                 fromAddress,
                 toAddress,
@@ -179,5 +288,5 @@ export const useSimLiFiTx = () => {
     return handleLiFiTx;
   }, [showNotification, simTransfer]);
 
-  return { status, simStatus, simLiFiTx, quote, extractConfirmationDetails, getQuote };
+  return { status, simulateLifiTx, simStatus, simLiFiTx, quote, extractConfirmationDetails, getQuote, createUserOpFromQuote, executeLifiTx };
 };
