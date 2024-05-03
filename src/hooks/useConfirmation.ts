@@ -1,6 +1,9 @@
+// useConfirmation.ts
 import { useState, useCallback } from 'react';
-import { useHandleSend } from '@/AI_Agent/hooks/useHandleSend';
-import { useLiFiTx } from '@/AI_Agent/hooks';
+import { useHandleSend } from '@/hooks/useHandleSend';
+import { useSimLiFiTx } from '@/hooks';
+import { useUserOpContext } from '@/context/UserOpContext';
+import { useUserOperations } from '@/hooks/useUserOperations';
 
 export enum ConfirmationType {
     Simple = 'Simple',
@@ -10,7 +13,7 @@ export enum ConfirmationType {
 
 interface ConfirmationDetails {
     message: string;
-    type: ConfirmationType; // Use the enum for type safety
+    type: ConfirmationType;
     action?: () => Promise<void>;
     recipient?: string;
     gasCost?: number;
@@ -19,52 +22,55 @@ interface ConfirmationDetails {
     amountWithDecimals?: number;
     amountToReceive?: number;
     amountToReceiveDecimals?: number;
-    tokenIn?: string; // Token address
+    tokenIn?: string;
     tokenInDecimals?: number;
-    tokenOut?: string; // Token address
+    tokenOut?: string;
     tokenOutDecimals?: number;
     exchangeRate?: number;
     maxSlippage?: number;
-    tokenInLogo?: string; // Logo URL
-    tokenOutLogo?: string; // Logo URL
-    tokenInSymbol?: string; // Token symbol e.g. USDC
-    tokenOutSymbol?: string; // Token symbol e.g. ETH
-    tool?: string; // Tool chosen for swapping. e.g. Uniswap
-    fromAddress?: string; // Address of the sender
-    fromChainId?: number; // Chain ID of the sender
-    toChainId?: number; // Chain ID of the recipient
+    tokenInLogo?: string;
+    tokenOutLogo?: string;
+    tokenInSymbol?: string;
+    tokenOutSymbol?: string;
+    tool?: string;
+    fromAddress?: string;
+    fromChainId?: number;
+    toChainId?: number;
 }
 
 export const useConfirmation = () => {
-    const [params, setParams] = useState<any>({}); // Add the type of params if needed
     const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [showConfirmationBox, setShowConfirmationBox] = useState(false);
     const { handleSend } = useHandleSend();
-    const { sendLiFiTx } = useLiFiTx();
+    const { sendUserOperations } = useUserOperations();
+    const { userOp, setUserOp } = useUserOpContext(); // Get the shared state
 
     const confirmAction = useCallback(async () => {
-        if (confirmationDetails) {
+        if (confirmationDetails && userOp) {
             setIsConfirmed(true);
+            console.log("Confirmation Details:", confirmationDetails);
             try {
                 if (confirmationDetails.type === ConfirmationType.Simple) {
-                    await handleSend({
-                        tokenAddress: confirmationDetails.tokenIn,
-                        amount: confirmationDetails.amountToSend,
-                        recipient: confirmationDetails.recipient
-                    });
+                    // await handleSend({
+                    //     tokenAddress: confirmationDetails.tokenIn,
+                    //     amount: confirmationDetails.amountToSend,
+                    //     recipient: confirmationDetails.recipient,
+                    // });
+                    await sendUserOperations(userOp);
                 } else if (confirmationDetails.type === ConfirmationType.Swap) {
-                    await sendLiFiTx(params);
+                    console.log("User Operations to Execute:", userOp);
+                    await sendUserOperations(userOp);
                 }
                 setShowConfirmationBox(false);
                 setConfirmationDetails(null);
+                setIsConfirmed(false);
             } catch (error) {
                 console.error(`${confirmationDetails.type} transaction failed:`, error);
                 setIsConfirmed(false);
             }
         }
-    }, [confirmationDetails, handleSend, sendLiFiTx]);
-    
+    }, [confirmationDetails, userOp, handleSend, sendUserOperations]);
 
     const rejectAction = useCallback(() => {
         setIsConfirmed(false);
@@ -76,6 +82,6 @@ export const useConfirmation = () => {
         confirmationDetails, setConfirmationDetails, 
         isConfirmed, setIsConfirmed, 
         showConfirmationBox, setShowConfirmationBox, 
-        confirmAction, rejectAction, setParams 
+        confirmAction, rejectAction, setUserOp 
     };
 };

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { dataClient } from '@rss3/js-sdk';
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { useChatHistory } from '@/context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 
 export const useRSS3Activities = () => {

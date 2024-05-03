@@ -1,13 +1,76 @@
 import { z } from "zod";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { agentCommunicationChannel, EVENT_TYPES } from "../AgentCommunicationChannel";
-import { getTokenInfo } from "@/lib/lifi/getLiFiTokenInfo";
+import { getTokenInfo } from "./getLiFiTokenInfo";
 import { tavilySearch } from "./tavilySearch";
+import { RSS3Search } from "./RSS3Search";
+import { getLiFiQuote } from "./getLiFiQuote";
+// import { BigNumber } from 'alchemy-sdk';
 
 export const dynamicTools = [
   new DynamicStructuredTool({
+    name: "Simulate-Transfer",
+    description: "Simulate a transfer of assets",
+    schema: z.object({
+      tokenAddress: z.string().describe("This uses the address of one of the tokens in the portfolio. You will only use the addresses of the tokens in the portfolio. e.g. If you are asked to transfer USDC, you will use the address of USDC of the portfolio."),
+      amount: z.string().describe("The amount of tokens to transfer"),
+      recipient: z.string().describe("The address of the recipient"),
+    }),
+    func: async ({ tokenAddress, amount, recipient }) => {
+      const result = `Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x403`;
+      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+        tool: 'Simulate-Transfer',
+        params: { tokenAddress, amount, recipient },
+        result,
+      });
+      return result;
+    },
+  }),
+  new DynamicStructuredTool({
+    name: "LiFi-Simulator",
+    description: "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0xaf88d065e77c8cC2239327C5EDb3A432268e5831) and for DAI use: 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1.",
+    schema: z.object({
+      type: z.string().describe("The type of transaction (Swap or Bridge), it will depend on the prompt of the user"),
+      fromChain: z.string().describe("The ID of the source chain, by default use Arbitrum: 42161"),
+      fromAmount: z.string().describe("The amount to transfer from the source chain, specified in the prompt, you will add the required 0s (decimals) to the amount provided in the query, e.g. The user provides 1 ARB you add 18 0s to make it 1,000,000,000,000,000,000 ARB"),
+      fromToken: z.string().describe("The address of the token to transfer from the source chain"),
+      toChain: z.string().describe("The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Arbitrum: 42161), if it is a bridge, it will be the destination chain ID"),
+      toToken: z.string().describe("The address of the token to receive on the destination chain"),
+      fromAddress: z.string().describe("The address of the SCA"),
+      slippage: z.string().describe("The maximum slippage allowed for the transaction, 0.01 as default"),
+    }),
+    func: async ({
+      type,
+      fromChain,
+      fromAmount,
+      fromToken,
+      toChain,
+      toToken,
+      fromAddress,
+      slippage,
+    }) => {
+      const result = `LiFi simulation requested.`;
+      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
+        tool: 'LiFi-Simulator',
+        params: {
+          type,
+          fromChain,
+          fromAmount,
+          fromToken,
+          toChain,
+          toToken,
+          fromAddress,
+          slippage,
+        },
+        result: result,
+      });
+
+      return result;
+    },
+  }),
+  new DynamicStructuredTool({
     name: "Get-Token-Info",
-    description: "This tool is for fetching basic information about a token, e.g. address, decimals, and price in USD. Use this tool only when you are asked to fetch the token price or explicitly asked to fetch the address.",
+    description: "USE ONLY WHEN EXPLICITLY ASKED. This tool is for fetching basic information about a token, e.g. address, decimals, and price in USD. Use this tool only when you are asked to fetch the token price or explicitly asked to fetch the address.",
     schema: z.object({
       chain: z.string().describe("The blockchain network chain ID or name where the token resides. By default: ARB"),
       token: z.string().describe("The symbol of the token to fetch information for. Use the token symbol. If asked to fetch the price of ETH, you will use 'WETH' as the token symbol."),
@@ -22,72 +85,6 @@ export const dynamicTools = [
         console.error("Failed to fetch token information:", error);
         throw new Error('Failed to fetch token information');
       }
-    },
-  }),
-  new DynamicStructuredTool({
-    name: "Simulate-Transfer",
-    description: "This simulates a transaction and renders the confirmation component for the user to approve it. This tool does not perform the actual transfer, it only simulates it and gives the user the capacity to approve it. If the user asks to make a transfer, this tool will be called.",
-    schema: z.object({
-      tokenAddress: z.string().describe("The address of the token to transfer"),
-      amount: z.string().describe("The amount of tokens to transfer"),
-      recipient: z.string().describe("The address of the recipient"),
-    }),
-    func: async ({ tokenAddress, amount, recipient }) => {
-      const result = `Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x403`;
-      console.log("Simulating Transfer... ")
-      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-        tool: 'Simulate-Transfer',
-        params: { tokenAddress, amount, recipient },
-        result,
-      });
-      return result;
-    },
-  }),
-  new DynamicStructuredTool({
-    name: "LiFi-Simulator",
-    description: "Simulate a LiFi operation (swap or bridge). This tool does not perform the actual operation, it only simulates it. This tool will be used always before the actual operation to check if the operation is possible and to estimate the gas cost.",
-    schema: z.object({
-      type: z.string().describe("The type of transaction (Swap or Bridge), it will depend on the prompt of the user"),
-      fromChainId: z.number().describe("The ID of the source chain, by default use Arbitrum: 42161"),
-      fromAmount: z.string().describe("The amount to transfer from the source chain, specified in the prompt"),
-      fromToken: z.string().describe("The address of the token to transfer from the source chain"),
-      toChainId: z.number().describe("The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Arbitrum: 42161), if it is a bridge, it will be the destination chain ID"),
-      toToken: z.string().describe("The address of the token to receive on the destination chain"),
-      fromAddress: z.string().describe("The address to transfer from on the source chain, specified in the prompt"),
-      toAddress: z.string().describe("The address to receive the tokens on the destination chain. By default use the same address as the source address"),
-      slippage: z.string().describe("The maximum slippage allowed for the transaction, 0.01 as default"),
-    }),
-    func: async ({
-      type,
-      fromChainId,
-      fromAmount,
-      fromToken,
-      toChainId,
-      toToken,
-      fromAddress,
-      // fromSymbol,
-      toAddress,
-      slippage,
-    }) => {
-      const result = `LiFi simulation requested.`;
-      agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-        tool: 'LiFi-Simulator',
-        params: {
-          type,
-          fromChainId,
-          fromAmount,
-          fromToken,
-          toChainId,
-          toToken,
-          fromAddress,
-          // fromSymbol,
-          toAddress,
-          slippage,
-        },
-        result: result,
-      });
-
-      return result;
     },
   }),
   new DynamicStructuredTool({
@@ -148,33 +145,6 @@ export const dynamicTools = [
     },
   }),
   new DynamicStructuredTool({
-      name: "Fetch-RSS3-Activities",
-      description: "Fetches on-chain activities for a specified account from the RSS3 network",
-      schema: z.object({
-          account: z.string().describe("The account to retrieve activities from. An EVM address"),
-          limit: z.number().optional().describe("Specify the number of activities to retrieve. An integer between 1 and 100. 1 by default"),
-          // action_limit: z.number().optional().describe("Specify the number of actions within the activity to retrieve. An integer between 1 and 20"),
-          since_timestamp: z.number().optional().describe("Retrieve activities starting from this timestamp"),
-          until_timestamp: z.number().optional().describe("Retrieve activities up to this timestamp"),
-          status: z.string().optional().describe("Retrieve activities with a specific status. 'successful' or 'failed'"),
-          direction: z.string().optional().describe("Retrieve activities with a specific direction. 'in' or 'out'"),
-          network: z.array(z.string()).optional().describe("Retrieve activities from specified network(s). Default: 'arbitrum_one'"),
-          tag: z.array(z.string()).optional().describe("Retrieve activities with specified tag(s). By default: 'transaction'"),
-          type: z.array(z.string()).optional().describe("Retrieve activities of a specified type(s). Default: 'transfer'"),
-      }),
-      func: async ({ account, direction, network, tag, type }) => {
-          // Placeholder function. The actual data fetching will be triggered in AgentChat
-          // and not directly executed here due to the hook's constraints.
-          const placeholderResult = `Request to fetch RSS3 activities for account ${account}`;
-          agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
-              tool: 'Fetch-RSS3-Activities',
-              params: { account, direction, network, tag, type },
-              result: placeholderResult,
-          });
-          return placeholderResult;
-      },
-  }),
-  new DynamicStructuredTool({
     name: "tavily-search",
     description: "Performs a detailed internet search through the Tavily API, fetching information based on various parameters such as search depth, inclusion of images, and domain filters.",
     schema: z.object({
@@ -208,4 +178,54 @@ export const dynamicTools = [
       }
     },
   }),
+  new DynamicStructuredTool({
+    name: "RSS3-activities-search",
+    description: "Fetches activity data from the RSS3 network for a specific account, filtering by network, direction, tags, types, and other parameters. It is used for getting transaction information.",
+    schema: z.object({
+      account: z.string().describe("The account identifier for which to fetch activities."),
+      network: z.array(z.string()).optional().describe("List of networks to include in the search."),
+      direction: z.union([z.literal('in'), z.literal('out')]).optional().describe("Direction of activities: 'in' for incoming, 'out' for outgoing."),
+      tag: z.array(z.string()).optional().describe("Tags associated with the activities."),
+      type: z.array(z.string()).optional().describe("Types of activities to include."),
+      limit: z.number().optional().default(2).describe("Limit the number of results returned."),
+      since_timestamp: z.number().optional().describe("Start timestamp for filtering activities."),
+      until_timestamp: z.number().optional().describe("End timestamp for filtering activities."),
+      status: z.array(z.union([z.literal('failed'), z.literal('successful')])).optional().describe("Filter activities by status: 'failed' or 'successful'."),
+    }),
+    func: async ({
+        account,
+        network,
+        direction,
+        tag,
+        type,
+        limit,
+        since_timestamp,
+        until_timestamp,
+        status
+    }) => {
+        console.log("Fetching RSS3 activities...");
+        try {
+            const results = await RSS3Search({
+                account,
+                network,
+                direction,
+                tag,
+                type,
+                limit,
+                since_timestamp,
+                until_timestamp,
+                status
+            }, {
+                onLoading: () => console.log("Loading RSS3 activities..."),
+                onResult: result => console.log("Fetched RSS3 data:", result),
+                onError: error => console.error("Error fetching RSS3 data:", error),
+            });
+            console.log('RSS3 Activities Results:', results);
+            return results;
+        } catch (error) {
+            console.error("Failed to fetch RSS3 activities:", error);
+            throw new Error('Failed to fetch RSS3 activities');
+        }
+    },
+}),
 ];

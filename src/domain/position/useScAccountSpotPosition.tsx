@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useTokensWithBalance from "../../hooks/useTokensWithBalance";
+import { useTokensWithBalance } from "../../hooks/useTokensWithBalance";
 import { PositionInfo } from "@/domain/position/types";
 import { TokenInfo } from "../tokens/types";
 

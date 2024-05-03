@@ -11,7 +11,7 @@ import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../Filters/SearchBar";
 import TokenCard from "./TokenCards/TokenCard";
 import { TokenInfo } from "@/domain/tokens/types";
-import { useTokenBalances } from "@/hooks/useTokensBalances";
+import { useTokenBalances } from "@/hooks/useTokenBalances";
 import { TokenInfoRebalanceInput } from "@/domain/tokens/types";
 import { useTokensInfo } from "@/hooks/useTokensInfo";
 

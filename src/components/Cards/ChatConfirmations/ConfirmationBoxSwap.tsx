@@ -15,7 +15,7 @@ interface ConfirmationBoxSwapProps {
   tokenOutLogo: string | undefined; // Logo URL
   tool: string | undefined;
   gasCost: number | undefined;
-  feeCost?: number | undefined;
+  // feeCost?: number | undefined;
   maxSlippage: number | undefined;
   tokenInDecimals?: number | undefined;
   tokenOutDecimals?: number | undefined;
@@ -32,7 +32,6 @@ const ConfirmationBoxSwap = ({
   tokenOutLogo,
   tool, 
   gasCost, 
-  feeCost,
   maxSlippage,
   isConfirmed,
   tokenInDecimals,
@@ -49,7 +48,7 @@ const ConfirmationBoxSwap = ({
               tokenOutLogo={tokenOutLogo}
               tool={tool}
               gasCost={gasCost}
-              feeCost={feeCost}
+              // feeCost={feeCost}
               maxSlippage={maxSlippage}
               tokenInDecimals={tokenInDecimals}
               tokenOutDecimals={tokenOutDecimals}

@@ -6,7 +6,7 @@ import { useNotification } from '@/context/NotificationContextProvider';
 import axios from "axios";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useUserOperations } from "@/hooks/useUserOperations";
-import { useChatHistory } from '@/AI_Agent/Context/ChatHistoryContext';
+import { useChatHistory } from '@/context/ChatHistoryContext';
 import { SystemMessage } from '@langchain/core/messages';
 import { add } from "lodash";
 

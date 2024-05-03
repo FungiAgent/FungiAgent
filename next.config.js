@@ -9,7 +9,7 @@ const nextConfig = {
     TAVILY_API_KEY: process.env.TAVILY_API_KEY,
   },
   images: {
-    domains: ['static.debank.com', 'static.alchemyapi.io', 'raw.githubusercontent.com'],
+    domains: ['static.alchemyapi.io', 'raw.githubusercontent.com', 'static.debank.com'],
   },
 }
 

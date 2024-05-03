@@ -1,7 +1,5 @@
 import { Alchemy, AlchemySettings, Network } from 'alchemy-sdk';
 import { getAlchemyNetwork } from '@/config/alchemyConfig';
-import { getViemChain } from '@/config/chains';
-import { getApiKeyChain } from '@/config/alchemyConfig';
 
 /**
  * This is a wrapper around the Alchemy class that allows you to use the same
