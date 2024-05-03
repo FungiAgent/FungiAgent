@@ -1,7 +1,7 @@
-import { useChatHistory } from '../Context/ChatHistoryContext';
+import { useChatHistory } from '../context/ChatHistoryContext';
 import { useCallback } from 'react';
 import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
-import { executeAgent } from '../AgentCreation';
+import { executeAgent } from '../agent/AgentCreation';
 
 export const useMind = () => {
     const { addMessage, getHistory } = useChatHistory();
