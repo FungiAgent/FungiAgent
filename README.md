@@ -6,9 +6,17 @@ The SCA used by the agent is created with Alchemy's Smart Contract Account Kit, 
 
 This web app features a chat component as the main interface for the agent, and a sidepanel to inspect the state of the SCA, such as the portfolio composition, the transaction history, and the current balance.
 
+![Alt text](public/readme/FungiAgentSS0.png?raw=true "Fungi Agent")
+
 ![Alt text](public/readme/FungiAgentSS1.png?raw=true "Fungi Agent")
 
 ![Alt text](public/readme/FungiAgentSS2.png?raw=true "Fungi Agent")
+
+The following diagram shows in a broad way the architecture of the Fungi Agent:
+
+![Alt text](public/readme/FungiAgentDiagram.png?raw=true "Fungi Agent Diagram")
+
+
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
