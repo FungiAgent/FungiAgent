@@ -1,47 +1,66 @@
 ## Fungi Agent
 
-The Fungi Agent is an LLM based agent that has connections to a Smart Contract Account (SCA) that allows it to perform transactions on behalf of the user. A number of tools are also provided to the agent to improve its performance and capacity to operate in the DeFi space, such as access to on-chain transactional data, consult prices in real time, and search the internet for general information fetching.
+### Overview
+The Fungi Agent is a decentralized finance (DeFi) interface powered by a Large Language Model (LLM). It utilizes a Smart Contract Account (SCA) to perform transactions on behalf of users. This agent is enhanced with tools that allow it to access on-chain transaction data, consult real-time pricing, and fetch general information from the internet.
 
-The SCA used by the agent is created with Alchemy's Smart Contract Account Kit, and MagicLink's wallet-as-a-service to create the SCA with social login.
+### Features
+- **Smart Contract Account Management:** Utilizes Alchemy's Smart Contract Account Kit and MagicLink's wallet-as-a-service with social login capabilities.
+- **Real-time Data Access:** Provides real-time access to market prices and transactional data.
+- **Interactive Chat Interface:** Features a chat-based user interface for interaction with the agent.
+- **Insightful Side Panel:** Displays portfolio composition, transaction history, and current balances.
 
-This web app features a chat component as the main interface for the agent, and a sidepanel to inspect the state of the SCA, such as the portfolio composition, the transaction history, and the current balance.
+### Screenshots
+![Fungi Agent](public/readme/FungiAgentSS0.png?raw=true "Fungi Agent Interface")
+![Fungi Agent Transaction](public/readme/FungiAgentSS1.png?raw=true "Transaction History")
+![Fungi Agent Balance](public/readme/FungiAgentSS2.png?raw=true "Portfolio Balance")
 
-![Alt text](public/readme/FungiAgentSS0.png?raw=true "Fungi Agent")
+### Architecture Diagram
+![Fungi Agent Architecture](public/readme/FungiAgentDiagram.png?raw=true "System Architecture")
 
-![Alt text](public/readme/FungiAgentSS1.png?raw=true "Fungi Agent")
+### Prerequisites
+Before starting, ensure you have the following installed:
+- Node.js (v12.0 or newer)
+- A package manager: npm, yarn, pnpm, or bun
 
-![Alt text](public/readme/FungiAgentSS2.png?raw=true "Fungi Agent")
+### Getting Started
+To get the application running locally:
 
-The following diagram shows in a broad way the architecture of the Fungi Agent:
+1. Clone the repository:
+   ```bash
+   git clone https://yourrepository.com/FungiAgent.git
+   cd FungiAgent
+   ```
 
-![Alt text](public/readme/FungiAgentDiagram.png?raw=true "Fungi Agent Diagram")
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   # or
+   bun install
+   ```
 
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   # or
+   bun dev
+   ```
 
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### Development
+- **Modify Pages:** Start editing by modifying `pages/index.tsx`. The page auto-updates as you make changes.
+- **API Routes:** Explore API routes by visiting [http://localhost:3000/api/hello](http://localhost:3000/api/hello). Modify or add new endpoints in the `pages/api` directory.
 
-## Getting Started
+### Contributing
+Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change. Ensure to update tests as appropriate.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-
+### License
+Distributed under the MIT License. See `LICENSE` for more information.
