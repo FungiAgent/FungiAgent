@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/FungiContextProvider";
 
-export default function useWallet() {
+export function useWallet() {
   const {
     login,
     scaAddress,
@@ -21,3 +21,5 @@ export default function useWallet() {
     chainId: chain,
   };
 }
+
+export default useWallet;

@@ -1,0 +1,173 @@
+/* ChatDisplay.module.css */
+
+/* Adjustments for the avatar and name alignment */
+.avatarNameRow {
+  display: flex;
+  align-items: center;
+}
+
+.avatarAndNameContainer {
+  width: 100%; /* Takes full width of the message container */
+}
+
+.message {
+  display: flex;
+  flex-direction: column; /* Stack avatar/name row and message content vertically */
+  align-items: flex-start; /* Align items to the start of the flex container */
+  margin-bottom: 16px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.messageContentContainer {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+/* Ensure you have CSS for .humanMessage, .aiMessage, and .name as needed */
+
+
+.chatContainer {
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 56vh;
+  max-height: 56vh;
+  min-width: 731px;
+  max-width: 731px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chatContainer.scrolling {
+  justify-content: flex-end;
+}
+
+.messagesWrapper {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.chatDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.messageContentContainer {
+  display: flex;
+  flex-direction: column;
+  /* background-color: #f8f9fa; */
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.messageContent {
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  /* margin-right: 10px; */
+}
+
+.message {
+  display: flex;
+  align-items: center; /* Aligns items vertically to the center */
+  margin-bottom: 16px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.messageContentContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 12px;
+  max-width: calc(100% - 50px); /* Adjust width based on avatar size to avoid overflow */
+}
+
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.humanMessage,
+.aiMessage {
+  color: #1a1a1a; /* Ensure text color is consistent */
+}
+
+.name {
+  margin-left: 4px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Increase the visibility and distinction of headers within message content */
+.messageContent h1,
+.messageContent h2,
+.messageContent h3,
+.messageContent h4,
+.messageContent h5,
+.messageContent h6 {
+    color: #333; /* Dark color for visibility */
+    font-weight: bold; /* Ensure headers are bold */
+    margin-top: 8px; /* Add spacing to separate headers from other text */
+    margin-bottom: 8px;
+}
+
+.messageContent h6 {
+    font-size: 1em; /* Ensure even smaller headers are visible */
+}
+
+.messageContent p {
+  margin: 4px 0; /* Add vertical spacing for paragraphs */
+}
+
+.messageContent ul,
+.messageContent ol {
+  padding-left: 20px; /* Proper indentation for lists */
+  margin: 4px 0;
+}
+
+.messageContent li {
+  margin-bottom: 2px; /* Spacing between list items */
+}
+
+.messageContent strong {
+  font-weight: bold;
+}
+
+.messageContent em {
+  font-style: italic;
+}
+
+.messageContent blockquote {
+  border-left: 3px solid #ccc; /* Styling for blockquotes */
+  padding-left: 10px;
+  margin-left: 0;
+  color: #666; /* Dimmed color for quotes */
+}
+
+.messageContent img {
+  max-width: 40%; /* ensure images are not wider than their container */
+  height: auto; /* maintain aspect ratio */
+  border-radius: 8px; /* optional: adds rounded corners to images */
+}

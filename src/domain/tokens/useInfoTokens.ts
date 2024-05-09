@@ -1,7 +1,7 @@
 import { Alchemy } from "alchemy-sdk";
 import { TokenInfo } from "./types";
 import { getTokenBalancesAlchemy } from "@/lib/alchemy/alchemyCalls";
-import { fillCoinGeckoTokenId } from "./useMarketData";
+// import { fillCoinGeckoTokenId } from "./useMarketData";
 import { TokenBalance } from "alchemy-sdk";
 import { BigNumber, ethers } from "ethers";
 import { getLifiTokens } from "@/lib/lifi/getLifiTokens";

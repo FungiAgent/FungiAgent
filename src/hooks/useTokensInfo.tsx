@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useGlobalContext } from "@/context/FungiContextProvider";
-import useWallet from "@/utils/gmx/lib/wallets/useWallet";
+// import useWallet from "@/utils/gmx/lib/wallets/useWallet";
 import { TokenInfo } from "@/domain/tokens/types";
 import { getAllTokensWithBalances } from "@/domain/tokens/useInfoTokens";
+import useWallet from "@/hooks/useWallet";
 
 /**
  * Custom React hook that retrieves information for all tokens supported by LifI and fills in the balance for tokens owned by the provided `scAccount`.

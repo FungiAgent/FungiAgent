@@ -15,7 +15,7 @@ export const useERC20Transfer = (
     text: string | null;
   }>({ disabled: true, text: "Enter an amount" });
 
-  const sendTransfer = async (
+  const sendTransferUO = async (
     tokenInParam?: string,
     amountInParam?: BigNumber,
     recipientParam?: string
@@ -73,5 +73,5 @@ export const useERC20Transfer = (
     }
   };
 
-  return [status, sendTransfer];
+  return [status, sendTransferUO];
 };
