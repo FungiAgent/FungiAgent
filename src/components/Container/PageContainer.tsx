@@ -42,22 +42,26 @@ export default function PageContainer({
           </div>
         </main>
       ) : (
-        <main className="mt-[20px] w-full h-[calc(100vh - 20px)] rounded-lg overflow-hidden relative flex">
+        <main className="mt-[20px] w-full h-[calc(100vh - 20px)] rounded-lg overflow-hidden relative flex flex-col lg:flex-row">
           <div
-            className={`border-l-1 w-[209px] mr-[30px] ${
+            className={`border-l-1 w-full lg:w-[209px] lg:mr-[30px] ${
               isModalOpen ? "absolute left-0 top-0 bottom-0 h-full" : ""
-            }`}
-            style={{overflowY: 'auto'}}
+            } hidden lg:block`}
+            style={{ overflowY: 'auto' }}
           >
             {secondary}
           </div>
           <div
-            className={`flex-1 ${isModalOpen ? "ml-[585px]" : ""} ${
+            className={`flex-1 ${
+              isModalOpen ? "ml-[585px]" : ""
+            } ${
               isModalOpen ? "w-[calc(100%-585px)]" : ""
-            }`}
-            style={{overflowY: 'auto'}}
+            } flex justify-center`}
+            style={{ overflowY: 'auto' }}
           >
-            {main}
+            <div className="w-full max-w-[731px] p-4">
+              {main}
+            </div>
           </div>
         </main>
       )}

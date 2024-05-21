@@ -5,8 +5,13 @@ import { marked } from 'marked'; // Import the marked library
 import Logo from "../../../public/profile/Logo.svg";
 
 const renderer = new marked.Renderer();
+
 renderer.image = (href, title, text) => {
     return `<img src="${href}" alt="${text}" title="${title}" style="max-width: 100%; height: auto;">`;
+};
+
+renderer.link = (href, title, text) => {
+    return `<a href="${href}" title="${title}" target="_blank" rel="noopener noreferrer" style="color: blue; text-decoration: underline;">${text}</a>`;
 };
 
 marked.setOptions({ renderer });
@@ -59,8 +64,7 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
         {index === nonSystemMessages.length - 1 && <div ref={endOfMessagesRef} />}
       </div>
     );
-};
-
+  };
 
   const renderPlaceholder = () => {
     return (
