@@ -25,19 +25,15 @@
   border-radius: 12px;
 }
 
-/* Ensure you have CSS for .humanMessage, .aiMessage, and .name as needed */
-
-
 .chatContainer {
   border-radius: 8px;
   padding: 16px;
   min-height: 56vh;
   max-height: 56vh;
-  min-width: 731px;
-  max-width: 731px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .chatContainer.scrolling {
@@ -73,7 +69,6 @@
 .messageContentContainer {
   display: flex;
   flex-direction: column;
-  /* background-color: #f8f9fa; */
   padding: 12px;
   border-radius: 12px;
 }
@@ -86,12 +81,11 @@
 .avatarContainer {
   display: flex;
   align-items: center;
-  /* margin-right: 10px; */
 }
 
 .message {
   display: flex;
-  align-items: center; /* Aligns items vertically to the center */
+  align-items: center;
   margin-bottom: 16px;
   max-width: 100%;
   word-break: break-word;
@@ -102,7 +96,7 @@
   flex-direction: column;
   padding: 12px;
   border-radius: 12px;
-  max-width: calc(100% - 50px); /* Adjust width based on avatar size to avoid overflow */
+  max-width: calc(100% - 50px);
 }
 
 .message:last-child {
@@ -111,7 +105,7 @@
 
 .humanMessage,
 .aiMessage {
-  color: #1a1a1a; /* Ensure text color is consistent */
+  color: #1a1a1a;
 }
 
 .name {
@@ -120,35 +114,34 @@
   color: #555;
 }
 
-/* Increase the visibility and distinction of headers within message content */
 .messageContent h1,
 .messageContent h2,
 .messageContent h3,
 .messageContent h4,
 .messageContent h5,
 .messageContent h6 {
-    color: #333; /* Dark color for visibility */
-    font-weight: bold; /* Ensure headers are bold */
-    margin-top: 8px; /* Add spacing to separate headers from other text */
-    margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .messageContent h6 {
-    font-size: 1em; /* Ensure even smaller headers are visible */
+  font-size: 1em;
 }
 
 .messageContent p {
-  margin: 4px 0; /* Add vertical spacing for paragraphs */
+  margin: 4px 0;
 }
 
 .messageContent ul,
 .messageContent ol {
-  padding-left: 20px; /* Proper indentation for lists */
+  padding-left: 20px;
   margin: 4px 0;
 }
 
 .messageContent li {
-  margin-bottom: 2px; /* Spacing between list items */
+  margin-bottom: 2px;
 }
 
 .messageContent strong {
@@ -160,14 +153,33 @@
 }
 
 .messageContent blockquote {
-  border-left: 3px solid #ccc; /* Styling for blockquotes */
+  border-left: 3px solid #ccc;
   padding-left: 10px;
   margin-left: 0;
-  color: #666; /* Dimmed color for quotes */
+  color: #666;
 }
 
 .messageContent img {
-  max-width: 40%; /* ensure images are not wider than their container */
-  height: auto; /* maintain aspect ratio */
-  border-radius: 8px; /* optional: adds rounded corners to images */
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Media queries for mobile devices */
+@media (max-width: 767px) {
+  .chatContainer {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .messageContentContainer {
+    max-width: 100%;
+  }
+}
+
+/* Media queries for desktop devices */
+@media (min-width: 768px) {
+  .chatContainer {
+    max-width: 731px; /* Ensures chat container does not exceed this width on larger screens */
+  }
 }
