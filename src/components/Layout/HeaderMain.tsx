@@ -21,7 +21,7 @@ export default function HeaderMain() {
   return (
     <div className="overflow-auto">
       <div className="flex shrink-0 items-center gap-x-4 z-50 mt-[20px] mb-16">
-        <div className="flex flex-1 gap-x-1 self-stretch lg:gap-x-3 z-5 ml-[75px] mr-[25px] items-center justify-between">
+        <div className="flex flex-1 gap-x-1 self-stretch lg:gap-x-3 z-5 ml-4 mr-4 lg:ml-[75px] lg:mr-[25px] items-center justify-between">
           <div className="flex items-center">
             <Image
               width={62}
@@ -53,8 +53,8 @@ export default function HeaderMain() {
           <Image
             src={Logo.src}
             alt="Logo"
-            width={200} // Adjusted width for better visibility
-            height={200} // Adjusted height to match width
+            width={200}
+            height={200}
           />
           <p className="mt-4 text-xxl">Hi, I'm Fungi, your DeFi Friend</p>
         </div>
