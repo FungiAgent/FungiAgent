@@ -22,6 +22,9 @@ import { MagicMultichainClient } from "@/lib/magic/MagicMultichainClient";
 import { AlchemySmartAccountClient } from "@alchemy/aa-alchemy";
 // import { useUserOperations } from '@/hooks/useUserOperations';
 // import { ChatHistoryProvider } from "@/AI_Agent/Context/ChatHistoryContext";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 import { type Address, type SmartAccountSigner } from "@alchemy/aa-core";
 // Types
@@ -50,6 +53,8 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
   const [chain, setChain] = useState(ARBITRUM);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID = process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID;
 
   // Batch operations
   // BatchContext
@@ -111,7 +116,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
         }
       }
     }
-  }, [chain]);
+  }, [alchemyMultichainClient, chain, magicMultichainClient]);
 
 
   const connectProviderToAccount = useCallback(
@@ -120,13 +125,16 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
         apiKey: getApiKeyChain(chain),
         chain: getViemChain(chain),
         signer,
+        gasManagerConfig: {
+          policyId: "7c8ccc91-d8a2-4c8c-8607-f7ae82cc9a3b",
+        },
       });
 
       setAlchemyScaProvider(connectedProvider);
 
       return connectedProvider;
     },
-    [alchemyScaProvider, chain]
+    [chain]
   );
 
   //TODO ya no sirve?
