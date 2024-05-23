@@ -8,6 +8,7 @@ const nextConfig = {
     POLYGON_API_KEY: process.env.POLYGON_API_KEY,
     TAVILY_API_KEY: process.env.TAVILY_API_KEY,
     NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID: process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID,
+    MAGIC_API_KEY: process.env.MAGIC_API_KEY,
   },
   images: {
     domains: ['static.alchemyapi.io', 'raw.githubusercontent.com', 'static.debank.com'],
