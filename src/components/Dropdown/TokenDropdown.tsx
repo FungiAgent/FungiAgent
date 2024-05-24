@@ -1,66 +1,48 @@
-// React
-import { useState } from "react";
-// Heroicons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-// Types
-import { TokenInfo } from "@/domain/tokens/types";
-// Components
-import TokensModal from "../Modals/TokensModal";
+import React, { useEffect, useState } from "react";
+import { useLiFiTokenInfo } from "@/hooks/useLiFiTokenInfo"; // Custom hook to fetch supported tokens
 
-type TokenDropdownProps = {
-  getToken: (token: TokenInfo) => void;
-  tokens: TokenInfo[] | undefined;
-  token: TokenInfo | undefined;
-  oppositToken: TokenInfo | undefined;
-  type: string;
-  className: string;
-  disabled?: boolean;
-};
+interface TokenDropdownProps {
+  onSelect: (tokenAddress: string) => void;
+}
 
-export default function TokenDropdown({
-  getToken,
-  tokens,
-  token,
-  oppositToken,
-  type,
-  className,
-  disabled,
-}: TokenDropdownProps) {
-  const [openModal, setOpenModal] = useState<boolean>(false);
+const TokenDropdown: React.FC<TokenDropdownProps> = ({ onSelect }) => {
+  const { tokens, loading, error } = useLiFiTokenInfo();
+  const [selectedToken, setSelectedToken] = useState<string>("");
 
-  const getOpenModal = (status: boolean) => {
-    setOpenModal(status);
+  useEffect(() => {
+    if (tokens.length > 0) {
+      setSelectedToken(tokens[0].address);
+      onSelect(tokens[0].address); // Set initial selected token
+    }
+  }, [tokens, onSelect]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedAddress = event.target.value;
+    setSelectedToken(selectedAddress);
+    onSelect(selectedAddress);
   };
 
   return (
-    <div>
-      {token ? (
-        <button className={className} onClick={() => setOpenModal(true)}>
-          <img height={25} width={25} alt={token.coinKey} src={token.logoURI} />{" "}
-          <span>{token.symbol}</span>{" "}
-          <ChevronDownIcon className=" h-5 w-5 text-black" aria-hidden="true" />
-        </button>
+    <div className="mb-4">
+      {loading ? (
+        <p>Loading tokens...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
       ) : (
-        <button
-          className={className}
-          onClick={() => setOpenModal(true)}
-          disabled={disabled}
+        <select
+          value={selectedToken}
+          onChange={handleChange}
+          className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <span className="pl-2">{type}</span>
-          <ChevronDownIcon
-            className="-mr-1 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-        </button>
-      )}
-      {openModal && tokens !== undefined && (
-        <TokensModal
-          tokens={tokens}
-          getToken={getToken}
-          getOpenModal={getOpenModal}
-          oppositToken={oppositToken}
-        />
+          {tokens.map((token) => (
+            <option key={token.address} value={token.address}>
+              {token.symbol}
+            </option>
+          ))}
+        </select>
       )}
     </div>
   );
-}
+};
+
+export default TokenDropdown;
