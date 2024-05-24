@@ -10,10 +10,7 @@ export const useERC20Transfer = (
   amountIn?: BigNumber,
   recipient?: string
 ) => {
-  const [status, setStatus] = useState<{
-    disabled: boolean;
-    text: string | null;
-  }>({ disabled: true, text: "Enter an amount" });
+  const [status, setStatus] = useState<{ disabled: boolean; text: string | null; }>({ disabled: true, text: "Enter an amount" });
 
   const sendTransferUO = async (
     tokenInParam?: string,
@@ -34,6 +31,7 @@ export const useERC20Transfer = (
 
       if (tokenToUse && amountToUse && recipientToUse) {
         if (tokenToUse !== ethers.constants.AddressZero) {
+          // ERC20 Transfer
           userOps.push(
             createApproveTokensUserOp({
               tokenAddress: tokenToUse,
@@ -41,25 +39,16 @@ export const useERC20Transfer = (
               amount: amountToUse,
             })
           );
-
-          userOps.push(getCallDataTransfer(recipientToUse, tokenToUse, amountToUse));
+          const callData = getCallDataTransfer(recipientToUse, tokenToUse, amountToUse.toString());
+          userOps.push(callData);
         } else {
-          userOps.push(getCallDataTransfer(recipientToUse, tokenToUse, amountToUse));
-        }
-
-        // Generate approve call data
-        const approveOperation = createApproveTokensUserOp({
-          tokenAddress: tokenToUse,
-          spender: recipientToUse,
-          amount: amountToUse,
-        });
-
-        // Generate transfer call data
-        const transferOperation = getCallDataTransfer(recipientToUse, tokenToUse, amountToUse);
-
-        // Verify the operations are correctly formed
-        if (!approveOperation || !transferOperation) {
-          throw new Error("Failed to generate call data for approve and/or transfer.");
+          // Native ETH Transfer
+          const targetAddress = ethers.utils.getAddress(recipientToUse) as `0x${string}`;
+          userOps.push({
+            target: targetAddress,
+            data: '0x' as `0x${string}`,
+            value: BigInt(amountToUse.toString()), // Value in wei as bigint
+          });
         }
 
         setStatus({ disabled: true, text: "Enter an amount" });

@@ -125,9 +125,9 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
         apiKey: getApiKeyChain(chain),
         chain: getViemChain(chain),
         signer,
-        // gasManagerConfig: {
-        //   policyId: "7c8ccc91-d8a2-4c8c-8607-f7ae82cc9a3b",
-        // },
+        gasManagerConfig: {
+          policyId: "7c8ccc91-d8a2-4c8c-8607-f7ae82cc9a3b",
+        },
       });
 
       setAlchemyScaProvider(connectedProvider);

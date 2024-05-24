@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useNotification } from '@/context/NotificationContextProvider';
 import { useERC20Transfer } from "@/hooks/useERC20Transfer";
 import { useUserOperations } from "@/hooks/useUserOperations";
@@ -15,12 +15,13 @@ export const useHandleSend = () => {
 
   const handleSend = useMemo(() => {
     const handleSendTransfer = async (params: any) => {
-      const { tokenAddress, amount, recipient } = params;
+      const { tokenAddress, amount, recipient, tokenDecimals } = params;
 
       if (
         tokenAddress === undefined ||
         amount === undefined ||
         recipient === undefined ||
+        tokenDecimals === undefined ||  // Ensure tokenDecimals is checked
         typeof sendTransferUO !== "function"
       ) {
         showNotification({
@@ -31,15 +32,25 @@ export const useHandleSend = () => {
       }
 
       try {
-        const resultTx: any = await sendTransferUO(tokenAddress, BigNumber.from(amount), recipient);
-        console.log("RESULT TX", resultTx);
-        await addMessage(new SystemMessage(`Sending ${amount} tokens of ${tokenAddress} to ${recipient}`));
-        const result: any = await sendUserOperations(resultTx);
-        setUpdatedSendTransfer(result);
-        showNotification({
-          message: "Transfer successful",
-          type: "success",
-        });
+        const rawAmount = BigNumber.from((parseFloat(amount) * Math.pow(10, tokenAddress === ethers.constants.AddressZero ? 18 : tokenDecimals)).toString());
+        const userOps = await sendTransferUO(tokenAddress, rawAmount, recipient);
+
+        if (userOps) {
+          const resultTx: any = await sendUserOperations(userOps, tokenAddress === ethers.constants.AddressZero ? rawAmount.toHexString() : '0x0');
+          
+          await addMessage(new SystemMessage(`Sending ${amount} tokens of ${tokenAddress} to ${recipient}`));
+          const result: any = await sendUserOperations(resultTx);
+          setUpdatedSendTransfer(result);
+          showNotification({
+            message: "Transfer successful",
+            type: "success",
+          });
+        } else {
+          showNotification({
+            message: "Error generating user operations",
+            type: "error",
+          });
+        }
       } catch (error: any) {
         showNotification({
           message: error.message,
