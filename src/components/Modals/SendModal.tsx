@@ -6,6 +6,7 @@ import { useNotification } from "@/context/NotificationContextProvider";
 import { useUserOperations } from "@/hooks/useUserOperations";
 import { useSimUO } from "@/hooks/useSimUO";
 import TokenDropdown from "@/components/Dropdown/TokenDropdown";
+import { useLiFiTokenInfo } from "@/hooks/useLiFiTokenInfo";
 
 interface SendModalProps {
   isOpen: boolean;
@@ -17,12 +18,14 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState<string>('');
   const [recipient, setRecipient] = useState<string>('');
   const { showNotification } = useNotification();
-  const [status, sendTransfer] = useERC20Transfer(tokenAddress, BigNumber.from(amount || '0'), recipient);
+  const [status, sendTransfer] = useERC20Transfer(tokenAddress, BigNumber.from(0), recipient);
   const { sendUserOperations } = useUserOperations();
   const { simStatus, simTransfer } = useSimUO();
   const [simulationResult, setSimulationResult] = useState<any>(null);
-
   const [isSimulateEnabled, setIsSimulateEnabled] = useState<boolean>(false);
+  const { tokens } = useLiFiTokenInfo();
+  const [tokenDecimals, setTokenDecimals] = useState<number>(18);
+  const [isSending, setIsSending] = useState<boolean>(false);
 
   const isValidAddress = (address: string) => {
     return /^0x[a-fA-F0-9]{40}$/.test(address);
@@ -37,6 +40,13 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
     }
   }, [tokenAddress, amount, recipient]);
 
+  useEffect(() => {
+    const selectedToken = tokens.find(token => token.address === tokenAddress);
+    if (selectedToken) {
+      setTokenDecimals(selectedToken.decimals);
+    }
+  }, [tokenAddress, tokens]);
+
   const handleSend = async () => {
     if (!tokenAddress || !amount || !recipient || !isValidAddress(recipient) || typeof sendTransfer !== "function") {
       showNotification({
@@ -45,8 +55,14 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
       });
       return Promise.resolve();
     }
-    const resultTx: any = await sendTransfer();
-    await sendUserOperations(resultTx);
+    setIsSending(true);
+    try {
+      const rawAmount = BigNumber.from((parseFloat(amount) * Math.pow(10, tokenDecimals)).toString());
+      const resultTx: any = await sendTransfer(tokenAddress, rawAmount, recipient);
+      await sendUserOperations(resultTx);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleSim = async () => {
@@ -58,7 +74,8 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
       return Promise.resolve();
     }
     try {
-      const resultTx: any = await sendTransfer();
+      const rawAmount = BigNumber.from((parseFloat(amount) * Math.pow(10, tokenDecimals)).toString());
+      const resultTx: any = await sendTransfer(tokenAddress, rawAmount, recipient);
       const result: any = await simTransfer(resultTx);
       if (!result || result.error) {
         throw new Error(result?.error || "Simulation failed. No result returned.");
@@ -110,12 +127,12 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
             <div className="flex justify-between">
               <button
                 onClick={handleSend}
-                disabled={!isSimulateEnabled}
+                disabled={!isSimulateEnabled || isSending}
                 className={`py-2 px-4 rounded transition duration-300 ${
-                  isSimulateEnabled ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                  isSimulateEnabled && !isSending ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer' : 'bg-gray-400 text-gray-700 cursor-not-allowed'
                 }`}
               >
-                Send
+                {isSending ? 'Sending...' : 'Send'}
               </button>
             </div>
             {simulationResult ? (
