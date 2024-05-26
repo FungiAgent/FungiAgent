@@ -12,7 +12,7 @@ export const dynamicTools = [
     name: "Simulate-Transfer",
     description: "Simulate a transfer of assets",
     schema: z.object({
-      tokenAddress: z.string().describe("This uses the address of one of the tokens in the portfolio. You will only use the addresses of the tokens in the portfolio. e.g. If you are asked to transfer USDC, you will use the address of USDC of the portfolio."),
+      tokenAddress: z.string().describe("This uses the address of one of the tokens in the portfolio. If the user wants to send ETH you will use the zero address. You will only use the addresses of the tokens in the portfolio. e.g. If you are asked to transfer USDC, you will use the address of USDC of the portfolio."),
       amount: z.string().describe("The amount of tokens to transfer"),
       recipient: z.string().describe("The address of the recipient"),
     }),
