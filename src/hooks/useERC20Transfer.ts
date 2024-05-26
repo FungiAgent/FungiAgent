@@ -10,30 +10,34 @@ export const useERC20Transfer = (
   amountIn?: BigNumber,
   recipient?: string
 ) => {
-  const [status, setStatus] = useState<{
-    disabled: boolean;
-    text: string | null;
-  }>({ disabled: true, text: "Enter an amount" });
+  // State to manage the status of the transfer
+  const [status, setStatus] = useState<{ disabled: boolean; text: string | null; }>({ disabled: true, text: "Enter an amount" });
 
+  // Function to handle the ERC20 or native ETH transfer
   const sendTransferUO = async (
     tokenInParam?: string,
     amountInParam?: BigNumber,
     recipientParam?: string
   ) => {
     try {
+      // Update the status to indicate that the transfer is in progress
       setStatus({
         disabled: true,
         text: "Transferring...",
       });
 
+      // Array to hold the user operations
       const userOps: UserOperation[] = [];
 
+      // Use the parameters passed to the function or fallback to the hook parameters
       const tokenToUse = tokenInParam || tokenIn;
       const amountToUse = amountInParam || amountIn;
       const recipientToUse = recipientParam || recipient;
 
+      // Ensure all necessary parameters are provided
       if (tokenToUse && amountToUse && recipientToUse) {
         if (tokenToUse !== ethers.constants.AddressZero) {
+          // Handle ERC20 transfer
           userOps.push(
             createApproveTokensUserOp({
               tokenAddress: tokenToUse,
@@ -41,33 +45,26 @@ export const useERC20Transfer = (
               amount: amountToUse,
             })
           );
-
-          userOps.push(getCallDataTransfer(recipientToUse, tokenToUse, amountToUse));
+          const callData = getCallDataTransfer(recipientToUse, tokenToUse, amountToUse.toString());
+          userOps.push(callData);
         } else {
-          userOps.push(getCallDataTransfer(recipientToUse, tokenToUse, amountToUse));
+          // Handle native ETH transfer
+          const targetAddress = ethers.utils.getAddress(recipientToUse) as `0x${string}`;
+          userOps.push({
+            target: targetAddress,
+            data: '0x' as `0x${string}`,
+            value: BigInt(amountToUse.toString()), // Value in wei as bigint
+          });
         }
 
-        // Generate approve call data
-        const approveOperation = createApproveTokensUserOp({
-          tokenAddress: tokenToUse,
-          spender: recipientToUse,
-          amount: amountToUse,
-        });
-
-        // Generate transfer call data
-        const transferOperation = getCallDataTransfer(recipientToUse, tokenToUse, amountToUse);
-
-        // Verify the operations are correctly formed
-        if (!approveOperation || !transferOperation) {
-          throw new Error("Failed to generate call data for approve and/or transfer.");
-        }
-
+        // Reset the status to the default state
         setStatus({ disabled: true, text: "Enter an amount" });
         return userOps;
       } else {
         throw new Error("Missing required parameters for transfer");
       }
     } catch (error) {
+      // Handle errors and reset the status to the default state
       setStatus({ disabled: true, text: "Enter an amount" });
       console.error(error);
     }

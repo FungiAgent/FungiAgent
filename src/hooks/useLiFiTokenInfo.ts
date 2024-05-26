@@ -1,25 +1,48 @@
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { TokenInfo } from "@/domain/tokens/types";
-// import { getChainIdLifi } from "./getChainIdLifi";
-// import { useChatHistory } from "@/AI_Agent/Context/ChatHistoryContext";
-// import { SystemMessage } from '@langchain/core/messages';
 
-/**
- * Retrieves the list of tokens supported by LifI on the specified chain.
- * 
- * @param {number} chainId - The identifier of the blockchain chain.
- * @returns {Promise<TokenInfo>} A Promise that resolves to an array of TokenInfo objects representing the supported tokens.
- */
-export const useLiFiTokenInfo = async (chain: string, token: string): Promise<TokenInfo> => {
-    // const { addMessage } = useChatHistory();
-    const result = await axios.get('https://li.quest/v1/token', {
-        params: {
-            chain,
-            token,
+interface LiFiToken {
+  address: string;
+  decimals: number;
+  symbol: string;
+  chainId: number;
+  coinKey: string;
+  name: string;
+  logoURI: string;
+  priceUSD: string;
+}
+
+export const useLiFiTokenInfo = () => {
+  const [tokens, setTokens] = useState<LiFiToken[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTokens = async () => {
+      try {
+        const response = await axios.get('https://li.quest/v1/tokens', {
+          params: {
+            chains: '42161', // Arbitrum chainId
+            chainTypes: 'EVM',
+          },
+        });
+        console.log("Response data:", response.data); // Debug log to check response structure
+        if (response.data && response.data.tokens && Array.isArray(response.data.tokens['42161'])) {
+          setTokens(response.data.tokens['42161']);
+        } else {
+          setError("Invalid response structure");
         }
-    });
-    console.log(`Retrieved token info for ${chain} ${token}: ${JSON.stringify(result.data)}`);
-    // await addMessage(new SystemMessage(`Retrieved token info for ${chain} ${token}: ${JSON.stringify(result.data)}`));
-    return result.data;
- 
- };
+      } catch (err) {
+        console.error("Error fetching tokens:", err); // Debug log to check error
+        setError("Failed to load tokens");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTokens();
+  }, []);
+
+  return { tokens, loading, error };
+};
