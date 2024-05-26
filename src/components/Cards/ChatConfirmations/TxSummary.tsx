@@ -7,6 +7,7 @@ const TxSummaryHeader = ({ isExpanded, handleArrowClick, amountToSwap, amountToR
     const formattedAmountToReceive = ((Number(amountToReceive) || 0) / Math.pow(10, tokenOutDecimals || 0)).toFixed(3);
 
     const totalCost = (Number(gasCost) || 0).toFixed(2); // Properly format costs
+    console.log("Total Cost:", totalCost)
 
     return (
         <div className="flex justify-between items-center h-[38px] rounded-full bg-white w-[454px]">
@@ -16,7 +17,8 @@ const TxSummaryHeader = ({ isExpanded, handleArrowClick, amountToSwap, amountToR
                 {tokenOutLogo && <Image src={tokenOutLogo} width={20} height={20} alt={tokenOutSymbol} className="mr-2" />}
             </div>
             <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />
-            <p><span>${totalCost}</span></p>
+            <p><span>Gas is covered by Fungi</span></p>
+            {/* <p><span>${totalCost}</span></p> */}
             <div className="cursor-pointer pr-[15px]" onClick={handleArrowClick}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +51,8 @@ const TxSummaryDetails = ({ isExpanded, tool, gasCost, maxSlippage }) => {
                 </div>
                 <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
                     <span>Network Cost</span>
-                    <span>${gasCost}</span>
+                    {/* <span>${gasCost}</span> */}
+                    <span>Gas is covered by Fungi</span>
                 </div>
                 <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
                     <span>Max Slippage</span>
