@@ -10,28 +10,34 @@ export const useERC20Transfer = (
   amountIn?: BigNumber,
   recipient?: string
 ) => {
+  // State to manage the status of the transfer
   const [status, setStatus] = useState<{ disabled: boolean; text: string | null; }>({ disabled: true, text: "Enter an amount" });
 
+  // Function to handle the ERC20 or native ETH transfer
   const sendTransferUO = async (
     tokenInParam?: string,
     amountInParam?: BigNumber,
     recipientParam?: string
   ) => {
     try {
+      // Update the status to indicate that the transfer is in progress
       setStatus({
         disabled: true,
         text: "Transferring...",
       });
 
+      // Array to hold the user operations
       const userOps: UserOperation[] = [];
 
+      // Use the parameters passed to the function or fallback to the hook parameters
       const tokenToUse = tokenInParam || tokenIn;
       const amountToUse = amountInParam || amountIn;
       const recipientToUse = recipientParam || recipient;
 
+      // Ensure all necessary parameters are provided
       if (tokenToUse && amountToUse && recipientToUse) {
         if (tokenToUse !== ethers.constants.AddressZero) {
-          // ERC20 Transfer
+          // Handle ERC20 transfer
           userOps.push(
             createApproveTokensUserOp({
               tokenAddress: tokenToUse,
@@ -42,7 +48,7 @@ export const useERC20Transfer = (
           const callData = getCallDataTransfer(recipientToUse, tokenToUse, amountToUse.toString());
           userOps.push(callData);
         } else {
-          // Native ETH Transfer
+          // Handle native ETH transfer
           const targetAddress = ethers.utils.getAddress(recipientToUse) as `0x${string}`;
           userOps.push({
             target: targetAddress,
@@ -51,12 +57,14 @@ export const useERC20Transfer = (
           });
         }
 
+        // Reset the status to the default state
         setStatus({ disabled: true, text: "Enter an amount" });
         return userOps;
       } else {
         throw new Error("Missing required parameters for transfer");
       }
     } catch (error) {
+      // Handle errors and reset the status to the default state
       setStatus({ disabled: true, text: "Enter an amount" });
       console.error(error);
     }
