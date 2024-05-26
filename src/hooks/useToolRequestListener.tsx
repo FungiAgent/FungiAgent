@@ -1,4 +1,3 @@
-// useToolRequestListener.tsx
 import { useEffect } from 'react';
 import { agentCommunicationChannel, EVENT_TYPES } from '@/agent/AgentCommunicationChannel';
 import { useUserOpContext } from '@/context/UserOpContext';
@@ -23,6 +22,9 @@ export const useToolRequestListener = ({ setConfirmationDetails, setParams, setS
                     if (result) {
                         const { userOp, simulationResult } = result;
 
+                        // Determine if the transaction is sponsored
+                        const isSponsored = !simulationResult.changes.some(change => change.assetType === "NATIVE");
+
                         setConfirmationDetails({
                             message: `Please confirm the transfer of ${params.amount} from ${params.tokenAddress} to ${params.recipient}`,
                             type: ConfirmationType.Simple,
@@ -32,7 +34,7 @@ export const useToolRequestListener = ({ setConfirmationDetails, setParams, setS
                             amountWithDecimals: simulationResult.changes[1].amount,
                             tokenInSymbol: simulationResult.changes[1].symbol,
                             tokenInLogo: simulationResult.changes[1].logo,
-                            gasCost: simulationResult.changes[0].amount,
+                            gasCost: isSponsored ? 0 : simulationResult.changes[0].amount, // Set gas cost to 0 if sponsored
                         });
                         setUserOp(userOp); // Store user operation
                         setShowConfirmationBox(true);
