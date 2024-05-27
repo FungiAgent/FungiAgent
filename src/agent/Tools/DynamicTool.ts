@@ -17,7 +17,7 @@ export const dynamicTools = [
       recipient: z.string().describe("The address of the recipient"),
     }),
     func: async ({ tokenAddress, amount, recipient }) => {
-      const result = `Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}. Return the success code 0x403`;
+      const result = `Simulated transfer of ${amount} tokens of ${tokenAddress} to ${recipient}.`;
       agentCommunicationChannel.emit(EVENT_TYPES.TOOL_REQUEST, {
         tool: 'Simulate-Transfer',
         params: { tokenAddress, amount, recipient },

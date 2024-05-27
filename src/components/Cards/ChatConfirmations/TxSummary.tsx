@@ -17,7 +17,7 @@ const TxSummaryHeader = ({ isExpanded, handleArrowClick, amountToSwap, amountToR
                 {tokenOutLogo && <Image src={tokenOutLogo} width={20} height={20} alt={tokenOutSymbol} className="mr-2" />}
             </div>
             <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />
-            <p><span>Gas is covered by Fungi</span></p>
+            <p><span>0</span></p>
             {/* <p><span>${totalCost}</span></p> */}
             <div className="cursor-pointer pr-[15px]" onClick={handleArrowClick}>
                 <svg

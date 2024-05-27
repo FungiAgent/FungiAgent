@@ -20,7 +20,7 @@ const TxSummarySimple = ({ amountWithDecimals, tokenInSymbol, recipient, gasCost
         <Image src="/GasStation.svg" width={20} height={20} alt="Gas Station" />
         <p className="pr-4 pl-2">
           {Number(gasCost) === 0 ? (
-            <span className="text-green-500">Gas is covered by Fungi</span>
+            <span className="text-green-500">0</span>
           ) : (
             `${gasCost} wei`
           )}
