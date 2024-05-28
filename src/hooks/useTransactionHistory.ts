@@ -10,18 +10,20 @@ export function useTransactionHistory() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pageKey, setPageKey] = useState<string | undefined>(undefined);
 
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransactions = useCallback(async (pageKey?: string) => {
     console.log('Fetching transactions...');
     console.log('Alchemy Client:', alchemyClient);
     console.log('Smart Contract Account:', scAccount);
 
     if (alchemyClient && scAccount) {
       try {
-        const txHistory: Transaction[] = await getTransactionHistory(scAccount);
+        const { transactions: txHistory, pageKey: newPageKey } = await getTransactionHistory(scAccount, pageKey);
         console.log('Transaction history fetched:', txHistory);
         if (txHistory) {
-          setTransactions(txHistory);
+          setTransactions(prev => [...prev, ...txHistory]);
+          setPageKey(newPageKey);
           setIsLoading(false);
         }
       } catch (e) {
@@ -38,5 +40,5 @@ export function useTransactionHistory() {
     fetchTransactions();
   }, [alchemyClient, fetchTransactions]);
 
-  return { transactions, isLoading, error, fetchTransactions };
+  return { transactions, isLoading, error, fetchTransactions, pageKey };
 }

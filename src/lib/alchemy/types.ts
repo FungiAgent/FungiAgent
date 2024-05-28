@@ -5,4 +5,20 @@ export interface Transaction {
     from: string;
     to: string | null;
     status: string;
+    tokenSymbol: string;
+    operationType: string;
   }
+
+export interface TransactionDetails {
+  hash: string;
+  blockNumber: number;
+  timestamp: number;
+  from: string;
+  to: string;
+  value: string;
+  gasUsed: string;
+  gasPrice: string;
+  input: string;
+  receivedTokenSymbol: string;
+  receivedAmount: string;
+}
