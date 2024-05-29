@@ -13,7 +13,7 @@ export const getTransactionHistory = async (address: string, pageKey?: string): 
     const params: AssetTransfersParams = {
       category: [AssetTransfersCategory.ERC20],
       order: 'desc' as SortingOrder,
-      maxCount: 10,
+      maxCount: 20, // Fetch a larger number of transactions
       pageKey,
     };
 

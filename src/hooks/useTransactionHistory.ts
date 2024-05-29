@@ -22,7 +22,11 @@ export function useTransactionHistory() {
         const { transactions: txHistory, pageKey: newPageKey } = await getTransactionHistory(scAccount, pageKey);
         console.log('Transaction history fetched:', txHistory);
         if (txHistory) {
-          setTransactions(prev => [...prev, ...txHistory]);
+          setTransactions(prev => {
+            const txIds = new Set(prev.map(tx => tx.id));
+            const newTransactions = txHistory.filter(tx => !txIds.has(tx.id));
+            return [...prev, ...newTransactions];
+          });
           setPageKey(newPageKey);
           setIsLoading(false);
         }

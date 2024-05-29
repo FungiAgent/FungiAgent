@@ -1,41 +1,93 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTransactionHistory } from '@/hooks/useTransactionHistory';
 import getTransactionDetails from '@/lib/alchemy/getTransactionDetails';
-import { TransactionDetails } from '@/lib/alchemy/types';
+import { Transaction, TransactionDetails } from '@/lib/alchemy/types';
+import TransactionRow from './TransactionRow';
 
 type TransactionHistoryTableProps = {
   formatCurrency: (value: number) => string;
 };
 
+const ITEMS_PER_PAGE = 10;
+
 const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({ formatCurrency }) => {
   const { transactions, isLoading, error, fetchTransactions, pageKey } = useTransactionHistory();
   const [transactionDetails, setTransactionDetails] = useState<{ [key: string]: TransactionDetails }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadingTransactions, setLoadingTransactions] = useState<string[]>([]);
+
+  const fetchTransactionDetails = useCallback(async (tx: Transaction) => {
+    if (!transactionDetails[tx.id] && !loadingTransactions.includes(tx.id)) {
+      setLoadingTransactions(prev => [...prev, tx.id]);
+      try {
+        const details = await getTransactionDetails(tx.id);
+        setTransactionDetails(prevState => ({
+          ...prevState,
+          [tx.id]: details,
+        }));
+      } catch (e) {
+        console.error('Failed to fetch transaction details', e);
+      } finally {
+        setLoadingTransactions(prev => prev.filter(id => id !== tx.id));
+      }
+    }
+  }, [transactionDetails, loadingTransactions]);
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      const detailsMap: { [key: string]: TransactionDetails } = {};
-      for (const transaction of transactions) {
-        try {
-          const details = await getTransactionDetails(transaction.id);
-          console.log('Transaction Details:', details); // Log for debugging
-          detailsMap[transaction.id] = details;
-        } catch (e) {
-          console.error('Failed to fetch transaction details', e);
-        }
-      }
-      setTransactionDetails(detailsMap);
-    };
+    transactions.forEach(tx => fetchTransactionDetails(tx));
+  }, [transactions, fetchTransactionDetails]);
 
-    if (transactions.length > 0) {
-      fetchDetails();
-    }
-  }, [transactions]);
-
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (pageKey) {
       fetchTransactions(pageKey);
+      setCurrentPage(prevPage => prevPage + 1);
     }
-  };
+  }, [pageKey, fetchTransactions]);
+
+  const handlePreviousPage = useCallback(() => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  }, [currentPage]);
+
+  const mergedTransactions = useMemo(() => {
+    if (isLoading || error) return [];
+    return transactions.map(transaction => {
+      if (transaction.operationType === 'Swap') {
+        const receivedTx = transactions.find(tx => tx.id === transaction.id && tx.operationType === 'Received');
+        if (receivedTx) {
+          transaction.receivedAmount = receivedTx.amount;
+          transaction.receivedTokenSymbol = receivedTx.tokenSymbol;
+        }
+      }
+      return transaction;
+    });
+  }, [transactions, isLoading, error]);
+
+  const filteredTransactions = useMemo(() => {
+    if (isLoading || error) return [];
+    return mergedTransactions.filter(tx =>
+      !(tx.operationType === 'Received' && tx.from.toLowerCase() === '0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae')
+    );
+  }, [mergedTransactions, isLoading, error]);
+
+  const sortedTransactions = useMemo(() => {
+    if (isLoading || error) return [];
+    return filteredTransactions.sort((a, b) => {
+      const detailsA = transactionDetails[a.id];
+      const detailsB = transactionDetails[b.id];
+      if (detailsA && detailsB) {
+        return detailsB.timestamp - detailsA.timestamp;
+      }
+      return 0;
+    });
+  }, [filteredTransactions, transactionDetails, isLoading, error]);
+
+  const paginatedTransactions = useMemo(() => {
+    if (isLoading || error) return [];
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return sortedTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [sortedTransactions, currentPage, isLoading, error]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -45,49 +97,24 @@ const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({ forma
     return <div>Error: {error}</div>;
   }
 
-  // Separate swap transactions and received transactions
-  const swaps = transactions.filter(tx => tx.operationType === 'Swap');
-  const received = transactions.filter(tx => tx.operationType === 'Received');
-
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <div>
-        {swaps.map((transaction, index) => {
-          const details = transactionDetails[transaction.id];
-          const receivedTx = received.find(tx => tx.id === transaction.id);
-          const receivedAmount = receivedTx ? formatCurrency(receivedTx.amount ?? 0) : 'Loading...';
-          const receivedSymbol = receivedTx ? receivedTx.tokenSymbol : '';
-          const date = details ? new Date(details.timestamp * 1000).toLocaleDateString() : 'Loading...';
-          console.log('Transaction ID:', transaction.id, 'Timestamp:', details?.timestamp);
-
-          return (
-            <div key={index} className="transaction">
-              <p><strong>Date:</strong> {date}</p>
-              <p><strong>Swapped:</strong> {formatCurrency(transaction.amount ?? 0)} {transaction.tokenSymbol} for {receivedAmount} {receivedSymbol}</p>
-              <p><strong>To:</strong> {transaction.to || 'Unknown'}</p>
-              <p><strong>Hash:</strong> {transaction.id}</p>
-              <hr />
-            </div>
-          );
-        })}
-        {transactions.filter(tx => tx.operationType !== 'Swap').map((transaction, index) => {
-          const date = transactionDetails[transaction.id] ? new Date(transactionDetails[transaction.id].timestamp * 1000).toLocaleDateString() : 'Loading...';
-
-          return (
-            <div key={index} className="transaction">
-              <p><strong>Date:</strong> {date}</p>
-              <p><strong>Amount:</strong> {formatCurrency(transaction.amount ?? 0)} {transaction.tokenSymbol}</p>
-              <p><strong>To:</strong> {transaction.to || 'Unknown'}</p>
-              <p><strong>Operation Type:</strong> {transaction.operationType}</p>
-              <p><strong>Hash:</strong> {transaction.id}</p>
-              <hr />
-            </div>
-          );
-        })}
+        {paginatedTransactions.map((transaction) => (
+          <TransactionRow
+            key={transaction.id}
+            transaction={transaction}
+            details={transactionDetails[transaction.id]}
+            formatCurrency={formatCurrency}
+          />
+        ))}
       </div>
-      <div className="pagination-buttons">
-        <button onClick={handleNextPage} disabled={!pageKey}>
-          Load More
+      <div className="flex justify-between mt-4">
+        <button onClick={handlePreviousPage} disabled={currentPage === 1} className="px-4 py-2 bg-gray-200 rounded">
+          Previous
+        </button>
+        <button onClick={handleNextPage} disabled={!pageKey} className="px-4 py-2 bg-gray-200 rounded">
+          Next
         </button>
       </div>
     </div>

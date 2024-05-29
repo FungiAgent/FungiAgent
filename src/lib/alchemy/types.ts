@@ -1,13 +1,15 @@
 export interface Transaction {
-    date: string;
-    id: string;
-    amount: number | null;
-    from: string;
-    to: string | null;
-    status: string;
-    tokenSymbol: string;
-    operationType: string;
-  }
+  date: string;
+  id: string;
+  amount: number | null;
+  from: string;
+  to: string | null;
+  status: string;
+  tokenSymbol: string;
+  receivedAmount?: number | null; // Add this line
+  receivedTokenSymbol?: string; // Add this line
+  operationType: string;
+}
 
 export interface TransactionDetails {
   hash: string;

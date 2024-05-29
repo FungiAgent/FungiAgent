@@ -33,10 +33,6 @@ async function getTransactionDetails(txHash: string): Promise<TransactionDetails
     // Fetch the block details to get the timestamp
     const block = await alchemy.core.getBlock(transaction.blockNumber);
 
-    // Log the transaction details for debugging
-    console.log('Transaction:', transaction);
-    console.log('Receipt:', receipt);
-
     // Extract received token information from logs
     let receivedTokenSymbol = '';
     let receivedAmount = '';
@@ -50,6 +46,20 @@ async function getTransactionDetails(txHash: string): Promise<TransactionDetails
                 receivedAmount = log.data; // This is the amount of tokens received
             }
         }
+    });
+
+    console.log('Transaction Details:', {
+      hash: transaction.hash,
+      blockNumber: transaction.blockNumber,
+      timestamp: block.timestamp,
+      from: transaction.from,
+      to: transaction.to || "",
+      value: transaction.value.toString(),
+      gasUsed: receipt.gasUsed.toString(),
+      gasPrice: transaction.gasPrice?.toString() || "0", // Provide a fallback value
+      input: transaction.data || "", // Use data instead of input
+      receivedTokenSymbol,
+      receivedAmount,
     });
 
     return {
