@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SideModal from "@/components/Modals/SideModal";
+import SideModal from '@/components/Modals/SideModal';
 import Image from 'next/image';
 
 const Secondary = ({
@@ -19,8 +19,10 @@ const Secondary = ({
   onModalToggle,
 }) => {
   const [localIsModalOpen, setLocalIsModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('Portfolio');
 
-  const toggleModal = () => {
+  const toggleModal = (category) => {
+    setActiveCategory(category);
     setLocalIsModalOpen(!localIsModalOpen);
     onModalToggle(!localIsModalOpen);
   };
@@ -31,7 +33,7 @@ const Secondary = ({
         <div className="flex justify-between items-center text-lg font-semibold mb-4 pl-20">
           <SideModal
             isOpen={localIsModalOpen}
-            onClose={toggleModal}
+            onClose={() => toggleModal(activeCategory)}
             balance={formatCurrency(totalBalance)}
             cash={formatCurrency(totalCash)}
             tokens={tokens}
@@ -46,6 +48,7 @@ const Secondary = ({
             length={length}
             setTokenFrom={setTokenFrom}
             onModalToggle={() => {}}
+            activeCategory={activeCategory}
           >
             <h2 className="text-2xl font-bold mb-4">Modal Content</h2>
             <p className="text-gray-600">This is the content of the modal</p>
@@ -63,15 +66,22 @@ const Secondary = ({
               className="flex items-center mr-8"
               onClick={(e) => {
                 e.preventDefault();
-                toggleModal();
+                toggleModal('Portfolio');
               }}
             >
-              <Image className={"pr-1"} src={"/navbar/portfolio.svg"} alt={"portfolio"} width={20} height={20}/>
+              <Image className="pr-1" src="/navbar/portfolio.svg" alt="portfolio" width={20} height={20} />
               Portfolio
             </a>
             <br />
-            <a href="/history" className="flex items-center">
-              <Image className={"pr-1"} src={"/navbar/history.svg"} alt={"history"} width={20} height={20} />
+            <a
+              href="/history"
+              className="flex items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleModal('History');
+              }}
+            >
+              <Image className="pr-1" src="/navbar/history.svg" alt="history" width={20} height={20} />
               History
             </a>
           </p>

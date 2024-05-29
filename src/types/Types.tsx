@@ -61,3 +61,4 @@ export type tokenType = {
   priceUSD: string;
   symbol: string;
 };
+

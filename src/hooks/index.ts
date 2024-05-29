@@ -19,3 +19,4 @@ export { useTokenBalances } from './useTokenBalances';
 export { useCreateUserOp } from './useCreateUserOp';
 export { useLiFiTokenInfo } from './useLiFiTokenInfo';
 export { useTokenMarketData } from './useTokenMarketData';
+export { useTransactionHistory } from './useTransactionHistory';
