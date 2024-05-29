@@ -1,8 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import LightSpotTable from '@/components/Tables/LightSpotTable';
-// import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";  // Importing XIcon for the close button
-import Loader from "../Loader/SpinnerLoader";
-import { Categories } from "../Cards/SideModal/Categories";
+import TransactionHistoryTable from '@/components/Tables/TransactionHistoryTable';
 import Image from 'next/image';
 
 type SideModalProps = {
@@ -22,6 +20,7 @@ type SideModalProps = {
   length: number;
   setTokenFrom: (token: any) => void;
   onModalToggle: (isOpen: boolean) => void;
+  activeCategory: string;
   children: React.ReactNode;
 };
 
@@ -42,22 +41,14 @@ const SideModal: FC<SideModalProps> = ({
   length,
   setTokenFrom,
   onModalToggle,
+  activeCategory,
   children,
 }) => {
-  const [forceReload, setForceReload] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Tokens');
-
   if (!isOpen) return null;
-
-  const handleReloadTable = () => {
-    setForceReload(true);
-    forceTableReload();
-    setForceReload(false);
-  };
 
   const categoryContent = () => {
     switch (activeCategory) {
-      case 'Tokens':
+      case 'Portfolio':
         return (
           <LightSpotTable
             startIndex={startIndex}
@@ -66,9 +57,11 @@ const SideModal: FC<SideModalProps> = ({
             handlePageChange={handlePageChange}
             setTokenFrom={setTokenFrom}
             forceReload={true} // Simplified for demonstration
-            handleReloadTable={handleReloadTable}
+            handleReloadTable={forceTableReload}
           />
         );
+      case 'History':
+        return <TransactionHistoryTable formatCurrency={formatCurrency} />;
       default:
         return <div className="text-center mt-10">This feature is coming soon.</div>;
     }
@@ -87,11 +80,10 @@ const SideModal: FC<SideModalProps> = ({
   };
 
   return (
-    <div style={{...modalStyle, position: 'fixed'}}>
+    <div style={{ ...modalStyle, position: 'fixed' }}>
       <div className="h-full overflow-auto p-6">
         <div className="h-[100px]">
           <button onClick={onClose} className="absolute top-5 right-5 p-2">
-            {/* <img src="navbar/CloseSideBar.svg" className="mr-2" alt="Close" /> */}
             <Image src="/navbar/CloseSideBar.svg" alt="Close" width={12} height={12} />
           </button>
         </div>
@@ -102,17 +94,13 @@ const SideModal: FC<SideModalProps> = ({
           </div>
           <div className="flex flex-col">
             <p className="text-lg">My Cash:</p>
-
             <p className="text-lg font-semibold">{cash}</p>
           </div>
         </div>
-
-        <Categories setActiveCategory={setActiveCategory} />
-        {tokens.length > 0 ? categoryContent() : <Loader />}
+        {tokens.length > 0 ? categoryContent() : <div>Loading...</div>}
       </div>
     </div>
   );
-  
 };
 
 export default SideModal;

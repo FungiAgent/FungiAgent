@@ -223,3 +223,36 @@ input[type="number"]::-webkit-outer-spin-button {
         opacity: 1
     }
 }
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .transaction {
+    padding: 1rem;
+    background-color: #ffffff;
+  }
+  
+  .transaction p {
+    margin: 0.5rem 0;
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
+  .pagination-buttons button {
+    padding: 0.5rem 1rem;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .pagination-buttons button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
