@@ -1,14 +1,14 @@
 // useConfirmation.ts
-import { useState, useCallback } from 'react';
-import { useHandleSend } from '@/hooks/useHandleSend';
-import { useSimLiFiTx } from '@/hooks';
-import { useUserOpContext } from '@/context/UserOpContext';
-import { useUserOperations } from '@/hooks/useUserOperations';
+import { useState, useCallback } from "react";
+import { useHandleSend } from "@/hooks/useHandleSend";
+import { useSimLiFiTx } from "@/hooks";
+import { useUserOpContext } from "@/context/UserOpContext";
+import { useUserOperations } from "@/hooks/useUserOperations";
 
 export enum ConfirmationType {
-    Simple = 'Simple',
-    Batch = 'Batch',
-    Swap = 'Swap'
+    Simple = "Simple",
+    Batch = "Batch",
+    Swap = "Swap",
 }
 
 interface ConfirmationDetails {
@@ -39,7 +39,8 @@ interface ConfirmationDetails {
 }
 
 export const useConfirmation = () => {
-    const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
+    const [confirmationDetails, setConfirmationDetails] =
+        useState<ConfirmationDetails | null>(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [showConfirmationBox, setShowConfirmationBox] = useState(false);
     const { handleSend } = useHandleSend();
@@ -66,7 +67,10 @@ export const useConfirmation = () => {
                 setConfirmationDetails(null);
                 setIsConfirmed(false);
             } catch (error) {
-                console.error(`${confirmationDetails.type} transaction failed:`, error);
+                console.error(
+                    `${confirmationDetails.type} transaction failed:`,
+                    error,
+                );
                 setIsConfirmed(false);
             }
         }
@@ -78,10 +82,15 @@ export const useConfirmation = () => {
         setConfirmationDetails(null);
     }, []);
 
-    return { 
-        confirmationDetails, setConfirmationDetails, 
-        isConfirmed, setIsConfirmed, 
-        showConfirmationBox, setShowConfirmationBox, 
-        confirmAction, rejectAction, setUserOp 
+    return {
+        confirmationDetails,
+        setConfirmationDetails,
+        isConfirmed,
+        setIsConfirmed,
+        showConfirmationBox,
+        setShowConfirmationBox,
+        confirmAction,
+        rejectAction,
+        setUserOp,
     };
 };

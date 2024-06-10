@@ -1,17 +1,17 @@
 import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
+    ReactNode,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
 } from "react";
 import { MagicSigner } from "@alchemy/aa-signers/magic";
 import { AlchemyMultichainClient } from "@/lib/alchemy/AlchemyMultichainClient";
 import {
-  getProviderMultichainSetting,
-  getProviderDefaultSettings,
+    getProviderMultichainSetting,
+    getProviderDefaultSettings,
 } from "@/config/alchemyConfig";
 import { Alchemy } from "alchemy-sdk";
 import { ARBITRUM } from "@/config/chains";
@@ -19,234 +19,230 @@ import { getApiKeyChain } from "@/config/alchemyConfig";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { getViemChain } from "@/config/chains";
 import { MagicMultichainClient } from "@/lib/magic/MagicMultichainClient";
-import {  AlchemySmartAccountClient  } from "@alchemy/aa-alchemy"
+import { AlchemySmartAccountClient } from "@alchemy/aa-alchemy";
 // import { useUserOperations } from '@/hooks/useUserOperations';
 
-
-import {
-  type Address,
-  type SmartAccountSigner
-} from "@alchemy/aa-core";
+import { type Address, type SmartAccountSigner } from "@alchemy/aa-core";
 
 export type FungiGlobalContextType = {
-  alchemyClient?: Alchemy;
-  alchemyScaProvider: any | undefined;
-  scaAddress?: Address;
-  chain: number;
-  switchNetwork: (number) => void;
-  isConnected: boolean;
-  isLoading: boolean;
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
+    alchemyClient?: Alchemy;
+    alchemyScaProvider: any | undefined;
+    scaAddress?: Address;
+    chain: number;
+    switchNetwork: (number) => void;
+    isConnected: boolean;
+    isLoading: boolean;
+    login: () => Promise<void>;
+    logout: () => Promise<void>;
 };
 
 export const FungiGlobalContext = createContext({} as FungiGlobalContextType);
 
 export function useGlobalContext() {
-  return useContext(FungiGlobalContext) as FungiGlobalContextType;
+    return useContext(FungiGlobalContext) as FungiGlobalContextType;
 }
 
 // FungiGlobalContextProvider.tsx
 export function FungiGlobalContextProvider({
-  children,
+    children,
 }: {
-  children: ReactNode;
+    children: ReactNode;
 }) {
-  const [alchemyMultichainClient, setAlchemyMultichainClient] =
-    useState<AlchemyMultichainClient>();
-  const [magicMultichainClient, setMagicMultichainClient] =
-    useState<MagicMultichainClient>();
+    const [alchemyMultichainClient, setAlchemyMultichainClient] =
+        useState<AlchemyMultichainClient>();
+    const [magicMultichainClient, setMagicMultichainClient] =
+        useState<MagicMultichainClient>();
 
-  const [alchemyClient, setAlchemyClient] = useState<Alchemy>();
-  const [alchemyScaProvider, setAlchemyScaProvider] =
-    useState<AlchemySmartAccountClient>();
-  const [magicClient, setMagicClient] =
-    useState<Promise<MagicSigner | undefined>>();
+    const [alchemyClient, setAlchemyClient] = useState<Alchemy>();
+    const [alchemyScaProvider, setAlchemyScaProvider] =
+        useState<AlchemySmartAccountClient>();
+    const [magicClient, setMagicClient] =
+        useState<Promise<MagicSigner | undefined>>();
 
-  const [scaAddress, setScaAddress] = useState<Address>();
-  const [chain, setChain] = useState(ARBITRUM);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [scaAddress, setScaAddress] = useState<Address>();
+    const [chain, setChain] = useState(ARBITRUM);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // BatchContext
-  // const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
-  // const { sendUserOperations } = useUserOperations();
+    // BatchContext
+    // const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
+    // const { sendUserOperations } = useUserOperations();
 
-  // const addOperationToBatch = (operation: any) => {
-  //     setBatchedOperations(prev => [...prev, operation]);
-  // };
+    // const addOperationToBatch = (operation: any) => {
+    //     setBatchedOperations(prev => [...prev, operation]);
+    // };
 
-  // const executeBatchedOperations = async (): Promise<string | undefined> => {
-  //     if (batchedOperations.length > 0) {
-  //         const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
-  //         setBatchedOperations([]);
-  //         return txHash;
-  //     }
-  //     return undefined;
-  // };
+    // const executeBatchedOperations = async (): Promise<string | undefined> => {
+    //     if (batchedOperations.length > 0) {
+    //         const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
+    //         setBatchedOperations([]);
+    //         return txHash;
+    //     }
+    //     return undefined;
+    // };
 
-  useEffect(() => {
-
-    const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
-    const overridesAlchemySettings = getProviderMultichainSetting();
-    const multichainProv = new AlchemyMultichainClient(
-      defaultAlchemySettings,
-      overridesAlchemySettings
-    );
-    setAlchemyMultichainClient(multichainProv);
-
-    setAlchemyClient(
-      multichainProv?.forNetwork(chain) ||
-      multichainProv?.forNetwork(ARBITRUM)
-    );
-
-    const magicMultichain = new MagicMultichainClient();
-    setMagicMultichainClient(magicMultichain);
-    setMagicClient(magicMultichain.forNetwork(ARBITRUM));
-  }, []);
-
-  useEffect(() => {
-    console.log("FungiGlobalContext: change chain")
-    if (chain) {
-      if (alchemyMultichainClient) {
-        setAlchemyClient(
-          alchemyMultichainClient?.forNetwork(chain) ||
-            alchemyMultichainClient?.forNetwork(ARBITRUM)
+    useEffect(() => {
+        const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
+        const overridesAlchemySettings = getProviderMultichainSetting();
+        const multichainProv = new AlchemyMultichainClient(
+            defaultAlchemySettings,
+            overridesAlchemySettings,
         );
-        /*setAlchemyScaProvider(
+        setAlchemyMultichainClient(multichainProv);
+
+        setAlchemyClient(
+            multichainProv?.forNetwork(chain) ||
+                multichainProv?.forNetwork(ARBITRUM),
+        );
+
+        const magicMultichain = new MagicMultichainClient();
+        setMagicMultichainClient(magicMultichain);
+        setMagicClient(magicMultichain.forNetwork(ARBITRUM));
+    }, []);
+
+    useEffect(() => {
+        console.log("FungiGlobalContext: change chain");
+        if (chain) {
+            if (alchemyMultichainClient) {
+                setAlchemyClient(
+                    alchemyMultichainClient?.forNetwork(chain) ||
+                        alchemyMultichainClient?.forNetwork(ARBITRUM),
+                );
+                /*setAlchemyScaProvider(
           alchemyMultichainClient?.forNetworkScProvider(chain)
         );*/
-      }
+            }
 
-      if (magicMultichainClient) {
-        const magicForNetwork = magicMultichainClient.forNetwork(chain);
-        if (magicForNetwork) {
-          setMagicClient(magicForNetwork);
-          (async ()=> {
-           await login()
-          })()
+            if (magicMultichainClient) {
+                const magicForNetwork = magicMultichainClient.forNetwork(chain);
+                if (magicForNetwork) {
+                    setMagicClient(magicForNetwork);
+                    (async () => {
+                        await login();
+                    })();
+                }
+            }
         }
-      }
-    }
-  }, [chain]);
+    }, [chain]);
 
-  useEffect(() => {
-    (async () => {
-      if(alchemyScaProvider){
-        console.log(alchemyScaProvider.account?.address)
-        if (alchemyScaProvider) {
-          setScaAddress(alchemyScaProvider.account?.address);
+    useEffect(() => {
+        (async () => {
+            if (alchemyScaProvider) {
+                console.log(alchemyScaProvider.account?.address);
+                if (alchemyScaProvider) {
+                    setScaAddress(alchemyScaProvider.account?.address);
+                }
+            }
+        })();
+    }, [alchemyScaProvider]);
+
+    const connectProviderToAccount = useCallback(
+        async (signer: SmartAccountSigner) => {
+            console.log("FungiGlobalContext: connectProviderToAccount");
+
+            const connectedProvider = await createModularAccountAlchemyClient({
+                apiKey: getApiKeyChain(chain),
+                chain: getViemChain(chain),
+                signer,
+            });
+
+            console.log(connectedProvider);
+            setAlchemyScaProvider(connectedProvider);
+
+            return connectedProvider;
+        },
+        [alchemyScaProvider, chain],
+    );
+
+    //TODO ya no sirve?
+    const disconnectProviderFromAccount = useCallback(() => {
+        if (!alchemyScaProvider) {
+            return;
         }
-      }
-    })();
-  }, [alchemyScaProvider]);
+        const disconnectedProvider = alchemyScaProvider;
 
-  const connectProviderToAccount = useCallback(
-    async (signer: SmartAccountSigner) => {
-      console.log("FungiGlobalContext: connectProviderToAccount")
+        setAlchemyScaProvider(disconnectedProvider);
+        return disconnectedProvider;
+    }, [alchemyScaProvider]);
 
-      const connectedProvider = await createModularAccountAlchemyClient({
-        apiKey: getApiKeyChain(chain),
-        chain: getViemChain(chain),
-        signer,
-      });
+    const login = useCallback(async () => {
+        console.log("FungiGlobalContext: login");
+        const signer = await magicClient;
 
-      console.log(connectedProvider)
-      setAlchemyScaProvider(connectedProvider);
-      
-      return connectedProvider;
-    },
-    [alchemyScaProvider, chain]
-  );
+        if (signer == null) {
+            throw new Error("Magic not initialized");
+        }
 
-  //TODO ya no sirve?
-  const disconnectProviderFromAccount = useCallback(() => {
-    if (!alchemyScaProvider) {
-      return;
-    }
-    const disconnectedProvider = alchemyScaProvider;
+        await signer.authenticate({
+            authenticate: async () => {
+                await signer.inner.wallet.connectWithUI();
+            },
+        });
 
-    setAlchemyScaProvider(disconnectedProvider);
-    return disconnectedProvider;
-  }, [alchemyScaProvider]);
+        await connectProviderToAccount(signer as SmartAccountSigner);
 
+        let signerAddress;
+        (async () => {
+            signerAddress = await signer.getAddress();
+        })();
 
-  const login = useCallback(async () => {
-    console.log("FungiGlobalContext: login")
-    const signer = await magicClient;
+        setScaAddress(
+            alchemyScaProvider?.getAddress({ account: signerAddress }),
+        );
+        setIsConnected(true);
+    }, [magicClient, connectProviderToAccount, alchemyScaProvider]);
 
-    if (signer == null) {
-      throw new Error("Magic not initialized");
-    }
+    const logout = useCallback(async () => {
+        const signer = await magicClient;
 
-    await signer.authenticate({
-      authenticate: async () => {
-        await signer.inner.wallet.connectWithUI();
-      },
-    });
+        if (!signer) {
+            return;
+        }
 
-    await connectProviderToAccount(signer as SmartAccountSigner);
+        if (!(await signer.inner.user.logout())) {
+            throw new Error("Magic logout failed");
+        }
 
-    let signerAddress
-    (async ()=>{
-      signerAddress = await signer.getAddress();
-    })()
+        setIsConnected(false);
+        disconnectProviderFromAccount();
+        setScaAddress(undefined);
+    }, [magicClient, disconnectProviderFromAccount]);
 
-    setScaAddress(alchemyScaProvider?.getAddress({account: signerAddress}));
-    setIsConnected(true);
-  }, [magicClient, connectProviderToAccount, alchemyScaProvider]);
+    const switchNetwork = useCallback((chainId: number) => {
+        setChain(chainId);
+    }, []);
 
-  const logout = useCallback(async () => {
-    const signer = await magicClient;
+    const state: FungiGlobalContextType = useMemo(() => {
+        return {
+            alchemyClient,
+            alchemyScaProvider,
+            scaAddress,
+            chain,
+            switchNetwork,
+            isLoading,
+            isConnected,
+            login,
+            logout,
+            // batchedOperations,
+            // addOperationToBatch,
+        };
+    }, [
+        alchemyClient,
+        scaAddress,
+        switchNetwork,
+        login,
+        alchemyScaProvider,
+        chain,
+        isLoading,
+        isConnected,
+        logout,
+        // batchedOperations,
+        // addOperationToBatch,
+    ]);
 
-    if (!signer) {
-      return;
-    }
-
-    if (!(await signer.inner.user.logout())) {
-      throw new Error("Magic logout failed");
-    }
-
-    setIsConnected(false);
-    disconnectProviderFromAccount();
-    setScaAddress(undefined);
-  }, [magicClient, disconnectProviderFromAccount]);
-
-  const switchNetwork = useCallback((chainId: number) => {
-    setChain(chainId);
-  }, []);
-
-  const state: FungiGlobalContextType = useMemo(() => {
-    return {
-      alchemyClient,
-      alchemyScaProvider,
-      scaAddress,
-      chain,
-      switchNetwork,
-      isLoading,
-      isConnected,
-      login,
-      logout,
-      // batchedOperations,
-      // addOperationToBatch,
-    };
-  }, [
-    alchemyClient,
-    scaAddress,
-    switchNetwork,
-    login,
-    alchemyScaProvider,
-    chain,
-    isLoading,
-    isConnected,
-    logout,
-    // batchedOperations,
-    // addOperationToBatch,
-  ]);
-
-  return (
-    <FungiGlobalContext.Provider value={state}>
-      {children}
-    </FungiGlobalContext.Provider>
-  );
+    return (
+        <FungiGlobalContext.Provider value={state}>
+            {children}
+        </FungiGlobalContext.Provider>
+    );
 }

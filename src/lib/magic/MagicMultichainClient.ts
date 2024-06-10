@@ -14,16 +14,18 @@ export type MagicSDKParams = {
 };
 
 export class MagicMultichainClient {
+    private readonly instances: Map<number, Promise<MagicSigner | undefined>> =
+        new Map();
 
-    private readonly instances: Map<number, Promise<MagicSigner | undefined>> = new Map();
-
-    constructor() { }
+    constructor() {}
 
     forNetwork(chainId: number): Promise<MagicSigner | undefined> {
         return this.loadInstance(chainId);
     }
 
-    private async loadInstance(chainId: number): Promise<MagicSigner | undefined> {
+    private async loadInstance(
+        chainId: number,
+    ): Promise<MagicSigner | undefined> {
         if (!this.instances.has(chainId)) {
             const newMagic = createMagicSigner(chainId);
             this.instances.set(chainId, newMagic);

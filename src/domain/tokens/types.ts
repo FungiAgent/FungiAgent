@@ -11,19 +11,18 @@ export type TokenInfo = {
     logoURI: string;
     priceUSD: string;
     balance?: BigNumber;
-}
+};
 
 export type MarketData = {
     price: number;
     marketCap: number;
     volumen24: number;
-}
+};
 
 export type TokenData = {
     token: TokenInfo;
     tokenData: MarketData | undefined;
-}
-
+};
 
 //Rebalance
 export interface RebalanceSwap {

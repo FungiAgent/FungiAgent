@@ -17,49 +17,53 @@ import { getTokenBalancesAlchemy } from "@/lib/alchemy/alchemyCalls";
  * @returns {Promise<TokenInfo[] | undefined>} A Promise that resolves to an array of TokenInfo objects representing token balances for the specified address, or undefined if the balance data is unavailable.
  */
 export async function getTokenBalances(
-  alchemyClient: Alchemy | undefined,
-  chainId: number | undefined,
-  address: string
+    alchemyClient: Alchemy | undefined,
+    chainId: number | undefined,
+    address: string,
 ): Promise<TokenInfo[] | undefined> {
-  if (!alchemyClient || !chainId! || !address) {
-    return;
-  }
+    if (!alchemyClient || !chainId! || !address) {
+        return;
+    }
 
-  const tokenBalanceAlchemy = await getTokenBalancesAlchemy(
-    alchemyClient,
-    address
-  );
+    const tokenBalanceAlchemy = await getTokenBalancesAlchemy(
+        alchemyClient,
+        address,
+    );
 
-  if (!tokenBalanceAlchemy) {
-    return;
-  }
+    if (!tokenBalanceAlchemy) {
+        return;
+    }
 
-  return await convertBalanceToTokenInfo(chainId, tokenBalanceAlchemy);
+    return await convertBalanceToTokenInfo(chainId, tokenBalanceAlchemy);
 }
 
 const convertBalanceToTokenInfo = async (
-  chainId: number,
-  tokensBalance: TokenBalance[]
+    chainId: number,
+    tokensBalance: TokenBalance[],
 ): Promise<TokenInfo[]> => {
-  const tokens = await getLifiTokens(chainId);
+    const tokens = await getLifiTokens(chainId);
 
-  const filteredTokensWithBalance: TokenInfo[] = tokens
-    .filter((token) =>
-      tokensBalance.some(
-        (tb) => tb.contractAddress.toLowerCase() === token.address.toLowerCase()
-      )
-    )
-    .map((token) => {
-      const balanceData = tokensBalance.find(
-        (tb) => tb.contractAddress.toLowerCase() === token.address.toLowerCase()
-      );
-      return {
-        ...token,
-        balance: balanceData
-          ? BigNumber.from(balanceData.tokenBalance)
-          : BigNumber.from(0),
-      };
-    });
+    const filteredTokensWithBalance: TokenInfo[] = tokens
+        .filter((token) =>
+            tokensBalance.some(
+                (tb) =>
+                    tb.contractAddress.toLowerCase() ===
+                    token.address.toLowerCase(),
+            ),
+        )
+        .map((token) => {
+            const balanceData = tokensBalance.find(
+                (tb) =>
+                    tb.contractAddress.toLowerCase() ===
+                    token.address.toLowerCase(),
+            );
+            return {
+                ...token,
+                balance: balanceData
+                    ? BigNumber.from(balanceData.tokenBalance)
+                    : BigNumber.from(0),
+            };
+        });
 
-  return filteredTokensWithBalance;
+    return filteredTokensWithBalance;
 };

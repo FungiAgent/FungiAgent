@@ -1,10 +1,17 @@
-import React from 'react';
-import { ConfirmationType } from '@/hooks/useConfirmation';
-import ConfirmationBoxSimple from '@/components/Cards/ChatConfirmations/ConfirmationBoxSimple';
-import ConfirmationBoxBatch from '@/components/Cards/ChatConfirmations/ConfirmationBoxBatch';
-import ConfirmationBoxSwap from '@/components/Cards/ChatConfirmations/ConfirmationBoxSwap';
+import React from "react";
+import { ConfirmationType } from "@/hooks/useConfirmation";
+import ConfirmationBoxSimple from "@/components/Cards/ChatConfirmations/ConfirmationBoxSimple";
+import ConfirmationBoxBatch from "@/components/Cards/ChatConfirmations/ConfirmationBoxBatch";
+import ConfirmationBoxSwap from "@/components/Cards/ChatConfirmations/ConfirmationBoxSwap";
 
-export const ConfirmationManager = ({ confirmationDetails, confirmAction, rejectAction, showConfirmationBox, isConfirmed, setIsConfirmed }) => {
+export const ConfirmationManager = ({
+    confirmationDetails,
+    confirmAction,
+    rejectAction,
+    showConfirmationBox,
+    isConfirmed,
+    setIsConfirmed,
+}) => {
     if (!confirmationDetails || !showConfirmationBox) {
         return null;
     }
@@ -17,14 +24,16 @@ export const ConfirmationManager = ({ confirmationDetails, confirmAction, reject
                         confirmAction={confirmAction}
                         rejectAction={rejectAction}
                         isConfirmed={isConfirmed}
-                        amountWithDecimals={confirmationDetails.amountWithDecimals}
+                        amountWithDecimals={
+                            confirmationDetails.amountWithDecimals
+                        }
                         tokenInSymbol={confirmationDetails.tokenInSymbol}
                         recipient={confirmationDetails.recipient}
                         gasCost={confirmationDetails.gasCost}
                         tokenInLogo={confirmationDetails.tokenInLogo}
                     />
                 );
-                
+
             case ConfirmationType.Batch:
                 return (
                     <ConfirmationBoxBatch

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ChatMessageHistory } from 'langchain/stores/message/in_memory';
-import { BaseMessage } from '@langchain/core/messages';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { ChatMessageHistory } from "langchain/stores/message/in_memory";
+import { BaseMessage } from "@langchain/core/messages";
 
 // Define the context shape
 interface ChatHistoryContextType {
@@ -16,7 +16,9 @@ const ChatHistoryContext = createContext<ChatHistoryContextType | null>(null);
 export const useChatHistory = () => {
     const context = useContext(ChatHistoryContext);
     if (!context) {
-        throw new Error('useChatHistory must be used within a ChatHistoryProvider');
+        throw new Error(
+            "useChatHistory must be used within a ChatHistoryProvider",
+        );
     }
     return context;
 };
@@ -25,13 +27,19 @@ interface ChatHistoryProviderProps {
     children: ReactNode;
 }
 
-export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({ children }) => {
-    const [chatHistory, setChatHistory] = useState<ChatMessageHistory>(new ChatMessageHistory());
+export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({
+    children,
+}) => {
+    const [chatHistory, setChatHistory] = useState<ChatMessageHistory>(
+        new ChatMessageHistory(),
+    );
 
     const addMessage = async (message: BaseMessage) => {
         await chatHistory.addMessage(message);
         // Trigger re-render by setting a new instance of the chat history
-        setChatHistory(new ChatMessageHistory([...await chatHistory.getMessages()]));
+        setChatHistory(
+            new ChatMessageHistory([...(await chatHistory.getMessages())]),
+        );
     };
 
     const clearHistory = async () => {
@@ -44,7 +52,9 @@ export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({ childr
     };
 
     return (
-        <ChatHistoryContext.Provider value={{ addMessage, clearHistory, getHistory, chatHistory }}>
+        <ChatHistoryContext.Provider
+            value={{ addMessage, clearHistory, getHistory, chatHistory }}
+        >
             {children}
         </ChatHistoryContext.Provider>
     );

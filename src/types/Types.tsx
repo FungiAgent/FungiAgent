@@ -1,64 +1,63 @@
 export type navigationType = {
-  imageActive: string;
-  imageDesactive: string;
-  name: string;
-  href: string;
+    imageActive: string;
+    imageDesactive: string;
+    name: string;
+    href: string;
 };
 
 export type integrationType = {
-  protocolImage: string;
-  title: string;
-  description: string;
-  networks: string[];
-  status: boolean;
+    protocolImage: string;
+    title: string;
+    description: string;
+    networks: string[];
+    status: boolean;
 };
 
 export type homeDataType = {
-  title: string;
-  amount: number;
-  imageHeight: number;
-  imageWidth: number;
-  imageSrc: string;
+    title: string;
+    amount: number;
+    imageHeight: number;
+    imageWidth: number;
+    imageSrc: string;
 };
 
 export type positionType = {
-  type: string;
-  number: number;
-  totalValue: number;
-  unPnL: number;
+    type: string;
+    number: number;
+    totalValue: number;
+    unPnL: number;
 };
 
 export type NetworkType = {
-  name: string;
-  id: number;
-  image: string;
-  symbol: string;
+    name: string;
+    id: number;
+    image: string;
+    symbol: string;
 };
 
 export type assetType = {
-  name: string;
-  address: string;
-  symbol: string;
-  coingeckoApi: string;
-  image: string;
-  price?: number;
-  marketCap?: number;
-  volumen24?: number;
+    name: string;
+    address: string;
+    symbol: string;
+    coingeckoApi: string;
+    image: string;
+    price?: number;
+    marketCap?: number;
+    volumen24?: number;
 };
 
 export type memberType = {
-  address: string;
-  image: string;
+    address: string;
+    image: string;
 };
 
 export type tokenType = {
-  address: string;
-  chainId: number;
-  coinKey: string;
-  decimals: number;
-  logoURI?: string;
-  name: string;
-  priceUSD: string;
-  symbol: string;
+    address: string;
+    chainId: number;
+    coinKey: string;
+    decimals: number;
+    logoURI?: string;
+    name: string;
+    priceUSD: string;
+    symbol: string;
 };
-

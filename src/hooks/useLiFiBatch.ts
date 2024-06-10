@@ -2,12 +2,12 @@ import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Hex } from "viem";
 import { createApproveTokensUserOp } from "@/lib/userOperations/getApproveUserOp";
 import { BigNumber } from "ethers";
-import { useNotification } from '@/context/NotificationContextProvider';
+import { useNotification } from "@/context/NotificationContextProvider";
 import axios from "axios";
 import { getChainIdLifi } from "@/lib/lifi/getChainIdLifi";
 import { useUserOperations } from "@/hooks/useUserOperations";
-import { useChatHistory } from '@/context/ChatHistoryContext';
-import { SystemMessage } from '@langchain/core/messages';
+import { useChatHistory } from "@/context/ChatHistoryContext";
+import { SystemMessage } from "@langchain/core/messages";
 import { add } from "lodash";
 
 export const useLiFiBatch = () => {
@@ -18,7 +18,9 @@ export const useLiFiBatch = () => {
     // const { addOperationToBatch, batchedOperations } = useGlobalContext();
 
     const getQuote = async (params) => {
-        const response = await axios.get("https://li.quest/v1/quote", { params });
+        const response = await axios.get("https://li.quest/v1/quote", {
+            params,
+        });
         return response.data;
     };
 
@@ -48,7 +50,7 @@ export const useLiFiBatch = () => {
 
     const addToBatch = useMemo(() => {
         const addOperationToBatch = (operation: any) => {
-            setBatchedOperations(prev => [...prev, operation]);
+            setBatchedOperations((prev) => [...prev, operation]);
         };
 
         const handleBatchUserOp = async (params: any) => {
@@ -63,7 +65,14 @@ export const useLiFiBatch = () => {
                 slippage,
             } = params;
 
-            if (!fromChainId || !fromAmount || !fromToken || !fromAddress || !toAddress || !slippage) {
+            if (
+                !fromChainId ||
+                !fromAmount ||
+                !fromToken ||
+                !fromAddress ||
+                !toAddress ||
+                !slippage
+            ) {
                 showNotification({
                     message: "Error sending tokens",
                     type: "error",
@@ -90,18 +99,20 @@ export const useLiFiBatch = () => {
                                 slippage,
                                 order,
                             });
-                        })
+                        }),
                     );
-                    quote = responses.find((response) => response.estimate !== null);
+                    quote = responses.find(
+                        (response) => response.estimate !== null,
+                    );
                     showNotification({
                         message: "Quote received!",
                         type: "success",
-                      });
+                    });
                 } catch (error: any) {
                     showNotification({
                         message: error.message,
                         type: "error",
-                      });
+                    });
                     return;
                 }
 
@@ -120,34 +131,45 @@ export const useLiFiBatch = () => {
                         data: quote.transactionRequest.data,
                     };
 
-                    await addMessage(new SystemMessage(`Adding batched operations for ${amount} tokens of ${tokenAddress} to ${toAddress}`));
+                    await addMessage(
+                        new SystemMessage(
+                            `Adding batched operations for ${amount} tokens of ${tokenAddress} to ${toAddress}`,
+                        ),
+                    );
 
                     addOperationToBatch(callDataApprove);
                     addOperationToBatch(callDataSwap);
                     showNotification({
                         message: "Tx added to batch!",
                         type: "success",
-                      });
+                    });
 
-                    console.log('Call data approve', callDataApprove);
+                    console.log("Call data approve", callDataApprove);
                     console.log("Batched operations", batchedOperations);
                 }
             } catch (error: any) {
                 showNotification({
                     message: error.message,
                     type: "error",
-                  });
+                });
                 console.error("Error sending batch", error);
-                await addMessage(new SystemMessage(`Error sending batch: ${error.message}`));
+                await addMessage(
+                    new SystemMessage(`Error sending batch: ${error.message}`),
+                );
             }
         };
 
-        return handleBatchUserOp;  
-    }, [showNotification, batchedOperations, setBatchedOperations, sendUserOperations]);
+        return handleBatchUserOp;
+    }, [
+        showNotification,
+        batchedOperations,
+        setBatchedOperations,
+        sendUserOperations,
+    ]);
 
     useEffect(() => {
         console.log("Batched operations:", batchedOperations);
     }, [batchedOperations]);
 
     return { addToBatch, batchedOperations, executeBatchOperations };
-}
+};
