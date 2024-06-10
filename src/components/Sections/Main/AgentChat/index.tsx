@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import PageContainer from '@/components/Container/PageContainer';
-import { useTokensInfo } from '@/hooks/useTokensInfo';
-import { generateQueryFromPortfolio } from '@/utils/generateQueryFromPortfolio';
+import React, { useState, useEffect } from "react";
+import PageContainer from "@/components/Container/PageContainer";
+import { useTokensInfo } from "@/hooks/useTokensInfo";
+import { generateQueryFromPortfolio } from "@/utils/generateQueryFromPortfolio";
 import useScAccountPositions from "@/domain/position/useScAccountPositions";
 import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
 import Secondary from "./sidebar";
 
 import useWallet from "@/hooks/useWallet";
-import { useMind } from '@/hooks';
-import { TokenInfo } from '@/domain/tokens/types';
-import { useChatHistory } from '@/context/ChatHistoryContext';
-import ChatDisplay from '@/components/ChatDisplay';
-import { BaseMessage } from '@langchain/core/messages';
-import  { UserInput }   from '@/components/TextInputs/UserInput';
-import { useConfirmation } from '@/hooks/useConfirmation';
+import { useMind } from "@/hooks";
+import { TokenInfo } from "@/domain/tokens/types";
+import { useChatHistory } from "@/context/ChatHistoryContext";
+import ChatDisplay from "@/components/ChatDisplay";
+import { BaseMessage } from "@langchain/core/messages";
+import { UserInput } from "@/components/TextInputs/UserInput";
+import { useConfirmation } from "@/hooks/useConfirmation";
 
 import dotenv from "dotenv";
-import { ConfirmationManager } from '@/components/ConfirmationManager/ConfirmationManager';
-import { useToolRequestListener } from '@/hooks/useToolRequestListener';
+import { ConfirmationManager } from "@/components/ConfirmationManager/ConfirmationManager";
+import { useToolRequestListener } from "@/hooks/useToolRequestListener";
 
 dotenv.config();
 
@@ -25,9 +25,13 @@ const AgentChat = () => {
     const { processChatMessage } = useMind();
     const { getHistory } = useChatHistory();
     const [chatHistory, setChatHistory] = useState<BaseMessage[]>([]);
-    const [tokenAddress, setTokenAddress] = useState<string>("0xaf88d065e77c8cc2239327c5edb3a432268e5831");
+    const [tokenAddress, setTokenAddress] = useState<string>(
+        "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+    );
     const [amount, setAmount] = useState<string>("1000000");
-    const [recipient, setRecipient] = useState<string>("0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD");
+    const [recipient, setRecipient] = useState<string>(
+        "0x141571912eC34F9bE50a6b8DC805e71Df70fAdAD",
+    );
     const { tokens } = useTokensInfo();
     const [query, setQuery] = useState<string>("");
     const [agentResponse, setAgentResponse] = useState<string>("");
@@ -42,14 +46,22 @@ const AgentChat = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { scAccount } = useWallet();
     const {
-        confirmationDetails, setConfirmationDetails, 
-        isConfirmed, setIsConfirmed, 
-        showConfirmationBox, setShowConfirmationBox, 
-        confirmAction, rejectAction
+        confirmationDetails,
+        setConfirmationDetails,
+        isConfirmed,
+        setIsConfirmed,
+        showConfirmationBox,
+        setShowConfirmationBox,
+        confirmAction,
+        rejectAction,
     } = useConfirmation();
 
-    useToolRequestListener({ setConfirmationDetails, setParams: null, setShowConfirmationBox });
-    
+    useToolRequestListener({
+        setConfirmationDetails,
+        setParams: null,
+        setShowConfirmationBox,
+    });
+
     const getCurrentDate = () => {
         return new Date().toISOString();
     };
@@ -63,7 +75,12 @@ const AgentChat = () => {
 
             try {
                 // Call Mind's processChatMessage and await its response
-                const response = await processChatMessage(query, date, portfolio, scaAddress);
+                const response = await processChatMessage(
+                    query,
+                    date,
+                    portfolio,
+                    scaAddress,
+                );
                 // Directly set the response as the agent's response
                 setAgentResponse(response);
             } catch (error) {
@@ -76,7 +93,10 @@ const AgentChat = () => {
     };
 
     const formatCurrency = (value: number | bigint) => {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+        }).format(value);
     };
 
     useEffect(() => {
@@ -109,11 +129,11 @@ const AgentChat = () => {
 
     return (
         <main>
-          <PageContainer
-            main={
-                <div className="flex flex-col items-center justify-end pb-0 p-4 rounded-lg shadow-sm">
-                    <ChatDisplay chatHistory={chatHistory} />
-                    <ConfirmationManager
+            <PageContainer
+                main={
+                    <div className="flex flex-col items-center justify-end pb-0 p-4 rounded-lg shadow-sm">
+                        <ChatDisplay chatHistory={chatHistory} />
+                        <ConfirmationManager
                             confirmationDetails={confirmationDetails}
                             confirmAction={confirmAction}
                             isConfirmed={isConfirmed}
@@ -121,33 +141,33 @@ const AgentChat = () => {
                             rejectAction={rejectAction}
                             showConfirmationBox={showConfirmationBox}
                         />
-                    <UserInput onSubmit={handleQuerySubmit} />
-                </div>
-            }
-            secondary={
-              <Secondary
-                totalBalance={totalBalance}
-                totalCash={totalCash}
-                tokens={tokens}
-                formatCurrency={formatCurrency}
-                startIndex={startIndex}
-                endIndex={endIndex}
-                getLength={getLength}
-                handlePageChange={handlePageChange}
-                setTokenFrom={setTokenFrom}
-                forceTableReload={forceTableReload}
-                currentPage={currentPage}
-                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-                length={length}
-                onModalToggle={setIsModalOpen}
-              />
-            }
-            page="AI Agent Tester"
-            keepWorkingMessage={null}
-            isModalOpen={isModalOpen}
-          />
+                        <UserInput onSubmit={handleQuerySubmit} />
+                    </div>
+                }
+                secondary={
+                    <Secondary
+                        totalBalance={totalBalance}
+                        totalCash={totalCash}
+                        tokens={tokens}
+                        formatCurrency={formatCurrency}
+                        startIndex={startIndex}
+                        endIndex={endIndex}
+                        getLength={getLength}
+                        handlePageChange={handlePageChange}
+                        setTokenFrom={setTokenFrom}
+                        forceTableReload={forceTableReload}
+                        currentPage={currentPage}
+                        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                        length={length}
+                        onModalToggle={setIsModalOpen}
+                    />
+                }
+                page="AI Agent Tester"
+                keepWorkingMessage={null}
+                isModalOpen={isModalOpen}
+            />
         </main>
-      );
+    );
 };
 
 export default AgentChat;

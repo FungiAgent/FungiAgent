@@ -2,116 +2,116 @@
 
 /* Adjustments for the avatar and name alignment */
 .avatarNameRow {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .avatarAndNameContainer {
-  width: 100%; /* Takes full width of the message container */
+    width: 100%; /* Takes full width of the message container */
 }
 
 .message {
-  display: flex;
-  flex-direction: column; /* Stack avatar/name row and message content vertically */
-  align-items: flex-start; /* Align items to the start of the flex container */
-  margin-bottom: 16px;
-  max-width: 100%;
-  word-break: break-word;
+    display: flex;
+    flex-direction: column; /* Stack avatar/name row and message content vertically */
+    align-items: flex-start; /* Align items to the start of the flex container */
+    margin-bottom: 16px;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .messageContentContainer {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
 }
 
 .chatContainer {
-  border-radius: 8px;
-  padding: 16px;
-  min-height: 56vh;
-  max-height: 56vh;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 56vh;
+    max-height: 56vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
 }
 
 .chatContainer.scrolling {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
 
 .messagesWrapper {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
 }
 
 .chatDisplay {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
 }
 
 .messageContentContainer {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 12px;
 }
 
 .messageContent {
-  max-width: 100%;
-  word-break: break-word;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .avatarContainer {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .message {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  max-width: 100%;
-  word-break: break-word;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .messageContentContainer {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  border-radius: 12px;
-  max-width: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 12px;
+    max-width: calc(100% - 50px);
 }
 
 .message:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .humanMessage,
 .aiMessage {
-  color: #1a1a1a;
+    color: #1a1a1a;
 }
 
 .name {
-  margin-left: 4px;
-  font-size: 0.9em;
-  color: #555;
+    margin-left: 4px;
+    font-size: 0.9em;
+    color: #555;
 }
 
 .messageContent h1,
@@ -120,66 +120,66 @@
 .messageContent h4,
 .messageContent h5,
 .messageContent h6 {
-  color: #333;
-  font-weight: bold;
-  margin-top: 8px;
-  margin-bottom: 8px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 .messageContent h6 {
-  font-size: 1em;
+    font-size: 1em;
 }
 
 .messageContent p {
-  margin: 4px 0;
+    margin: 4px 0;
 }
 
 .messageContent ul,
 .messageContent ol {
-  padding-left: 20px;
-  margin: 4px 0;
+    padding-left: 20px;
+    margin: 4px 0;
 }
 
 .messageContent li {
-  margin-bottom: 2px;
+    margin-bottom: 2px;
 }
 
 .messageContent strong {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .messageContent em {
-  font-style: italic;
+    font-style: italic;
 }
 
 .messageContent blockquote {
-  border-left: 3px solid #ccc;
-  padding-left: 10px;
-  margin-left: 0;
-  color: #666;
+    border-left: 3px solid #ccc;
+    padding-left: 10px;
+    margin-left: 0;
+    color: #666;
 }
 
 .messageContent img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
 }
 
 /* Media queries for mobile devices */
 @media (max-width: 767px) {
-  .chatContainer {
-    min-width: 100%;
-    max-width: 100%;
-  }
+    .chatContainer {
+        min-width: 100%;
+        max-width: 100%;
+    }
 
-  .messageContentContainer {
-    max-width: 100%;
-  }
+    .messageContentContainer {
+        max-width: 100%;
+    }
 }
 
 /* Media queries for desktop devices */
 @media (min-width: 768px) {
-  .chatContainer {
-    max-width: 731px; /* Ensures chat container does not exceed this width on larger screens */
-  }
+    .chatContainer {
+        max-width: 731px; /* Ensures chat container does not exceed this width on larger screens */
+    }
 }

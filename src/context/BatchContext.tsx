@@ -1,12 +1,14 @@
 // BatchContext.tsx
-import React, { createContext, useContext, useState } from 'react';
-import { useUserOperations } from '@/hooks/useUserOperations';
+import React, { createContext, useContext, useState } from "react";
+import { useUserOperations } from "@/hooks/useUserOperations";
 import { AlchemyModularAccountClientConfig } from "@alchemy/aa-alchemy";
 
 interface BatchContextType {
     batchedOperations: any[];
     addOperationToBatch: (operation: any) => void;
-    executeBatchedOperations: (provider: AlchemyModularAccountClientConfig) => Promise<string | undefined>;
+    executeBatchedOperations: (
+        provider: AlchemyModularAccountClientConfig,
+    ) => Promise<string | undefined>;
 }
 
 const BatchContext = createContext<BatchContextType>(null!);
@@ -14,12 +16,14 @@ const BatchContext = createContext<BatchContextType>(null!);
 export const useBatchContext = () => useContext(BatchContext);
 
 // BatchProvider.tsx
-export const BatchProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const BatchProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
     const { sendUserOperations } = useUserOperations();
 
     const addOperationToBatch = (operation: any) => {
-        setBatchedOperations(prev => [...prev, operation]);
+        setBatchedOperations((prev) => [...prev, operation]);
     };
 
     const executeBatchedOperations = async (): Promise<string | undefined> => {
@@ -32,7 +36,13 @@ export const BatchProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     return (
-        <BatchContext.Provider value={{ batchedOperations, addOperationToBatch, executeBatchedOperations }}>
+        <BatchContext.Provider
+            value={{
+                batchedOperations,
+                addOperationToBatch,
+                executeBatchedOperations,
+            }}
+        >
             {children}
         </BatchContext.Provider>
     );

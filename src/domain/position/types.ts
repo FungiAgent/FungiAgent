@@ -1,6 +1,6 @@
 export type PositionInfo = {
-  type: string;
-  numberPositions: number;
-  totalValue: number;
-  unPnL: string | number;
+    type: string;
+    numberPositions: number;
+    totalValue: number;
+    unPnL: string | number;
 };

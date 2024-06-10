@@ -604,7 +604,7 @@
 //       {/* <Helmet>
 //         <style type="text/css">{`
 //             :root {
-//               --main-bg-color: #08091b;                   
+//               --main-bg-color: #08091b;
 //              {
 //          `}</style>
 //       </Helmet> */}

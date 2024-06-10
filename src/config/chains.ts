@@ -1,5 +1,11 @@
-import { arbitrum, arbitrumSepolia, polygon, polygonMumbai, mainnet, optimism} from "@alchemy/aa-core";
-
+import {
+    arbitrum,
+    arbitrumSepolia,
+    polygon,
+    polygonMumbai,
+    mainnet,
+    optimism,
+} from "@alchemy/aa-core";
 
 export const ETH_MAINNET: number = 1;
 export const ETH_SEPOLIA = 11155111;
@@ -15,7 +21,7 @@ export const DEFAULT_CHAIN_ID = ARBITRUM;
 export const SUPPORTED_CHAIN_IDS = [ARBITRUM, OPTIMISM];
 
 export function isSupportedChainOrDefault(chainId: number): number {
-    return SUPPORTED_CHAIN_IDS.includes(chainId) ? chainId : DEFAULT_CHAIN_ID
+    return SUPPORTED_CHAIN_IDS.includes(chainId) ? chainId : DEFAULT_CHAIN_ID;
 }
 
 export function isSupportedChain(chainId: number): boolean {
@@ -24,19 +30,19 @@ export function isSupportedChain(chainId: number): boolean {
 
 export function getViemChain(chainId: number) {
     switch (chainId) {
-      case ETH_MAINNET:
-        return mainnet;
-      case ARBITRUM:
-        return arbitrum;
-      case ARBITRUM_SEPOLIA:
-          return arbitrumSepolia;
-      case POLYGON:
-        return polygon;
-      case POLYGON_MUMBAI:
-        return polygonMumbai;
-      case OPTIMISM:
-          return optimism;
-      default:
-        throw new Error("Chain not supported");
+        case ETH_MAINNET:
+            return mainnet;
+        case ARBITRUM:
+            return arbitrum;
+        case ARBITRUM_SEPOLIA:
+            return arbitrumSepolia;
+        case POLYGON:
+            return polygon;
+        case POLYGON_MUMBAI:
+            return polygonMumbai;
+        case OPTIMISM:
+            return optimism;
+        default:
+            throw new Error("Chain not supported");
     }
-  }
+}
