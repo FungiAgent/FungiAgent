@@ -1,17 +1,17 @@
 import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
+	ReactNode,
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
 } from "react";
 import { MagicSigner } from "@alchemy/aa-signers/magic";
 import { AlchemyMultichainClient } from "@/lib/alchemy/AlchemyMultichainClient";
 import {
-  getProviderMultichainSetting,
-  getProviderDefaultSettings,
+	getProviderMultichainSetting,
+	getProviderDefaultSettings,
 } from "@/config/alchemyConfig";
 import { Alchemy } from "alchemy-sdk";
 import { ARBITRUM } from "@/config/chains";
@@ -33,190 +33,191 @@ import { FungiContextType } from "./types";
 export const FungiContext = createContext({} as FungiContextType);
 
 export function useGlobalContext() {
-  return useContext(FungiContext) as FungiContextType;
+	return useContext(FungiContext) as FungiContextType;
 }
 
 // Provider
 export function FungiContextProvider({ children }: { children: ReactNode }) {
-  const [alchemyMultichainClient, setAlchemyMultichainClient] =
-    useState<AlchemyMultichainClient>();
-  const [magicMultichainClient, setMagicMultichainClient] =
-    useState<MagicMultichainClient>();
+	const [alchemyMultichainClient, setAlchemyMultichainClient] =
+		useState<AlchemyMultichainClient>();
+	const [magicMultichainClient, setMagicMultichainClient] =
+		useState<MagicMultichainClient>();
 
-  const [alchemyClient, setAlchemyClient] = useState<Alchemy>();
-  const [alchemyScaProvider, setAlchemyScaProvider] =
-    useState<AlchemySmartAccountClient>();
-  const [magicClient, setMagicClient] =
-    useState<Promise<MagicSigner | undefined>>();
+	const [alchemyClient, setAlchemyClient] = useState<Alchemy>();
+	const [alchemyScaProvider, setAlchemyScaProvider] =
+		useState<AlchemySmartAccountClient>();
+	const [magicClient, setMagicClient] =
+		useState<Promise<MagicSigner | undefined>>();
 
-  const [scaAddress, setScaAddress] = useState<Address>();
-  const [chain, setChain] = useState(ARBITRUM);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [scaAddress, setScaAddress] = useState<Address>();
+	const [chain, setChain] = useState(ARBITRUM);
+	const [isConnected, setIsConnected] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID = process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID;
+	const NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID =
+		process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID;
 
-  // Batch operations
-  // BatchContext
-  // const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
-  // const { sendUserOperations } = useUserOperations();
+	// Batch operations
+	// BatchContext
+	// const [batchedOperations, setBatchedOperations] = useState<any[]>([]);
+	// const { sendUserOperations } = useUserOperations();
 
-  // const addOperationToBatch = useCallback((operation: any) => {
-  //   setBatchedOperations(prev => [...prev, operation]);
-  //   // console.log("Batched operations", batchedOperations);
-  // }, []);
+	// const addOperationToBatch = useCallback((operation: any) => {
+	//   setBatchedOperations(prev => [...prev, operation]);
+	//   // console.log("Batched operations", batchedOperations);
+	// }, []);
 
-  // const executeBatchedOperations = useCallback(async (): Promise<string | undefined> => {
-  //   if (batchedOperations.length > 0) {
-  //     const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
-  //     setBatchedOperations([]);
-  //     return txHash;
-  //   }
-  //   return undefined;
-  // }, [batchedOperations, sendUserOperations]);
+	// const executeBatchedOperations = useCallback(async (): Promise<string | undefined> => {
+	//   if (batchedOperations.length > 0) {
+	//     const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
+	//     setBatchedOperations([]);
+	//     return txHash;
+	//   }
+	//   return undefined;
+	// }, [batchedOperations, sendUserOperations]);
 
+	useEffect(() => {
+		const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
+		const overridesAlchemySettings = getProviderMultichainSetting();
+		const multichainProv = new AlchemyMultichainClient(
+			defaultAlchemySettings,
+			overridesAlchemySettings
+		);
+		setAlchemyMultichainClient(multichainProv);
 
-  useEffect(() => {
-    const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
-    const overridesAlchemySettings = getProviderMultichainSetting();
-    const multichainProv = new AlchemyMultichainClient(
-      defaultAlchemySettings,
-      overridesAlchemySettings
-    );
-    setAlchemyMultichainClient(multichainProv);
+		setAlchemyClient(
+			multichainProv?.forNetwork(chain) || multichainProv?.forNetwork(ARBITRUM)
+		);
 
-    setAlchemyClient(
-      multichainProv?.forNetwork(chain) || multichainProv?.forNetwork(ARBITRUM)
-    );
+		const magicMultichain = new MagicMultichainClient();
+		setMagicMultichainClient(magicMultichain);
+		setMagicClient(magicMultichain.forNetwork(ARBITRUM));
+	}, []);
 
-    const magicMultichain = new MagicMultichainClient();
-    setMagicMultichainClient(magicMultichain);
-    setMagicClient(magicMultichain.forNetwork(ARBITRUM));
-  }, []);
-
-  useEffect(() => {
-    if (chain) {
-      if (alchemyMultichainClient) {
-        setAlchemyClient(
-          alchemyMultichainClient?.forNetwork(chain) ||
-            alchemyMultichainClient?.forNetwork(ARBITRUM)
-        );
-        /*setAlchemyScaProvider(
+	useEffect(() => {
+		if (chain) {
+			if (alchemyMultichainClient) {
+				setAlchemyClient(
+					alchemyMultichainClient?.forNetwork(chain) ||
+						alchemyMultichainClient?.forNetwork(ARBITRUM)
+				);
+				/*setAlchemyScaProvider(
           alchemyMultichainClient?.forNetworkScProvider(chain)
         );*/
-      }
+			}
 
-      if (magicMultichainClient) {
-        const magicForNetwork = magicMultichainClient.forNetwork(chain);
-        if (magicForNetwork) {
-          setMagicClient(magicForNetwork);
-          (async () => {
-            await login();
-          })();
-        }
-      }
-    }
-  }, [alchemyMultichainClient, chain, magicMultichainClient]);
+			if (magicMultichainClient) {
+				const magicForNetwork = magicMultichainClient.forNetwork(chain);
+				if (magicForNetwork) {
+					setMagicClient(magicForNetwork);
+					(async () => {
+						await login();
+					})();
+				}
+			}
+		}
+	}, [alchemyMultichainClient, chain, magicMultichainClient]);
 
+	const connectProviderToAccount = useCallback(
+		async (signer: SmartAccountSigner) => {
+			const connectedProvider = await createModularAccountAlchemyClient({
+				apiKey: getApiKeyChain(chain),
+				chain: getViemChain(chain),
+				signer,
+				gasManagerConfig: {
+					policyId: NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID as string,
+				},
+			});
 
-  const connectProviderToAccount = useCallback(
-    async (signer: SmartAccountSigner) => {
-      const connectedProvider = await createModularAccountAlchemyClient({
-        apiKey: getApiKeyChain(chain),
-        chain: getViemChain(chain),
-        signer,
-        gasManagerConfig: {
-          policyId: "7c8ccc91-d8a2-4c8c-8607-f7ae82cc9a3b",
-        },
-      });
+			setAlchemyScaProvider(connectedProvider);
 
-      setAlchemyScaProvider(connectedProvider);
+			return connectedProvider;
+		},
+		[chain]
+	);
 
-      return connectedProvider;
-    },
-    [chain]
-  );
+	//TODO ya no sirve?
+	const disconnectProviderFromAccount = useCallback(() => {
+		if (!alchemyScaProvider) {
+			return;
+		}
+		const disconnectedProvider = alchemyScaProvider;
 
-  //TODO ya no sirve?
-  const disconnectProviderFromAccount = useCallback(() => {
-    if (!alchemyScaProvider) {
-      return;
-    }
-    const disconnectedProvider = alchemyScaProvider;
+		setAlchemyScaProvider(disconnectedProvider);
+		return disconnectedProvider;
+	}, [alchemyScaProvider]);
 
-    setAlchemyScaProvider(disconnectedProvider);
-    return disconnectedProvider;
-  }, [alchemyScaProvider]);
+	const login = useCallback(async () => {
+		const signer = await magicClient;
 
-  const login = useCallback(async () => {
-    const signer = await magicClient;
+		if (signer == null) {
+			throw new Error("Magic not initialized");
+		}
 
-    if (signer == null) {
-      throw new Error("Magic not initialized");
-    }
+		await signer.authenticate({
+			authenticate: async () => {
+				await signer.inner.wallet.connectWithUI();
+			},
+		});
 
-    await signer.authenticate({
-      authenticate: async () => {
-        await signer.inner.wallet.connectWithUI();
-      },
-    });
+		const connectedProvider = await connectProviderToAccount(
+			signer as SmartAccountSigner
+		);
 
-    const connectedProvider = await connectProviderToAccount(signer as SmartAccountSigner);
+		let signerAddress;
+		(async () => {
+			signerAddress = await signer.getAddress();
+		})();
 
-    let signerAddress;
-    (async () => {
-      signerAddress = await signer.getAddress();
-    })();
+		setScaAddress(connectedProvider?.getAddress());
+		setIsConnected(true);
+	}, [magicClient, connectProviderToAccount, alchemyScaProvider]);
 
-    setScaAddress(connectedProvider?.getAddress());
-    setIsConnected(true);
-  }, [magicClient, connectProviderToAccount, alchemyScaProvider]);
+	const logout = useCallback(async () => {
+		const signer = await magicClient;
 
-  const logout = useCallback(async () => {
-    const signer = await magicClient;
+		if (!signer) {
+			return;
+		}
 
-    if (!signer) {
-      return;
-    }
+		if (!(await signer.inner.user.logout())) {
+			throw new Error("Magic logout failed");
+		}
 
-    if (!(await signer.inner.user.logout())) {
-      throw new Error("Magic logout failed");
-    }
+		setIsConnected(false);
+		disconnectProviderFromAccount();
+		setScaAddress(undefined);
+	}, [magicClient, disconnectProviderFromAccount]);
 
-    setIsConnected(false);
-    disconnectProviderFromAccount();
-    setScaAddress(undefined);
-  }, [magicClient, disconnectProviderFromAccount]);
+	const switchNetwork = useCallback((chainId: number) => {
+		setChain(chainId);
+	}, []);
 
-  const switchNetwork = useCallback((chainId: number) => {
-    setChain(chainId);
-  }, []);
+	const state: FungiContextType = useMemo(() => {
+		return {
+			alchemyClient,
+			alchemyScaProvider,
+			scaAddress,
+			chain,
+			switchNetwork,
+			isLoading,
+			isConnected,
+			login,
+			logout,
+		};
+	}, [
+		alchemyClient,
+		scaAddress,
+		switchNetwork,
+		login,
+		alchemyScaProvider,
+		chain,
+		isLoading,
+		isConnected,
+		logout,
+	]);
 
-  const state: FungiContextType = useMemo(() => {
-    return {
-      alchemyClient,
-      alchemyScaProvider,
-      scaAddress,
-      chain,
-      switchNetwork,
-      isLoading,
-      isConnected,
-      login,
-      logout
-    };
-  }, [
-    alchemyClient,
-    scaAddress,
-    switchNetwork,
-    login,
-    alchemyScaProvider,
-    chain,
-    isLoading,
-    isConnected,
-    logout
-  ]);
-
-  return (
-    <FungiContext.Provider value={state}>{children}</FungiContext.Provider>
-  );
+	return (
+		<FungiContext.Provider value={state}>{children}</FungiContext.Provider>
+	);
 }

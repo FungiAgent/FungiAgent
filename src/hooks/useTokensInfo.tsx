@@ -13,27 +13,28 @@ import useWallet from "@/hooks/useWallet";
  * @returns {TokenInfo[]} tokens - An array of TokenInfo objects representing the supported tokens and their balances for the `scAccount`.
  */
 export function useTokensInfo() {
-  const { chainId, scAccount } = useWallet();
-  const { alchemyClient } = useGlobalContext();
-  const [tokens, setTokens] = useState<TokenInfo[] | []>([]);
+	const { chainId, scAccount } = useWallet();
+	const { alchemyClient } = useGlobalContext();
+	const [tokens, setTokens] = useState<TokenInfo[] | []>([]);
 
-  const fetchTokens = useCallback(async () => {
-    if (alchemyClient && chainId && scAccount) {
-      const tokensInfo = await getAllTokensWithBalances(
-        alchemyClient,
-        chainId,
-        scAccount
-      );
-      if (!tokensInfo) {
-        return;
-      }
-      setTokens(tokensInfo);
-    }
-  }, [alchemyClient, chainId, scAccount]);
+	const fetchTokens = useCallback(async () => {
+		if (alchemyClient && chainId && scAccount) {
+			const tokensInfo = await getAllTokensWithBalances(
+				alchemyClient,
+				chainId,
+				scAccount
+				// "0x9c91AFF7d082C253F736854cBEC4c267C47bc098"
+			);
+			if (!tokensInfo) {
+				return;
+			}
+			setTokens(tokensInfo);
+		}
+	}, [alchemyClient, chainId, scAccount]);
 
-  useEffect(() => {
-    fetchTokens();
-  }, [alchemyClient, fetchTokens]);
+	useEffect(() => {
+		fetchTokens();
+	}, [alchemyClient, fetchTokens]);
 
-  return { tokens, fetchTokens };
+	return { tokens, fetchTokens };
 }
