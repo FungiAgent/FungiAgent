@@ -38,7 +38,6 @@ export const useSimLiFiTx = () => {
         order: string;
     }): Promise<any> => {
         try {
-            console.log("QUOTE PARAMS: ", JSON.stringify(params, null, 2));
             const response = await axios.get("https://li.quest/v1/quote", {
                 params,
             });

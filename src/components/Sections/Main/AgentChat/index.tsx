@@ -11,7 +11,7 @@ import { useMind } from "@/hooks";
 import { TokenInfo } from "@/domain/tokens/types";
 import { useChatHistory } from "@/context/ChatHistoryContext";
 import ChatDisplay from "@/components/ChatDisplay";
-import { BaseMessage } from "@langchain/core/messages";
+import { BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { UserInput } from "@/components/TextInputs/UserInput";
 import { useConfirmation } from "@/hooks/useConfirmation";
 
@@ -68,6 +68,8 @@ const AgentChat = () => {
 
     const handleQuerySubmit = async (query: string) => {
         if (tokens.length > 0 && query.trim() !== "") {
+            const msg = new HumanMessage(query);
+            setChatHistory([...chatHistory, ...[msg]]);
             const portfolioQuery = generateQueryFromPortfolio(tokens);
             const date = getCurrentDate();
             const portfolio = portfolioQuery;
@@ -81,8 +83,10 @@ const AgentChat = () => {
                     portfolio,
                     scaAddress,
                 );
+
                 // Directly set the response as the agent's response
                 setAgentResponse(response);
+                updateChatHistory();
             } catch (error) {
                 console.error("Error processing chat message:", error);
             }
@@ -105,17 +109,11 @@ const AgentChat = () => {
         setRecipient(recipient);
     }, [tokenAddress, amount, recipient]);
 
-    const logHistory = async () => {
+    const updateChatHistory = async () => {
         const history: BaseMessage[] = await getHistory();
-        console.log(history);
+        setChatHistory(history);
     };
-
     useEffect(() => {
-        const updateChatHistory = async () => {
-            const history: BaseMessage[] = await getHistory();
-            setChatHistory(history);
-        };
-
         updateChatHistory();
     }, [getHistory]);
 
@@ -146,7 +144,6 @@ const AgentChat = () => {
                             rejectAction={rejectAction}
                             showConfirmationBox={showConfirmationBox}
                         />
-                        <button onClick={logHistory}>Log Main History</button>
                         <UserInput onSubmit={handleQuerySubmit} />
                     </div>
                 }

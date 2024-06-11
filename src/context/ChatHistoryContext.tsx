@@ -72,7 +72,7 @@ export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({
                 addMessage,
                 clearHistory,
                 getHistory,
-                chatHistory,
+                chatHistory: history,
                 addAIMessage,
             }}
         >
