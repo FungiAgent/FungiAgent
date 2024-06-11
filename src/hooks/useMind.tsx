@@ -5,65 +5,87 @@ import {
     AIMessage,
     SystemMessage,
 } from "@langchain/core/messages";
-import { executeAgent } from "../agent/AgentCreation";
+import { executeAgent, executeInternalAgent } from "../agent/AgentCreation";
 
 export const useMind = () => {
     const { addMessage, getHistory } = useChatHistory();
 
-    const processChatMessage = useCallback(
-        async (
-            inputMessage: string,
-            date?: string,
-            portfolio?: string,
-            scaAddress?: string | undefined,
-        ) => {
-            // The chat history
-            const chatHistory = await getHistory();
+    const processChatMessage = async (
+        inputMessage: string,
+        date?: string,
+        portfolio?: string,
+        scaAddress?: string | undefined,
+    ) => {
+        console.log("1. Getting chat history PCM...");
+        const initialChatHistory = await getHistory();
+        console.log("Initial chat history:", initialChatHistory);
 
-            await addMessage(new HumanMessage(inputMessage));
+        console.log("2. Adding human message PCM...");
+        await addMessage(new HumanMessage(inputMessage));
 
-            // Call the agent's executeAgent function passing the chat history as query, date, portfolio, and scaAddress
-            const response = await executeAgent(
-                inputMessage,
-                chatHistory,
-                date,
-                portfolio,
-                scaAddress,
-            );
+        const chatHistoryAfterHumanMessage = await getHistory();
+        console.log(
+            "Chat history after adding human message:",
+            chatHistoryAfterHumanMessage,
+        );
 
-            const content = response.output;
+        console.log("3. Executing agent PCM...");
+        const response = await executeAgent(
+            inputMessage,
+            chatHistoryAfterHumanMessage,
+            date,
+            portfolio,
+            scaAddress,
+        );
 
-            // Add AI's response to the chat history
-            await addMessage(new AIMessage(content));
+        const content = response.output;
+        console.log("4. Adding AI message PCM...");
+        await addMessage(new AIMessage(content));
 
-            // console.log("Chat History:", chatHistory);
-            return content;
-        },
-        [addMessage, getHistory],
-    );
+        const finalChatHistory = await getHistory();
+        console.log(
+            "Final chat history after adding AI message:",
+            finalChatHistory,
+        );
 
-    // A modified processChatMessage function that only receives the inputMessage, and passes it as a systemMessage to the agent
-    // This is a context feeding function
-    const processInternalMessage = useCallback(
-        async (inputMessage: string) => {
-            // The chat history
-            const chatHistory = await getHistory();
+        return content;
+    };
 
-            await addMessage(new SystemMessage(inputMessage));
+    const processInternalMessage = async (inputMessage: string) => {
+        console.log("5. Getting history...");
+        const chatHistory = await getHistory();
+        console.log(
+            "Chat history before adding internal message:",
+            chatHistory,
+        );
 
-            // Call the agent's executeAgent function passing the chat history as query
-            const response = await executeAgent(inputMessage, chatHistory);
+        console.log("6. Adding system message...");
+        await addMessage(new SystemMessage(inputMessage));
 
-            const content = response.output;
+        const chatHistoryAfterSystemMessage = await getHistory();
+        console.log(
+            "Chat history after adding system message:",
+            chatHistoryAfterSystemMessage,
+        );
 
-            // Add AI's response to the chat history
-            await addMessage(new AIMessage(content));
+        console.log("7. Executing internal agent...");
+        const response = await executeInternalAgent(
+            inputMessage,
+            chatHistoryAfterSystemMessage,
+        );
 
-            // console.log("Chat History:", chatHistory);
-            return content;
-        },
-        [addMessage, getHistory],
-    );
+        const content = response.output;
+        console.log("8. Adding AI message...");
+        await addMessage(new AIMessage(content));
+
+        const finalChatHistory = await getHistory();
+        console.log(
+            "Final chat history after adding AI message:",
+            finalChatHistory,
+        );
+
+        return content;
+    };
 
     return { processChatMessage, processInternalMessage };
 };

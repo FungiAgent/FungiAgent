@@ -8,12 +8,18 @@ import { useSimUO } from "@/hooks/useSimUO";
 import { useNotification } from "@/context/NotificationContextProvider";
 import { ConfirmationType } from "@/hooks/useConfirmation";
 import { useUserOperations } from "@/hooks/useUserOperations";
+import { useChatHistory } from "@/context/ChatHistoryContext";
+import { ChatMessage, SystemMessage } from "@langchain/core/messages";
+import { useMind } from "./useMind";
 
 // This hook receives the parameters for a LiFi transaction, gets a quote for the transaction, and simulates the transaction
 export const useSimLiFiTx = () => {
     const { simStatus, simTransfer } = useSimUO();
     const { showNotification } = useNotification();
     const { sendUserOperations } = useUserOperations();
+    const chatHistory = useChatHistory();
+    const { processInternalMessage } = useMind();
+
     const [status, setStatus] = useState<{
         disabled: boolean;
         text: string | null;
@@ -32,7 +38,7 @@ export const useSimLiFiTx = () => {
         order: string;
     }): Promise<any> => {
         try {
-            // console.log("QUOTE PARAMS: ", JSON.stringify(params, null, 2));
+            console.log("QUOTE PARAMS: ", JSON.stringify(params, null, 2));
             const response = await axios.get("https://li.quest/v1/quote", {
                 params,
             });
@@ -161,17 +167,29 @@ export const useSimLiFiTx = () => {
         try {
             const result = await simTransfer(userOps);
 
-            console.log("Sim result: ", JSON.stringify(result, null, 2));
+            // console.log("Sim result: ", JSON.stringify(result, null, 2));
             if (!result) {
                 showNotification({
                     message: "LiFi transaction simulation error",
                     type: "error",
                 });
+
+                // await processInternalMessage("The swap didn't work");
+                // await chatHistory.addMessage(systemMessage);
+                // await chatHistory.addAIMessage(
+                //     "Tell the user that the simulated transaction has failed and now we will provide another option.",
+                // );
             } else {
                 showNotification({
                     message: "LiFi transaction simulated successfully",
                     type: "success",
                 });
+
+                // await processInternalMessage(
+                //     "The swap was successful. List the two new balances.",
+                // );
+
+                // await chatHistory.addMessage(systemMessage);
             }
 
             return result;

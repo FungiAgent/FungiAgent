@@ -36,6 +36,12 @@ const agentExecutor = new AgentExecutor({
     // verbose: true,
 });
 
+const internalAgentExecutor = new AgentExecutor({
+    agent,
+    tools: [],
+    // verbose: true,
+});
+
 // A function for executing the agent
 export const executeAgent = async (
     query: string,
@@ -44,6 +50,7 @@ export const executeAgent = async (
     portfolio?: string,
     scaAddress?: string | undefined,
 ) => {
+    // console.log("executeAgent.query: ", query);
     let response = await agentExecutor.invoke(
         {
             input: query,
@@ -70,6 +77,38 @@ export const executeAgent = async (
             },
         },
     );
-    console.log("Memory:", memory);
+    // console.log("Memory:", memory);
+    // console.log("executeAgent.response:", response);
+
+    return response;
+};
+
+export const executeInternalAgent = async (
+    query: string,
+    memory: (SystemMessage | AIMessage | HumanMessage)[],
+) => {
+    // console.log("executeAgent.query: ", query);
+    let response = await internalAgentExecutor.invoke(
+        {
+            input: query,
+            chat_history: [
+                new AIMessage("What is my purpose?"),
+                new SystemMessage(
+                    "You are a friendly AI agent that helps users with their queries concerning decentralized finance (DeFi). You communicate with users based on system inputs.",
+                ),
+                ...memory,
+            ],
+        },
+        {
+            // This is needed because in most real world scenarios, a session id is needed per user.
+            // It isn't really used here because we are using a simple in memory ChatMessageHistory.
+            configurable: {
+                sessionId: "foo",
+            },
+        },
+    );
+    // console.log("Memory:", memory);
+    // console.log("executeInternalAgent.response:", response);
+
     return response;
 };

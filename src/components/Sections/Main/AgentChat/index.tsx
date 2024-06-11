@@ -105,6 +105,11 @@ const AgentChat = () => {
         setRecipient(recipient);
     }, [tokenAddress, amount, recipient]);
 
+    const logHistory = async () => {
+        const history: BaseMessage[] = await getHistory();
+        console.log(history);
+    };
+
     useEffect(() => {
         const updateChatHistory = async () => {
             const history: BaseMessage[] = await getHistory();
@@ -141,6 +146,7 @@ const AgentChat = () => {
                             rejectAction={rejectAction}
                             showConfirmationBox={showConfirmationBox}
                         />
+                        <button onClick={logHistory}>Log Main History</button>
                         <UserInput onSubmit={handleQuerySubmit} />
                     </div>
                 }
