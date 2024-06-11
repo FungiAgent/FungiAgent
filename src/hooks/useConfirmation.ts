@@ -86,11 +86,14 @@ export const useConfirmation = () => {
         }
     }, [confirmationDetails, userOp, handleSend, sendUserOperations]);
 
-    const rejectAction = useCallback(() => {
+    const rejectAction = async () => {
         setIsConfirmed(false);
         setShowConfirmationBox(false);
+        await processInternalMessage(
+            `The user rejected the transaction. Let them know that you recognize their rejection and ask them if they would like help with anything else. Suggest other things they can do.`,
+        );
         setConfirmationDetails(null);
-    }, []);
+    };
 
     return {
         confirmationDetails,
