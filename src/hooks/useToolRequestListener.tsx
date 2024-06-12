@@ -5,11 +5,8 @@ import {
 } from "@/agent/AgentCommunicationChannel";
 import { useUserOpContext } from "@/context/UserOpContext";
 import { ConfirmationType } from "@/hooks/useConfirmation";
-import { useNotification } from "@/context/NotificationContextProvider";
 import { useMind, useSimLiFiTx } from "@/hooks";
 import { useSimulateTransfer } from "./useSimulateTransfer";
-import { useChatHistory } from "@/context/ChatHistoryContext";
-import { AIMessage, SystemMessage } from "@langchain/core/messages";
 
 export const useToolRequestListener = ({
     setConfirmationDetails,

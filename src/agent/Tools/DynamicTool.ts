@@ -8,9 +8,60 @@ import { getTokenInfo } from "./getLiFiTokenInfo";
 import { tavilySearch } from "./tavilySearch";
 import { RSS3Search } from "./RSS3Search";
 import { getLiFiQuote } from "./getLiFiQuote";
+import { getOnlyTokensWithBalances } from "@/domain/tokens/useInfoTokens";
+import { generateQueryFromPortfolio } from "@/utils/generateQueryFromPortfolio";
+import {
+    getProviderDefaultSettings,
+    getProviderMultichainSetting,
+} from "@/config/alchemyConfig";
+import { ARBITRUM } from "@/config/chains";
+import { AlchemyMultichainClient } from "@/lib/alchemy/AlchemyMultichainClient";
 // import { BigNumber } from 'alchemy-sdk';
 
 export const dynamicTools = [
+    new DynamicStructuredTool({
+        name: "Check-Portfolio",
+        description: "Check the user's portfolio of tokens",
+        schema: z.object({
+            scAccount: z.string().describe("The account of the recipient"),
+            chainId: z.number().describe("The id of the chain"),
+        }),
+        func: async ({ chainId, scAccount }) => {
+            if (chainId && scAccount) {
+                const defaultAlchemySettings =
+                    getProviderDefaultSettings(ARBITRUM);
+                const overridesAlchemySettings = getProviderMultichainSetting();
+                const multichainProv = new AlchemyMultichainClient(
+                    defaultAlchemySettings,
+                    overridesAlchemySettings,
+                );
+                const alchemyClient = multichainProv?.forNetwork(ARBITRUM);
+                if (!alchemyClient) {
+                    return "Error with portfolio alchemy client";
+                }
+
+                const tokensInfo = await getOnlyTokensWithBalances(
+                    alchemyClient,
+                    chainId,
+                    scAccount,
+                    // "0x9c91AFF7d082C253F736854cBEC4c267C47bc098"
+                );
+                if (!tokensInfo) {
+                    return "Error with portfolio tokenInfo";
+                }
+
+                const tokenVals = await generateQueryFromPortfolio(tokensInfo);
+
+                if (!tokenVals) {
+                    return "Error with portfolio tokenVals";
+                } else {
+                    return `The user's portfolio information is: ${JSON.stringify(tokenVals)}. Format it as neatly and as legibly as possible.`;
+                }
+            }
+
+            return "error with portfolio params";
+        },
+    }),
     new DynamicStructuredTool({
         name: "Simulate-Transfer",
         description: "Simulate a transfer of assets",
@@ -214,6 +265,7 @@ export const dynamicTools = [
             return result;
         },
     }),
+
     new DynamicStructuredTool({
         name: "tavily-search",
         description:

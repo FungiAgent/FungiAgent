@@ -112,9 +112,9 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
                     ? renderPlaceholder()
                     : nonSystemMessages.map(renderMessage)}
             </div>
-            {/* <button onClick={() => console.log({ chatHistory })}>
+            <button onClick={() => console.log({ chatHistory })}>
                 Log History
-            </button> */}
+            </button>
         </div>
     );
 };
