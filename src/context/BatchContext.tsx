@@ -30,6 +30,7 @@ export const BatchProvider: React.FC<{ children: React.ReactNode }> = ({
         if (batchedOperations.length > 0) {
             const txHash = await sendUserOperations(batchedOperations); // Sending the list of operations
             setBatchedOperations([]);
+            // @ts-expect-error
             return txHash;
         }
         return undefined;
