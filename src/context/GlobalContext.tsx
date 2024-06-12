@@ -14,7 +14,7 @@ import {
     getProviderDefaultSettings,
 } from "@/config/alchemyConfig";
 import { Alchemy } from "alchemy-sdk";
-import { ARBITRUM } from "@/config/chains";
+import { ARBITRUM, BASE } from "@/config/chains";
 import { getApiKeyChain } from "@/config/alchemyConfig";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { getViemChain } from "@/config/chains";
@@ -60,7 +60,7 @@ export function FungiGlobalContextProvider({
         useState<Promise<MagicSigner | undefined>>();
 
     const [scaAddress, setScaAddress] = useState<Address>();
-    const [chain, setChain] = useState(ARBITRUM);
+    const [chain, setChain] = useState(BASE);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -82,7 +82,7 @@ export function FungiGlobalContextProvider({
     // };
 
     useEffect(() => {
-        const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
+        const defaultAlchemySettings = getProviderDefaultSettings(BASE);
         const overridesAlchemySettings = getProviderMultichainSetting();
         const multichainProv = new AlchemyMultichainClient(
             defaultAlchemySettings,
@@ -92,12 +92,12 @@ export function FungiGlobalContextProvider({
 
         setAlchemyClient(
             multichainProv?.forNetwork(chain) ||
-                multichainProv?.forNetwork(ARBITRUM),
+                multichainProv?.forNetwork(BASE),
         );
-
+        console.log("ac from gc", alchemyClient);
         const magicMultichain = new MagicMultichainClient();
         setMagicMultichainClient(magicMultichain);
-        setMagicClient(magicMultichain.forNetwork(ARBITRUM));
+        setMagicClient(magicMultichain.forNetwork(BASE));
     }, []);
 
     useEffect(() => {
@@ -106,7 +106,7 @@ export function FungiGlobalContextProvider({
             if (alchemyMultichainClient) {
                 setAlchemyClient(
                     alchemyMultichainClient?.forNetwork(chain) ||
-                        alchemyMultichainClient?.forNetwork(ARBITRUM),
+                        alchemyMultichainClient?.forNetwork(BASE),
                 );
                 /*setAlchemyScaProvider(
           alchemyMultichainClient?.forNetworkScProvider(chain)

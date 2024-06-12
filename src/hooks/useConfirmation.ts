@@ -67,7 +67,7 @@ export const useConfirmation = () => {
                     // console.log("User Operations to Execute:", userOp);
                     const result = await sendUserOperations(userOp);
                     await processInternalMessage(
-                        `The transfer was done successfully with ${JSON.stringify(result, null, 2)}. Now, explain to the user the results of the transaction along with hash information and where this transaction can be viewed on https://arbiscan.io.`,
+                        `The transfer was done successfully with ${JSON.stringify(result, null, 2)}. Now, explain to the user the results of the transaction along with hash information and where this transaction can be viewed on https://basescan.org.`,
                     );
                 }
                 setShowConfirmationBox(false);

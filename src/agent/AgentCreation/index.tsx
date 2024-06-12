@@ -50,14 +50,13 @@ export const executeAgent = async (
     portfolio?: string,
     scaAddress?: string | undefined,
 ) => {
-    // console.log("executeAgent.query: ", query);
     let response = await agentExecutor.invoke(
         {
             input: query,
             chat_history: [
                 portfolio
                     ? new SystemMessage(
-                          `Source address or Smart Contract Account (SCA): ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\n`,
+                          `Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address or Smart Contract Account (SCA): ${scaAddress} \n\n`,
                       )
                     : new SystemMessage(
                           `Portfolio is empty. If user asks about the contents of their portfolio, tell them it is empty`,

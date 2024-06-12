@@ -14,7 +14,7 @@ import {
     getProviderDefaultSettings,
 } from "@/config/alchemyConfig";
 import { Alchemy } from "alchemy-sdk";
-import { ARBITRUM } from "@/config/chains";
+import { BASE } from "@/config/chains";
 import { getApiKeyChain } from "@/config/alchemyConfig";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { getViemChain } from "@/config/chains";
@@ -50,12 +50,12 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
         useState<Promise<MagicSigner | undefined>>();
 
     const [scaAddress, setScaAddress] = useState<Address>();
-    const [chain, setChain] = useState(ARBITRUM);
+    const [chain, setChain] = useState(BASE);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID =
-        process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID;
+    const NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE =
+        process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE;
 
     // Batch operations
     // BatchContext
@@ -77,7 +77,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
     // }, [batchedOperations, sendUserOperations]);
 
     useEffect(() => {
-        const defaultAlchemySettings = getProviderDefaultSettings(ARBITRUM);
+        const defaultAlchemySettings = getProviderDefaultSettings(BASE);
         const overridesAlchemySettings = getProviderMultichainSetting();
         const multichainProv = new AlchemyMultichainClient(
             defaultAlchemySettings,
@@ -87,12 +87,12 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
 
         setAlchemyClient(
             multichainProv?.forNetwork(chain) ||
-                multichainProv?.forNetwork(ARBITRUM),
+                multichainProv?.forNetwork(BASE),
         );
 
         const magicMultichain = new MagicMultichainClient();
         setMagicMultichainClient(magicMultichain);
-        setMagicClient(magicMultichain.forNetwork(ARBITRUM));
+        setMagicClient(magicMultichain.forNetwork(BASE));
     }, []);
 
     useEffect(() => {
@@ -100,7 +100,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
             if (alchemyMultichainClient) {
                 setAlchemyClient(
                     alchemyMultichainClient?.forNetwork(chain) ||
-                        alchemyMultichainClient?.forNetwork(ARBITRUM),
+                        alchemyMultichainClient?.forNetwork(BASE),
                 );
                 /*setAlchemyScaProvider(
           alchemyMultichainClient?.forNetworkScProvider(chain)
@@ -127,7 +127,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
                 signer,
                 gasManagerConfig: {
                     policyId:
-                        NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID as string,
+                        NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE as string,
                 },
             });
 

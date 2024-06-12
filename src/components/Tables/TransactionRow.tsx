@@ -43,7 +43,7 @@ function TitleSection({ title }: { title: string }) {
 }
 
 function BodySection({ children }) {
-    return <p className="text-md">{children}</p>;
+    return <p className="text-md font-light">{children}</p>;
 }
 
 function EyeSection({ visible, setVisible }) {

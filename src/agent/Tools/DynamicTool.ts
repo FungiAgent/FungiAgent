@@ -14,7 +14,7 @@ import {
     getProviderDefaultSettings,
     getProviderMultichainSetting,
 } from "@/config/alchemyConfig";
-import { ARBITRUM } from "@/config/chains";
+import { BASE } from "@/config/chains";
 import { AlchemyMultichainClient } from "@/lib/alchemy/AlchemyMultichainClient";
 // import { BigNumber } from 'alchemy-sdk';
 
@@ -28,14 +28,13 @@ export const dynamicTools = [
         }),
         func: async ({ chainId, scAccount }) => {
             if (chainId && scAccount) {
-                const defaultAlchemySettings =
-                    getProviderDefaultSettings(ARBITRUM);
+                const defaultAlchemySettings = getProviderDefaultSettings(BASE);
                 const overridesAlchemySettings = getProviderMultichainSetting();
                 const multichainProv = new AlchemyMultichainClient(
                     defaultAlchemySettings,
                     overridesAlchemySettings,
                 );
-                const alchemyClient = multichainProv?.forNetwork(ARBITRUM);
+                const alchemyClient = multichainProv?.forNetwork(BASE);
                 if (!alchemyClient) {
                     return "Error with portfolio alchemy client";
                 }
@@ -87,7 +86,7 @@ export const dynamicTools = [
     new DynamicStructuredTool({
         name: "LiFi-Simulator",
         description:
-            "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0xaf88d065e77c8cC2239327C5EDb3A432268e5831) and for DAI use: 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1.",
+            "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) and for DAI use: 0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb.",
         schema: z.object({
             type: z
                 .string()
@@ -97,12 +96,12 @@ export const dynamicTools = [
             fromChain: z
                 .string()
                 .describe(
-                    "The ID of the source chain, by default use Arbitrum: 42161",
+                    "The ID of the source chain, by default use Base: 8453",
                 ),
             fromAmount: z
                 .string()
                 .describe(
-                    "The amount to transfer from the source chain, specified in the prompt, you will add the required 0s (decimals) to the amount provided in the query, e.g. The user provides 1 ARB you add 18 0s to make it 1,000,000,000,000,000,000 ARB",
+                    "The amount to transfer from the source chain, specified in the prompt, you will add the required 0s (decimals) to the amount provided in the query, e.g. The user provides 1 BASE you add 18 0s to make it 1,000,000,000,000,000,000 BASE",
                 ),
             fromToken: z
                 .string()
@@ -112,7 +111,7 @@ export const dynamicTools = [
             toChain: z
                 .string()
                 .describe(
-                    "The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Arbitrum: 42161), if it is a bridge, it will be the destination chain ID",
+                    "The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Base: 8453), if it is a bridge, it will be the destination chain ID",
                 ),
             toToken: z
                 .string()
@@ -170,7 +169,7 @@ export const dynamicTools = [
             chain: z
                 .string()
                 .describe(
-                    "The blockchain network chain ID or name where the token resides. By default: ARB",
+                    "The blockchain network chain ID or name where the token resides. By default: BASE",
                 ),
             token: z
                 .string()
