@@ -6,7 +6,9 @@ import { BaseMessage } from "@langchain/core/messages";
 interface ChatHistoryContextType {
     addMessage: (message: BaseMessage) => Promise<void>;
     clearHistory: () => Promise<void>;
+    addAIMessage: (message: string) => Promise<void>;
     getHistory: () => Promise<BaseMessage[]>;
+
     chatHistory: ChatMessageHistory;
 }
 
@@ -30,30 +32,49 @@ interface ChatHistoryProviderProps {
 export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({
     children,
 }) => {
-    const [chatHistory, setChatHistory] = useState<ChatMessageHistory>(
-        new ChatMessageHistory(),
-    );
+    const history = new ChatMessageHistory();
+    const [chatHistory, setChatHistory] = useState<ChatMessageHistory>(history);
 
     const addMessage = async (message: BaseMessage) => {
-        await chatHistory.addMessage(message);
-        // Trigger re-render by setting a new instance of the chat history
-        setChatHistory(
-            new ChatMessageHistory([...(await chatHistory.getMessages())]),
-        );
+        // @ts-expect-error
+        await history.addMessage(message);
+        // setChatHistory(history);
+        // await chatHistory.addMessage(message);
+        // // Trigger re-render by setting a new instance of the chat history
+        // setChatHistory(
+        //     new ChatMessageHistory([...(await chatHistory.getMessages())]),
+        // );
+    };
+
+    const addAIMessage = async (message: string) => {
+        await history.addAIMessage(message);
+        // setChatHistory(history);
+
+        // await chatHistory.addAIMessage(message);
+        // // Trigger re-render by setting a new instance of the chat history
+        // setChatHistory(
+        //     new ChatMessageHistory([...(await chatHistory.getMessages())]),
+        // );
     };
 
     const clearHistory = async () => {
         await chatHistory.clear();
-        setChatHistory(new ChatMessageHistory());
+        // setChatHistory(new ChatMessageHistory());
     };
 
     const getHistory = async (): Promise<BaseMessage[]> => {
-        return await chatHistory.getMessages();
+        return await history.getMessages();
     };
 
     return (
         <ChatHistoryContext.Provider
-            value={{ addMessage, clearHistory, getHistory, chatHistory }}
+            value={{
+                addMessage,
+                clearHistory,
+                getHistory,
+                chatHistory: history,
+                addAIMessage,
+            }}
         >
             {children}
         </ChatHistoryContext.Provider>

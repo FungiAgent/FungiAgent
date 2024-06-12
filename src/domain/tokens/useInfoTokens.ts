@@ -30,6 +30,55 @@ export async function getAllTokensWithBalances(
     return tokens;
 }
 
+export async function getOnlyTokensWithBalances(
+    alchemyClient: Alchemy,
+    chainId: number,
+    address: string,
+) {
+    const balances = await getTokenBalancesAlchemy(alchemyClient, address);
+
+    if (!balances) return;
+    const tokens = await getLifiOnlyTokensWithBalance(chainId, balances);
+
+    return tokens;
+}
+
+export const getLifiOnlyTokensWithBalance = async (
+    chainId: number,
+    tokensBalance: TokenBalance[],
+): Promise<TokenInfo[]> => {
+    const tokensWithBalance: TokenInfo[] = [];
+
+    // Extraer tokens con balance y asignar sus balances
+    for (const token of await getLifiTokens(chainId)) {
+        const matchingBalance = tokensBalance.find(
+            (tb) =>
+                tb.contractAddress.toLowerCase() ===
+                token.address.toLowerCase(),
+        );
+        token.balance = matchingBalance
+            ? BigNumber.from(matchingBalance.tokenBalance)
+            : BigNumber.from(0);
+
+        if (matchingBalance) {
+            tokensWithBalance.push(token);
+        }
+    }
+
+    // Ordenar los tokens con balance
+    tokensWithBalance.sort((a, b) => {
+        const aBalance = a.balance
+            ? parseInt(ethers.utils.formatUnits(a.balance, a.decimals))
+            : 0;
+        const bBalance = b.balance
+            ? parseInt(ethers.utils.formatUnits(b.balance, b.decimals))
+            : 0;
+        return bBalance - aBalance;
+    });
+
+    return tokensWithBalance;
+};
+
 export const getLifiTokensWithBalance = async (
     chainId: number,
     tokensBalance: TokenBalance[],

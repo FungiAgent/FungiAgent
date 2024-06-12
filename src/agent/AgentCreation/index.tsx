@@ -22,17 +22,29 @@ const llm = new ChatOpenAI({
 
 const tools = dynamicTools;
 
+// @ts-expect-error
 const prompt = await pull<ChatType>("hwchase17/openai-functions-agent");
+
 
 const agent = await createOpenAIFunctionsAgent({
     llm,
+    // @ts-expect-error
     tools,
+    // @ts-expect-error
     prompt,
 });
 
+
 const agentExecutor = new AgentExecutor({
     agent,
+    // @ts-expect-error
     tools,
+    // verbose: true,
+});
+
+const internalAgentExecutor = new AgentExecutor({
+    agent,
+    tools: [],
     // verbose: true,
 });
 
@@ -50,7 +62,7 @@ export const executeAgent = async (
             chat_history: [
                 portfolio
                     ? new SystemMessage(
-                          `Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address or Smart Contract Account (SCA): ${scaAddress} \n\nUSDC: 0xaf88d065e77c8cc2239327c5edb3a432268e5831, DAI: 0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, WETH: 0x82af49447d8a07e3bd95bd0d56f35241523fbab1 ARB: 0x912ce59144191c1204e64559fe8253a0e49e6548\n\n`,
+                          `Portfolio composition:\n\nDate: ${date}\n\nPortfolio: ${portfolio}\n\nSource address or Smart Contract Account (SCA): ${scaAddress} \n\n`,
                       )
                     : new SystemMessage(
                           `Portfolio is empty. If user asks about the contents of their portfolio, tell them it is empty`,
@@ -70,6 +82,38 @@ export const executeAgent = async (
             },
         },
     );
-    console.log("Memory:", memory);
+    // console.log("Memory:", memory);
+    // console.log("executeAgent.response:", response);
+
+    return response;
+};
+
+export const executeInternalAgent = async (
+    query: string,
+    memory: (SystemMessage | AIMessage | HumanMessage)[],
+) => {
+    // console.log("executeAgent.query: ", query);
+    let response = await internalAgentExecutor.invoke(
+        {
+            input: query,
+            chat_history: [
+                new AIMessage("What is my purpose?"),
+                new SystemMessage(
+                    "You are a friendly AI agent that helps users with their queries concerning decentralized finance (DeFi). You communicate with users based on system inputs.",
+                ),
+                ...memory,
+            ],
+        },
+        {
+            // This is needed because in most real world scenarios, a session id is needed per user.
+            // It isn't really used here because we are using a simple in memory ChatMessageHistory.
+            configurable: {
+                sessionId: "foo",
+            },
+        },
+    );
+    // console.log("Memory:", memory);
+    // console.log("executeInternalAgent.response:", response);
+
     return response;
 };

@@ -16,6 +16,7 @@ import AIAgentActive from "../public/navbar/AIAgentActive.svg";
 import Arbitrum from "../public/Arbitrum.svg";
 import Polygon from "../public/Polygon.svg";
 import Optimism from "../public/Optimism.svg";
+import Base from "../public/Base.svg";
 
 export const navigation = [
     // {
@@ -73,6 +74,8 @@ export const networks = [
     { name: "Arbitrum One", id: 42161, image: Arbitrum.src, symbol: "ARB" },
     //{ name: "Arbitrum Sepolia", id: 421614, image: Arbitrum.src, symbol: "ARB" },
     { name: "Optimism", id: 10, image: Optimism.src, symbol: "OP" },
+    { name: "Base", id: 8453, image: Base.src, symbol: "ETH" },
+
     // {
     //   name: "Arbitrum Goerli",
     //   id: 421613,

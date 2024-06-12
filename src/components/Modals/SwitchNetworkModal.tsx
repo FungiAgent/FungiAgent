@@ -36,6 +36,7 @@ export default function SwitchNetworkModal({
             chainId === 80001 ||
             chainId === 42161 ||
             chainId === 1 ||
+            chainId === 8453 ||
             chainId === 137
         ) {
             setOpen(false);

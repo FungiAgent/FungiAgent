@@ -2,8 +2,8 @@ import { Alchemy, Network } from "alchemy-sdk";
 import { TransactionDetails } from "./types";
 
 const alchemyConfig = {
-    apiKey: process.env.ARBITRUM_API_KEY, // Ensure this is correctly set in your environment
-    network: Network.ARB_MAINNET,
+    apiKey: process.env.BASE_API_KEY, // Ensure this is correctly set in your environment
+    network: Network.BASE_MAINNET,
 };
 
 const alchemy = new Alchemy(alchemyConfig);

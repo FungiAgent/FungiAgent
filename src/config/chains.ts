@@ -5,6 +5,7 @@ import {
     polygonMumbai,
     mainnet,
     optimism,
+    base,
 } from "@alchemy/aa-core";
 
 export const ETH_MAINNET: number = 1;
@@ -15,10 +16,11 @@ export const ARBITRUM_SEPOLIA: number = 421614;
 export const POLYGON: number = 137;
 export const OPTIMISM: number = 10;
 export const POLYGON_MUMBAI: number = 80001;
+export const BASE: number = 8453;
 
-export const DEFAULT_CHAIN_ID = ARBITRUM;
+export const DEFAULT_CHAIN_ID = BASE;
 
-export const SUPPORTED_CHAIN_IDS = [ARBITRUM, OPTIMISM];
+export const SUPPORTED_CHAIN_IDS = [ARBITRUM, OPTIMISM, BASE];
 
 export function isSupportedChainOrDefault(chainId: number): number {
     return SUPPORTED_CHAIN_IDS.includes(chainId) ? chainId : DEFAULT_CHAIN_ID;
@@ -42,6 +44,8 @@ export function getViemChain(chainId: number) {
             return polygonMumbai;
         case OPTIMISM:
             return optimism;
+        case BASE:
+            return base;
         default:
             throw new Error("Chain not supported");
     }

@@ -5,8 +5,7 @@ import {
 } from "@/agent/AgentCommunicationChannel";
 import { useUserOpContext } from "@/context/UserOpContext";
 import { ConfirmationType } from "@/hooks/useConfirmation";
-import { useNotification } from "@/context/NotificationContextProvider";
-import { useSimLiFiTx } from "@/hooks";
+import { useMind, useSimLiFiTx } from "@/hooks";
 import { useSimulateTransfer } from "./useSimulateTransfer";
 
 export const useToolRequestListener = ({
@@ -21,7 +20,7 @@ export const useToolRequestListener = ({
         simulateLifiTx,
     } = useSimLiFiTx();
     const { setUserOp } = useUserOpContext();
-    const { showNotification } = useNotification();
+    const { processInternalMessage } = useMind();
     const { simulateTransfer, simulationResult } = useSimulateTransfer(); // Use the new hook
 
     useEffect(() => {
@@ -30,7 +29,6 @@ export const useToolRequestListener = ({
 
             switch (tool) {
                 case "Simulate-Transfer": {
-                    console.log("--- IN SIM TRANSFER ---");
                     const result = await simulateTransfer(params); // Simulate transfer
                     if (result) {
                         const { userOp, simulationResult } = result;
@@ -65,17 +63,29 @@ export const useToolRequestListener = ({
                     break;
                 }
                 case "LiFi-Simulator": {
-                    console.log("--- IN LIFI SIM ---");
-                    const quote = await getQuote(params);
-                    const confirmationDetails =
-                        extractConfirmationDetails(quote);
-                    setConfirmationDetails(confirmationDetails);
-
-                    const userOp = createUserOpFromQuote(quote);
-                    const simResult = await simulateLifiTx(userOp);
-                    if (simResult) {
-                        setUserOp(userOp);
-                        setShowConfirmationBox(true);
+                    let passed = false;
+                    let triedTools = [];
+                    while (!passed) {
+                        const quote = await getQuote({
+                            ...params,
+                            denyExchanges: triedTools,
+                        });
+                        // @ts-expect-error
+                        triedTools.push(quote.tool);
+                        const confirmationDetails =
+                            extractConfirmationDetails(quote);
+                        setConfirmationDetails(confirmationDetails);
+                        const userOp = createUserOpFromQuote(quote);
+                        const simResult = await simulateLifiTx(userOp);
+                        if (simResult) {
+                            setUserOp(userOp);
+                            setShowConfirmationBox(true);
+                            passed = true;
+                        } else {
+                            await processInternalMessage(
+                                `The initial quote for ${JSON.stringify(quote, null, 2)} simulation failed. Give a brief message to the user explaining this and that you're trying a different swap tool`,
+                            );
+                        }
                     }
 
                     break;

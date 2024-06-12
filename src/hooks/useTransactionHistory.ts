@@ -14,15 +14,15 @@ export function useTransactionHistory() {
 
     const fetchTransactions = useCallback(
         async (pageKey?: string) => {
-            console.log("Fetching transactions...");
-            console.log("Alchemy Client:", alchemyClient);
-            console.log("Smart Contract Account:", scAccount);
+            // console.log("Fetching transactions...");
+            // console.log("Alchemy Client:", alchemyClient);
+            // console.log("Smart Contract Account:", scAccount);
 
             if (alchemyClient && scAccount) {
                 try {
                     const { transactions: txHistory, pageKey: newPageKey } =
                         await getTransactionHistory(scAccount, pageKey);
-                    console.log("Transaction history fetched:", txHistory);
+                    // console.log("Transaction history fetched:", txHistory);
                     if (txHistory) {
                         setTransactions((prev) => {
                             const txIds = new Set(prev.map((tx) => tx.id));

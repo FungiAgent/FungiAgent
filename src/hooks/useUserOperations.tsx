@@ -4,8 +4,9 @@ import { useGlobalContext } from "@/context/FungiContextProvider";
 import { useNotification } from "@/context/NotificationContextProvider";
 
 export function useUserOperations() {
-    const { alchemyScaProvider } = useGlobalContext();
+    const { alchemyScaProvider, alchemyClient } = useGlobalContext();
     const { showNotification } = useNotification();
+
     const sendUserOperations = async (
         userOperations: UserOperation[],
         successMessage?: string,
@@ -29,7 +30,12 @@ export function useUserOperations() {
                 ),
                 type: "success",
             });
-            return txHash;
+
+            const txInfo = await alchemyClient?.core.getTransactionReceipt(
+                txHash?.toString() || "",
+            );
+
+            return { ...txInfo, logs: undefined };
         } catch (e) {
             console.error(e);
             showNotification({

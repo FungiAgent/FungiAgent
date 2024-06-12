@@ -8,9 +8,59 @@ import { getTokenInfo } from "./getLiFiTokenInfo";
 import { tavilySearch } from "./tavilySearch";
 import { RSS3Search } from "./RSS3Search";
 import { getLiFiQuote } from "./getLiFiQuote";
+import { getOnlyTokensWithBalances } from "@/domain/tokens/useInfoTokens";
+import { generateQueryFromPortfolio } from "@/utils/generateQueryFromPortfolio";
+import {
+    getProviderDefaultSettings,
+    getProviderMultichainSetting,
+} from "@/config/alchemyConfig";
+import { BASE } from "@/config/chains";
+import { AlchemyMultichainClient } from "@/lib/alchemy/AlchemyMultichainClient";
 // import { BigNumber } from 'alchemy-sdk';
 
 export const dynamicTools = [
+    new DynamicStructuredTool({
+        name: "Check-Portfolio",
+        description: "Check the user's portfolio of tokens",
+        schema: z.object({
+            scAccount: z.string().describe("The account of the recipient"),
+            chainId: z.number().describe("The id of the chain"),
+        }),
+        func: async ({ chainId, scAccount }) => {
+            if (chainId && scAccount) {
+                const defaultAlchemySettings = getProviderDefaultSettings(BASE);
+                const overridesAlchemySettings = getProviderMultichainSetting();
+                const multichainProv = new AlchemyMultichainClient(
+                    defaultAlchemySettings,
+                    overridesAlchemySettings,
+                );
+                const alchemyClient = multichainProv?.forNetwork(BASE);
+                if (!alchemyClient) {
+                    return "Error with portfolio alchemy client";
+                }
+
+                const tokensInfo = await getOnlyTokensWithBalances(
+                    alchemyClient,
+                    chainId,
+                    scAccount,
+                    // "0x9c91AFF7d082C253F736854cBEC4c267C47bc098"
+                );
+                if (!tokensInfo) {
+                    return "Error with portfolio tokenInfo";
+                }
+
+                const tokenVals = await generateQueryFromPortfolio(tokensInfo);
+
+                if (!tokenVals) {
+                    return "Error with portfolio tokenVals";
+                } else {
+                    return `The user's portfolio information is: ${JSON.stringify(tokenVals)}. Format it as neatly and as legibly as possible.`;
+                }
+            }
+
+            return "error with portfolio params";
+        },
+    }),
     new DynamicStructuredTool({
         name: "Simulate-Transfer",
         description: "Simulate a transfer of assets",
@@ -36,7 +86,7 @@ export const dynamicTools = [
     new DynamicStructuredTool({
         name: "LiFi-Simulator",
         description:
-            "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0xaf88d065e77c8cC2239327C5EDb3A432268e5831) and for DAI use: 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1.",
+            "Make a swap between 2 tokens using LiFi. This tool fetches a quote from LiFi's api, simulates the transaction and then renders a component that allows the user to confirm the execution of the swap. The tokens will be passed as addresses, and in the case of USDC use the address of the token in the portfolio (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) and for DAI use: 0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb.",
         schema: z.object({
             type: z
                 .string()
@@ -46,12 +96,12 @@ export const dynamicTools = [
             fromChain: z
                 .string()
                 .describe(
-                    "The ID of the source chain, by default use Arbitrum: 42161",
+                    "The ID of the source chain, by default use Base: 8453",
                 ),
             fromAmount: z
                 .string()
                 .describe(
-                    "The amount to transfer from the source chain, specified in the prompt, you will add the required 0s (decimals) to the amount provided in the query, e.g. The user provides 1 ARB you add 18 0s to make it 1,000,000,000,000,000,000 ARB",
+                    "The amount to transfer from the source chain, specified in the prompt, you will add the required 0s (decimals) to the amount provided in the query, e.g. The user provides 1 BASE you add 18 0s to make it 1,000,000,000,000,000,000 BASE",
                 ),
             fromToken: z
                 .string()
@@ -61,7 +111,7 @@ export const dynamicTools = [
             toChain: z
                 .string()
                 .describe(
-                    "The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Arbitrum: 42161), if it is a bridge, it will be the destination chain ID",
+                    "The ID of the destination chain, if it is a swap, it will be the same as the source chain (by default use Base: 8453), if it is a bridge, it will be the destination chain ID",
                 ),
             toToken: z
                 .string()
@@ -119,7 +169,7 @@ export const dynamicTools = [
             chain: z
                 .string()
                 .describe(
-                    "The blockchain network chain ID or name where the token resides. By default: ARB",
+                    "The blockchain network chain ID or name where the token resides. By default: BASE",
                 ),
             token: z
                 .string()
@@ -214,6 +264,7 @@ export const dynamicTools = [
             return result;
         },
     }),
+
     new DynamicStructuredTool({
         name: "tavily-search",
         description:

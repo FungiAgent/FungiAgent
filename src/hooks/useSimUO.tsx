@@ -19,20 +19,7 @@ export function useSimUO() {
             if (userOperations.length === 0) {
                 return null;
             }
-            console.log(
-                "Alchemy info: ",
-                JSON.stringify(
-                    {
-                        account: alchemyScaProvider.account!,
-                        uo:
-                            userOperations.length > 1
-                                ? userOperations
-                                : userOperations[0],
-                    },
-                    null,
-                    2,
-                ),
-            );
+
             let result = await alchemyScaProvider.simulateUserOperation({
                 account: alchemyScaProvider.account!,
                 uo:
@@ -40,7 +27,7 @@ export function useSimUO() {
                         ? userOperations
                         : userOperations[0],
             });
-            console.log("SIM", result);
+            // console.log("SIM", result);
             setSimResult(result);
             // await addMessage(new SystemMessage('The simulation result is the following, where the amount in index 0 represents the gas cost:', result)); // Add a system message to the chat history
             if (!result) {
@@ -61,7 +48,7 @@ export function useSimUO() {
 
             return result; // Directly return the result for immediate use
         } catch (e: any) {
-            console.error(e);
+            // console.error(e);
             setSimStatus({
                 ...simStatus,
                 loading: false,
