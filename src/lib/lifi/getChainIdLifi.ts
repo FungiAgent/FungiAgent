@@ -4,6 +4,7 @@ import {
     POLYGON,
     ETH_MAINNET,
     OPTIMISM,
+    BASE,
 } from "../../config/chains";
 
 export const LIFI_CHAINS = {
@@ -46,6 +47,16 @@ export const LIFI_CHAINS = {
         mainnet: true,
         logoURI:
             "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/optimism.svg",
+    },
+    [BASE]: {
+        key: "bas",
+        chainType: "EVM",
+        name: "Base",
+        coin: "ETH",
+        id: 10,
+        mainnet: true,
+        logoURI:
+            "https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/base.svg",
     },
 };
 

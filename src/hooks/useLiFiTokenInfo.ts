@@ -23,7 +23,7 @@ export const useLiFiTokenInfo = () => {
             try {
                 const response = await axios.get("https://li.quest/v1/tokens", {
                     params: {
-                        chains: "42161", // Arbitrum chainId
+                        chains: "8453", // Arbitrum chainId
                         chainTypes: "EVM",
                     },
                 });
@@ -31,9 +31,9 @@ export const useLiFiTokenInfo = () => {
                 if (
                     response.data &&
                     response.data.tokens &&
-                    Array.isArray(response.data.tokens["42161"])
+                    Array.isArray(response.data.tokens["8453"])
                 ) {
-                    setTokens(response.data.tokens["42161"]);
+                    setTokens(response.data.tokens["8453"]);
                 } else {
                     setError("Invalid response structure");
                 }

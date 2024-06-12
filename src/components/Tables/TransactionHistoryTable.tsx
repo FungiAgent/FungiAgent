@@ -127,12 +127,20 @@ const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({
     return (
         <div className="container mx-auto p-4">
             <div>
-                {paginatedTransactions.map((transaction) => (
+                {paginatedTransactions.map((transaction, index) => (
                     <TransactionRow
                         key={transaction.id}
                         transaction={transaction}
                         details={transactionDetails[transaction.id]}
+                        prevDetails={
+                            index > 0
+                                ? transactionDetails[
+                                      paginatedTransactions[index - 1].id
+                                  ]
+                                : null
+                        }
                         formatCurrency={formatCurrency}
+                        index={index}
                     />
                 ))}
             </div>

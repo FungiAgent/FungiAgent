@@ -6,6 +6,7 @@ import {
     POLYGON,
     POLYGON_MUMBAI,
     OPTIMISM,
+    BASE,
     isSupportedChainOrDefault,
 } from "@/config/chains";
 import { Network } from "alchemy-sdk";
@@ -15,6 +16,7 @@ dotenv.config();
 
 const ALCHEMY_API_KEYS = {
     [ARBITRUM]: process.env.ARBITRUM_API_KEY,
+    [BASE]: process.env.BASE_API_KEY,
     [POLYGON]: process.env.POLYGON_API_KEY,
     [OPTIMISM]: process.env.OPTIMISM_API_KEY,
 };
@@ -23,6 +25,7 @@ const ALCHEMY_URL = {
     [ARBITRUM]: "https://arb-mainnet.g.alchemy.com/v2/",
     [POLYGON]: "https://polygon-mainnet.g.alchemy.com/v2/",
     [OPTIMISM]: "https://opt-mainnet.g.alchemy.com/v2/",
+    [BASE]: "https://opt-mainnet.g.alchemy.com/v2/",
 };
 
 export function getApiKeyChain(chainId: number) {
@@ -60,6 +63,8 @@ export function getAlchemyNetwork(chainId: number): Network {
             return Network.MATIC_MUMBAI;
         case OPTIMISM:
             return Network.OPT_MAINNET;
+        case BASE:
+            return Network.BASE_MAINNET;
         default:
             throw new Error("Chain not supported");
     }
