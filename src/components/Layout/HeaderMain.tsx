@@ -8,7 +8,7 @@ import ProfileModal from "../Modals/ProfileModal";
 import ChangeNetworkDropdown from "../Dropdown/ChangeNetworkDropdown";
 import LoginButton from "../Buttons/LoginButton";
 import { networks } from "../../../constants/Constants";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { generateQueryFromPortfolio } from "@/utils/generateQueryFromPortfolio";
 import {
@@ -170,36 +170,38 @@ export default function HeaderMain() {
                 />
                 {isConnected && (
                     <div className="flex w-full justify-between items-center text-lg font-semibold mb-4">
-                        {isExpanded ? (
-                            <SideModal
-                                isOpen={true}
-                                onClose={() => toggleExpand(activeCategory)}
-                                // @ts-expect-error
-                                balance={formatCurrency(totalBalance)}
-                                // @ts-expect-error
-                                cash={formatCurrency(totalCash)}
-                                tokens={tokens}
-                                startIndex={startIndex}
-                                endIndex={endIndex}
-                                // @ts-expect-error
-                                getLength={getLength}
-                                handlePageChange={handlePageChange}
-                                // @ts-expect-error
-                                forceTableReload={forceTableReload}
-                                currentPage={currentPage}
-                                ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-                                length={length}
-                                setTokenFrom={setTokenFrom}
-                                onModalToggle={() => {}}
-                                activeCategory={activeCategory}
-                            />
-                        ) : (
-                            <LeftSideBar
-                                toggleExpand={toggleExpand}
-                                totalBalance={totalBalance}
-                                totalCash={totalCash}
-                            />
-                        )}
+                        <AnimatePresence mode="wait">
+                            {isExpanded ? (
+                                <SideModal
+                                    isOpen={true}
+                                    onClose={() => toggleExpand(activeCategory)}
+                                    // @ts-expect-error
+                                    balance={formatCurrency(totalBalance)}
+                                    // @ts-expect-error
+                                    cash={formatCurrency(totalCash)}
+                                    tokens={tokens}
+                                    startIndex={startIndex}
+                                    endIndex={endIndex}
+                                    // @ts-expect-error
+                                    getLength={getLength}
+                                    handlePageChange={handlePageChange}
+                                    // @ts-expect-error
+                                    forceTableReload={forceTableReload}
+                                    currentPage={currentPage}
+                                    ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+                                    length={length}
+                                    setTokenFrom={setTokenFrom}
+                                    onModalToggle={() => {}}
+                                    activeCategory={activeCategory}
+                                />
+                            ) : (
+                                <LeftSideBar
+                                    toggleExpand={toggleExpand}
+                                    totalBalance={totalBalance}
+                                    totalCash={totalCash}
+                                />
+                            )}
+                        </AnimatePresence>
                     </div>
                 )}
             </motion.div>
@@ -231,6 +233,7 @@ export default function HeaderMain() {
                 )}
             </motion.div>
             {/* Right */}
+
             {!isExpanded && (
                 <div
                     className="flex flex-col justify-start items-center"

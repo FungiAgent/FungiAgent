@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import LightSpotTable from "@/components/Tables/LightSpotTable";
 import TransactionHistoryTable from "@/components/Tables/TransactionHistoryTable";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 type SideModalProps = {
     isOpen: boolean;
@@ -82,7 +83,12 @@ const SideModal: FC<SideModalProps> = ({
     };
 
     return (
-        <div className="p-6 w-full">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="p-6 w-full"
+        >
             <div className="flex flex-row justify-end">
                 <button onClick={onClose}>
                     <Image
@@ -104,7 +110,7 @@ const SideModal: FC<SideModalProps> = ({
                 </div>
             </div>
             <div className="overflow-y-auto">{categoryContent()}</div>
-        </div>
+        </motion.div>
     );
 };
 
