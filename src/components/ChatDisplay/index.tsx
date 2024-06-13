@@ -3,6 +3,7 @@ import styles from "./ChatDisplay.module.css";
 import Image from "next/image";
 import { marked } from "marked"; // Import the marked library
 import Logo from "../../../public/profile/Logo.svg";
+import WelcomeMessage from "../Layout/WelcomeMessage";
 
 const renderer = new marked.Renderer();
 
@@ -92,15 +93,11 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
 
     const renderPlaceholder = () => {
         return (
-            <div className="col-span-3 flex items-center justify-center flex-col">
-                <Image
-                    width={150}
-                    height={150}
-                    alt="Logo"
-                    src={Logo.src}
-                    aria-hidden="true"
-                />
-                <h1 className="text-3xl">Hi, I'm Fungi! your DeFi Friend</h1>
+            <div className="flex flex-col justify-between h-full ">
+                <div className="flex flex-col items-center mt-4">
+                    <Image src={Logo.src} alt="Logo" width={100} height={100} />
+                    <p className="text-xxl">Welcome.</p>
+                </div>
             </div>
         );
     };

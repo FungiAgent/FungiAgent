@@ -9,7 +9,6 @@ type SideModalProps = {
     balance: string;
     cash: string;
     tokens: any[];
-    formatCurrency: (value: number) => string;
     startIndex: number;
     endIndex: number;
     getLength: () => number;
@@ -30,7 +29,6 @@ const SideModal: FC<SideModalProps> = ({
     balance,
     cash,
     tokens,
-    formatCurrency,
     startIndex,
     endIndex,
     getLength,
@@ -61,9 +59,7 @@ const SideModal: FC<SideModalProps> = ({
                     />
                 );
             case "History":
-                return (
-                    <TransactionHistoryTable formatCurrency={formatCurrency} />
-                );
+                return <TransactionHistoryTable />;
             default:
                 return (
                     <div className="text-center mt-10">
@@ -86,33 +82,28 @@ const SideModal: FC<SideModalProps> = ({
     };
 
     return (
-        <div style={{ ...modalStyle, position: "fixed" }}>
-            <div className="h-full overflow-auto p-6">
-                <div className="h-[100px]">
-                    <button
-                        onClick={onClose}
-                        className="absolute top-5 right-5 p-2"
-                    >
-                        <Image
-                            src="/navbar/CloseSideBar.svg"
-                            alt="Close"
-                            width={12}
-                            height={12}
-                        />
-                    </button>
-                </div>
-                <div className="mb-6 flex justify-center items-center h-[79px] pb-[16px]">
-                    <div className="flex flex-col pr-[32px]">
-                        <p className="text-lg">My Balance:</p>
-                        <p className="text-lg font-semibold">{balance}</p>
-                    </div>
-                    <div className="flex flex-col">
-                        <p className="text-lg">My Cash:</p>
-                        <p className="text-lg font-semibold">{cash}</p>
-                    </div>
-                </div>
-                {tokens.length > 0 ? categoryContent() : <div>Loading...</div>}
+        <div className="p-6 w-full">
+            <div className="flex flex-row justify-end">
+                <button onClick={onClose}>
+                    <Image
+                        src="/navbar/CloseSideBar.svg"
+                        alt="Close"
+                        width={12}
+                        height={12}
+                    />
+                </button>
             </div>
+            <div className="mb-6 flex justify-center items-center">
+                <div className="flex flex-col px-10">
+                    <p className="font-light">My Balance</p>
+                    <p className="text-xl font-semibold">{balance}</p>
+                </div>
+                <div className="flex flex-col px-10">
+                    <p className="font-light">My Cash</p>
+                    <p className="text-xl font-semibold">{cash}</p>
+                </div>
+            </div>
+            <div className="overflow-y-auto">{categoryContent()}</div>
         </div>
     );
 };
