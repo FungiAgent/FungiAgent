@@ -127,7 +127,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
                 signer,
                 gasManagerConfig: {
                     policyId:
-                        NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE as string,
+                        "3d9deb19-b96d-4e91-b388-ef8d98e2ab1c",
                 },
             });
 
