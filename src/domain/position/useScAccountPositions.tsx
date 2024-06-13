@@ -3,43 +3,43 @@ import { PositionInfo } from "./types";
 import useScAccountSpotPosition from "./useScAccountSpotPosition";
 
 export default function useScAccountPositions() {
-  const { spotPosition } = useScAccountSpotPosition();
-  // const { perpsPosition } = useScAccountPerpsPosition();
-  const [positions, setPositions] = useState<PositionInfo[]>([]);
-  const [totalBalance, setTotalBalance] = useState<number>();
+    const { spotPosition } = useScAccountSpotPosition();
+    // const { perpsPosition } = useScAccountPerpsPosition();
+    const [positions, setPositions] = useState<PositionInfo[]>([]);
+    const [totalBalance, setTotalBalance] = useState<number>();
 
-  const checkExits = (type: string) => {
-    return positions.some((element) => element.type === type);
-  };
+    const checkExits = (type: string) => {
+        return positions.some((element) => element.type === type);
+    };
 
-  useEffect(() => {
-    let copy = [...positions];
+    useEffect(() => {
+        let copy = [...positions];
 
-    if (spotPosition && !checkExits("Spot")) {
-      copy.push(spotPosition);
-    }
-    // if (perpsPosition && !checkExits("Perps")) {
-    //   copy.push(perpsPosition);
-    // }
+        if (spotPosition && !checkExits("Spot")) {
+            copy.push(spotPosition);
+        }
+        // if (perpsPosition && !checkExits("Perps")) {
+        //   copy.push(perpsPosition);
+        // }
 
-    const totalBalance = copy.reduce((acc, prev) => {
-      return acc + Number(Number(prev.totalValue));
-    }, 0);
+        const totalBalance = copy.reduce((acc, prev) => {
+            return acc + Number(Number(prev.totalValue));
+        }, 0);
 
-    setTotalBalance(totalBalance);
+        setTotalBalance(totalBalance);
 
-    copy.sort((a, b) => {
-      if (a.type === "Spot") {
-        return -1; // Put a after b
-      } else if (b.type === "Spot") {
-        return 1; // Put b after a
-      } else {
-        return 0; // Keep the order
-      }
-    });
+        copy.sort((a, b) => {
+            if (a.type === "Spot") {
+                return -1; // Put a after b
+            } else if (b.type === "Spot") {
+                return 1; // Put b after a
+            } else {
+                return 0; // Keep the order
+            }
+        });
 
-    setPositions(copy);
-  }, [spotPosition]);
+        setPositions(copy);
+    }, [spotPosition]);
 
-  return { positions, totalBalance };
+    return { positions, totalBalance };
 }

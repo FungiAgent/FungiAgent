@@ -1,6 +1,12 @@
-import { createContext, useState, useContext, Dispatch, SetStateAction } from 'react';
-import { UserOperation } from '@/lib/userOperations/types';
-import React from 'react';
+import {
+    createContext,
+    useState,
+    useContext,
+    Dispatch,
+    SetStateAction,
+} from "react";
+import { UserOperation } from "@/lib/userOperations/types";
+import React from "react";
 
 // Define the context type
 interface UserOpContextType {
@@ -15,13 +21,17 @@ const UserOpContext = createContext<UserOpContextType | undefined>(undefined);
 export const useUserOpContext = () => {
     const context = useContext(UserOpContext);
     if (!context) {
-        throw new Error("useUserOpContext must be used within a UserOpProvider");
+        throw new Error(
+            "useUserOpContext must be used within a UserOpProvider",
+        );
     }
     return context;
 };
 
 // Create a provider component
-export const UserOpProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const UserOpProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [userOp, setUserOp] = useState<UserOperation[]>([]);
 
     return (

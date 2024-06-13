@@ -1,13 +1,13 @@
 /* global.css */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;0,9..40,1000;1,9..40,100;1,9..40,200;1,9..40,300;1,9..40,400;1,9..40,500;1,9..40,600;1,9..40,700;1,9..40,800;1,9..40,900;1,9..40,1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100;0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;0,9..40,1000;1,9..40,100;1,9..40,200;1,9..40,300;1,9..40,400;1,9..40,500;1,9..40,600;1,9..40,700;1,9..40,800;1,9..40,900;1,9..40,1000&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 html {
-    background-color: #F4F4FF;
+    background-color: #f4f4ff;
     margin: 0;
     max-width: 100%;
     padding: 0;
@@ -41,7 +41,7 @@ body {
 .bar-filled {
     width: 0;
     height: 100%;
-    background-color: #514AF3;
+    background-color: #514af3;
     transition: width 0.8s ease-in-out;
 }
 
@@ -89,11 +89,12 @@ body {
 }
 
 @keyframes colorChange {
-    0%, 100% {
+    0%,
+    100% {
         background-color: #e0cafe;
     }
     50% {
-        background-color: #514AF3;
+        background-color: #514af3;
     }
 }
 
@@ -139,7 +140,7 @@ input[type="number"]::-webkit-outer-spin-button {
     .rc-slider-tooltip-inner {
         box-shadow: none;
         padding: 0.465rem 0.8rem;
-        background: #514AF3;
+        background: #514af3;
     }
 
     .rc-slider-tooltip {
@@ -147,7 +148,7 @@ input[type="number"]::-webkit-outer-spin-button {
     }
 
     .rc-slider-tooltip-placement-top .rc-slider-tooltip-arrow {
-        border-top-color: #514AF3;
+        border-top-color: #514af3;
     }
 
     .rc-slider-rail {
@@ -155,7 +156,7 @@ input[type="number"]::-webkit-outer-spin-button {
     }
 
     .rc-slider-track {
-        background: linear-gradient(90deg, #514AF3, #514AF3);
+        background: linear-gradient(90deg, #514af3, #514af3);
     }
 
     .rc-slider-dot {
@@ -165,7 +166,7 @@ input[type="number"]::-webkit-outer-spin-button {
         height: 18px;
         margin-bottom: -5px;
         margin-left: -1px;
-        background: #514AF3;
+        background: #514af3;
     }
 
     .rc-slider-dot-active {
@@ -173,8 +174,8 @@ input[type="number"]::-webkit-outer-spin-button {
     }
 
     .rc-slider-handle {
-        background: #514AF3;
-        border: solid 2px #514AF3;
+        background: #514af3;
+        border: solid 2px #514af3;
     }
 
     .rc-slider-handle:active {
@@ -211,48 +212,48 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .fadeInAnimation {
-    animation: fadeIn .8s forwards;
+    animation: fadeIn 0.8s forwards;
 }
 
 @keyframes fadeIn {
     0% {
-        opacity: 0
+        opacity: 0;
     }
 
     100% {
-        opacity: 1
+        opacity: 1;
     }
 }
 
 .container {
     max-width: 800px;
     margin: 0 auto;
-  }
-  
-  .transaction {
+}
+
+.transaction {
     padding: 1rem;
     background-color: #ffffff;
-  }
-  
-  .transaction p {
+}
+
+.transaction p {
     margin: 0.5rem 0;
-  }
-  
-  .pagination-buttons {
+}
+
+.pagination-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 1rem;
-  }
-  
-  .pagination-buttons button {
+}
+
+.pagination-buttons button {
     padding: 0.5rem 1rem;
     background-color: #e0e0e0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .pagination-buttons button:disabled {
+}
+
+.pagination-buttons button:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-  }
+}
