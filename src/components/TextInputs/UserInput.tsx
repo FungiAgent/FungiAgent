@@ -38,7 +38,7 @@ export const UserInput: React.FC<UserInputProps> = ({
                 onChange={handleInputChange}
                 onKeyDown={handleKeyPress}
                 placeholder="What can I do for you?"
-                className={`p-4 h-16 w-full rounded-md border border-gray-300 ${showConfirmationBox ? "bg-gray-200" : "bg-white"}  pr-16`}
+                className={`p-4 h-16 w-full rounded-md border border-gray-300 ${showConfirmationBox ? "bg-gray-200" : "bg-white"}  pr-16 focus:outline-none focus:ring-2 focus:ring-main`}
                 disabled={showConfirmationBox}
             />
             <button

@@ -62,10 +62,15 @@ export default function ChangeNetworkDropdown({
                 leaveTo="transform opacity-0 scale-95"
             >
                 <Menu.Items
-                    className={`absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+                    className={`absolute right-0 z-10 mt-2 origin-top-right rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
                         isModal ? "w-32" : "w-56"
                     }`}
                 >
+                    <div className="py-4">
+                        <p className="font-light text-xl text-center">
+                            Select Network
+                        </p>
+                    </div>
                     <div
                         className={`py-1 flex  ${isModal ? "flex-row" : "flex-col px-5"} `}
                     >
@@ -76,23 +81,22 @@ export default function ChangeNetworkDropdown({
                                         onClick={() =>
                                             switchNetwork(network.id)
                                         }
-                                        className={`my-1 ${
+                                        className={`py-1 my-1 ${
                                             isModal ? "" : "grid grid-cols-3"
-                                        } g justify-end align-end  items-center`}
+                                        } w-full  items-center hover:opacity-80`}
                                     >
-                                        {!isModal && (
-                                            <span className="col-span-2 text-start">
-                                                {network.name}
-                                            </span>
-                                        )}
                                         <Image
-                                            width={25}
-                                            height={25}
+                                            width={30}
+                                            height={30}
                                             alt="Network image"
                                             src={network.image}
                                             aria-hidden="true"
-                                            className={`${isModal ? "ml-4" : "ml-10"}`}
                                         />
+                                        {!isModal && (
+                                            <p className="ml-0 col-span-2 text-end">
+                                                {network.name}
+                                            </p>
+                                        )}
                                     </button>
                                 </Menu.Item>
                             );
