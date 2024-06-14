@@ -9,19 +9,7 @@ type SideModalProps = {
     onClose: () => void;
     balance: string;
     cash: string;
-    tokens: any[];
-    startIndex: number;
-    endIndex: number;
-    getLength: () => number;
-    handlePageChange: (page: number) => void;
-    forceTableReload: () => void;
-    currentPage: number;
-    ITEMS_PER_PAGE: number;
-    length: number;
-    setTokenFrom: (token: any) => void;
-    onModalToggle: (isOpen: boolean) => void;
     activeCategory: string;
-    children: React.ReactNode;
 };
 
 const SideModal: FC<SideModalProps> = ({
@@ -29,19 +17,7 @@ const SideModal: FC<SideModalProps> = ({
     onClose,
     balance,
     cash,
-    tokens,
-    startIndex,
-    endIndex,
-    getLength,
-    handlePageChange,
-    forceTableReload,
-    currentPage,
-    ITEMS_PER_PAGE,
-    length,
-    setTokenFrom,
-    onModalToggle,
     activeCategory,
-    children,
 }) => {
     if (!isOpen) return null;
 
@@ -50,13 +26,7 @@ const SideModal: FC<SideModalProps> = ({
             case "Portfolio":
                 return (
                     <LightSpotTable
-                        startIndex={startIndex}
-                        endIndex={endIndex}
-                        getLength={getLength}
-                        handlePageChange={handlePageChange}
-                        setTokenFrom={setTokenFrom}
                         forceReload={true} // Simplified for demonstration
-                        handleReloadTable={forceTableReload}
                     />
                 );
             case "History":
@@ -68,18 +38,6 @@ const SideModal: FC<SideModalProps> = ({
                     </div>
                 );
         }
-    };
-
-    const modalStyle = {
-        transform: isOpen ? "translateX(0)" : "translateX(-100%)",
-        width: "585px",
-        height: "100%",
-        position: "fixed",
-        top: "0",
-        left: "0",
-        backgroundColor: "white",
-        zIndex: 50,
-        transition: "transform 0.9s ease-in-out",
     };
 
     return (

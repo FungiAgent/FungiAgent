@@ -2,7 +2,7 @@ import { formatCurrency } from "@/helpers/formatCurrency";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-export default function LeftSideBar({ totalBalance, totalCash, toggleExpand }) {
+export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
     return (
         <motion.div
             initial={{ opacity: 0 }}
