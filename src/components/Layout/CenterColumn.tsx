@@ -69,26 +69,31 @@ export default function CenterColumn({ isExpanded, isConnected }) {
     };
     return (
         <motion.div
-            className="flex justify-center items-center"
+            className="flex justify-center items-center  px-5 h-full"
             animate={{
-                width: isExpanded ? "60%" : "60%",
-                // marginLeft: isExpanded ? "0%" : "10%",
+                width: isExpanded ? "100%" : "75%",
+                transformOrigin: "left",
             }}
-            transition={{ duration: 0.5 }}
+            exit={{ opacity: 0, scaleX: 0, transformOrigin: "left" }}
         >
             {isConnected ? (
-                <div className="flex flex-col items-center justify-end pb-0 p-4 rounded-lg ">
-                    <ChatDisplay chatHistory={chatHistory} />
-                    <ConfirmationManager
-                        confirmationDetails={confirmationDetails}
-                        confirmAction={confirmAction}
-                        isConfirmed={isConfirmed}
-                        setIsConfirmed={setIsConfirmed}
-                        rejectAction={rejectAction}
+                <div className="flex flex-col items-center w-full h-full justify-end rounded-lg ">
+                    <div className=" w-full h-full flex flex-col items-center justify-end overflow-y-hidden">
+                        <ChatDisplay chatHistory={chatHistory} />
+                        <ConfirmationManager
+                            confirmationDetails={confirmationDetails}
+                            confirmAction={confirmAction}
+                            isConfirmed={isConfirmed}
+                            setIsConfirmed={setIsConfirmed}
+                            rejectAction={rejectAction}
+                            showConfirmationBox={showConfirmationBox}
+                        />
+                    </div>
+                    {chatHistory.length === 0 && <Tips />}
+                    <UserInput
+                        onSubmit={handleQuerySubmit}
                         showConfirmationBox={showConfirmationBox}
                     />
-                    {chatHistory.length === 0 && <Tips />}
-                    <UserInput onSubmit={handleQuerySubmit} />
                 </div>
             ) : (
                 <WelcomeMessage />

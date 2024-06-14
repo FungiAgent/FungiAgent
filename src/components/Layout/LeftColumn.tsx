@@ -17,18 +17,20 @@ export default function LeftColumn({
     const { totalCash } = useScAccountSpotPosition();
     return (
         <motion.div
-            className="flex justify-start flex-col items-center overflow-y-scroll"
+            className="flex justify-start flex-col items-center overflow-y-scroll "
             animate={{ width: isExpanded ? "40%" : "20%" }}
             transition={{ duration: 0.5 }}
         >
-            <Image
-                width={62}
-                height={68}
-                alt="Logo"
-                src={Logo.src}
-                aria-hidden="true"
-                className="pt-10 pb-10"
-            />
+            <div className="h-[100px] p-5">
+                <Image
+                    width={62}
+                    height={68}
+                    alt="Logo"
+                    src={Logo.src}
+                    aria-hidden="true"
+                />
+            </div>
+
             {isConnected && (
                 <div className="flex w-full justify-between items-center text-lg font-semibold mb-4">
                     <AnimatePresence mode="wait">

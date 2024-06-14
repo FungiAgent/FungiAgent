@@ -1,7 +1,7 @@
 // React
 import React from "react";
-import HeaderMain from "@/components/Layout/HeaderMain";
+import Main from "@/components/Layout/Main";
 
 export default function HomePage() {
-    return <HeaderMain />;
+    return <Main />;
 }

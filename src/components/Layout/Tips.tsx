@@ -12,7 +12,7 @@ const tips = [
 
 export default function Tips() {
     return (
-        <div>
+        <div className="flex flex-col w-full  items-center">
             <p className="font-light text-center">
                 <i>Some ideas</i>
             </p>

@@ -4,9 +4,13 @@ import Image from "next/image";
 
 interface UserInputProps {
     onSubmit: (query: string) => void;
+    showConfirmationBox: boolean;
 }
 
-export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
+export const UserInput: React.FC<UserInputProps> = ({
+    onSubmit,
+    showConfirmationBox,
+}) => {
     const [input, setInput] = useState("");
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,13 +32,14 @@ export const UserInput: React.FC<UserInputProps> = ({ onSubmit }) => {
     };
 
     return (
-        <div className="pb-0 flex items-center mt-4 w-full md:w-[731px] relative">
+        <div className="pb-0 flex items-center mt-4 w-full relative">
             <input
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyPress}
                 placeholder="What can I do for you?"
-                className="p-4 h-16 w-full rounded-md border border-gray-300 bg-white pr-16"
+                className={`p-4 h-16 w-full rounded-md border border-gray-300 ${showConfirmationBox ? "bg-gray-200" : "bg-white"}  pr-16`}
+                disabled={showConfirmationBox}
             />
             <button
                 type="button"

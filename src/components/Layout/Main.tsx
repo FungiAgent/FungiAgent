@@ -5,8 +5,10 @@ import useWallet from "@/hooks/useWallet";
 import LeftColumn from "./LeftColumn";
 import CenterColumn from "./CenterColumn";
 import RightColumn from "./RightColumn";
+import { motion } from "framer-motion";
+import Header from "./Header";
 
-export default function HeaderMain() {
+export default function Main() {
     const { isConnected } = useWallet();
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -42,9 +44,24 @@ export default function HeaderMain() {
                 toggleExpand={toggleExpand}
                 activeCategory={activeCategory}
             />
-            <CenterColumn isConnected={isConnected} isExpanded={isExpanded} />
-
-            <RightColumn isConnected={isConnected} isExpanded={isExpanded} />
+            <motion.div
+                className="flex flex-col h-full"
+                animate={{
+                    width: isExpanded ? "60%" : "80%",
+                    transformOrigin: "left",
+                }}
+                exit={{ opacity: 0, scaleX: 0, transformOrigin: "left" }}
+            >
+                <Header isConnected={isConnected} />
+                <motion.div className="flex flex-row h-full w-full">
+                    <CenterColumn
+                        isConnected={isConnected}
+                        isExpanded={isExpanded}
+                    />
+                    <RightColumn isExpanded={isExpanded} />
+                </motion.div>
+                <div className="h-[32px] w-full" />
+            </motion.div>
         </div>
     );
 }
