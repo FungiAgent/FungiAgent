@@ -1,8 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import styles from "./ChatDisplay.module.css";
 import Image from "next/image";
 import { marked } from "marked"; // Import the marked library
-import Logo from "../../../public/profile/Logo.svg";
 
 const renderer = new marked.Renderer();
 
@@ -44,10 +42,6 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
         }
     }, [chatHistory]);
 
-    const containerClass =
-        chatHistory.length > 0
-            ? `${styles.chatContainer} ${styles.scrolling}`
-            : styles.chatContainer;
     const nonSystemMessages = chatHistory.filter(
         (msg) => msg?.lc_id?.[2] !== "SystemMessage",
     );
@@ -70,7 +64,6 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
                 <div className="flex flex-row">
                     <div className="ml-20 pr-5">
                         <span
-                            className={styles.messageContent}
                             dangerouslySetInnerHTML={{ __html: htmlContent }}
                         />
                     </div>
@@ -99,15 +92,12 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
     };
 
     return (
-        <div className={containerClass}>
-            <div className={styles.messagesWrapper}>
+        <div className="p-[16px]  max-h-[65vh] flex flex-col gap-[10px] w-full">
+            <div className="overflow-y-auto flex flex-col gap-[10px] h-full">
                 {nonSystemMessages.length === 0
                     ? renderPlaceholder()
                     : nonSystemMessages.map(renderMessage)}
             </div>
-            {/* <button onClick={() => console.log({ chatHistory })}>
-                Log History
-            </button> */}
         </div>
     );
 };

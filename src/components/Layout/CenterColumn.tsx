@@ -69,7 +69,7 @@ export default function CenterColumn({ isExpanded, isConnected }) {
     };
     return (
         <motion.div
-            className="flex justify-center items-center  px-5 h-full"
+            className="flex flex-col justify-center items-center  px-5 h-full"
             animate={{
                 width: isExpanded ? "100%" : "75%",
                 transformOrigin: "left",
@@ -78,7 +78,7 @@ export default function CenterColumn({ isExpanded, isConnected }) {
         >
             {isConnected ? (
                 <div className="flex flex-col items-center w-full h-full justify-end rounded-lg ">
-                    <div className=" w-full h-full flex flex-col items-center justify-end overflow-y-hidden">
+                    <div className="flex flex-col w-full h-full items-center justify-end overflow-y-hidden">
                         <ChatDisplay chatHistory={chatHistory} />
                         <ConfirmationManager
                             confirmationDetails={confirmationDetails}
