@@ -8,12 +8,12 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import ProfileSelectionButton from "../Buttons/ProfileSelectionButton";
 import { useRouter } from "next/router";
 
-import SendIcon from "../../../public/profile/SendIcon.svg";
-import SettingsIcon from "../../../public/profile/SettingsIcon.svg";
-import WithdrawIcon from "../../../public/profile/WithdrawIcon.svg";
-import DepositIcon from "../../../public/profile/DepositIcon.svg";
+import Send from "../../../public/profile/Send.svg";
+import Settings from "../../../public/profile/Settings.svg";
+import Withdraw from "../../../public/profile/Withdraw.svg";
+import Deposit from "../../../public/profile/Deposit.svg";
 import LogOutIcon from "../../../public/profile/LogOutIcon.svg";
-import TransactionIcon from "../../../public/profile/TransactionIcon.svg";
+import AddFriends from "../../../public/profile/AddFriends.svg";
 import useWallet from "@/hooks/useWallet";
 import { useNotification } from "@/context/NotificationContextProvider";
 import SendModal from "../Modals/SendModal";
@@ -52,31 +52,32 @@ export default function ProfileModal({ getOpenModal }: ProfileModalProps) {
     const profileActions = [
         {
             title: "Send",
-            image: SendIcon.src,
+            image: Send.src,
             status: true,
             onClick: openSendModal,
         },
+
         {
-            title: "Withdraw",
-            image: WithdrawIcon.src,
-            status: false,
-            onClick: handle,
-        },
-        {
-            title: "Transactions",
-            image: TransactionIcon.src,
+            title: "Add Friends",
+            image: AddFriends.src,
             status: false,
             onClick: handle,
         },
         {
             title: "Deposit",
-            image: DepositIcon.src,
+            image: Deposit.src,
             status: false,
             onClick: handle,
         },
         {
             title: "Settings",
-            image: SettingsIcon.src,
+            image: Settings.src,
+            status: false,
+            onClick: handle,
+        },
+        {
+            title: "Withdraw",
+            image: Withdraw.src,
             status: false,
             onClick: handle,
         },
@@ -115,9 +116,9 @@ export default function ProfileModal({ getOpenModal }: ProfileModalProps) {
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <Dialog.Panel className="absolute transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-fit top-0 right-10">
-                                <div className="bg-white rounded-lg px-4 py-2 shadow-input z-50">
-                                    <div className="flex flex-col justify-center p-[36px] text-center">
-                                        <p className="text-xl mb-[18px] font-light">
+                                <div className="bg-white rounded-lg px-2 py-1 shadow-input z-50">
+                                    <div className="flex flex-col justify-center px-[40px] py-[32px] text-center">
+                                        <p className=" mb-[18px] font-light text-lg">
                                             Your Fungi Account
                                         </p>
                                         <button
@@ -146,7 +147,7 @@ export default function ProfileModal({ getOpenModal }: ProfileModalProps) {
                                                 aria-hidden="true"
                                             />
                                         </button>
-                                        <div className="grid grid-cols-3 gap-x-[54px] gap-y-[30px] mt-[34px]">
+                                        <div className="grid grid-cols-3 gap-x-[40px] gap-y-[30px] mt-[34px]">
                                             {profileActions.map((action) => {
                                                 return (
                                                     <ProfileSelectionButton
