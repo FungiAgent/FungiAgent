@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 type ProfileSelectionButtonProps = {
@@ -20,8 +21,9 @@ export default function ProfileSelectionButton({
             } flex flex-col items-center justify-center  `}
             onClick={onClick}
         >
-            <div className="p-1.5 rounded-full bg-gray-100">
-                <img src={image} className="min-w-[48px] p-1" />
+            <div className="p-1.5 rounded-full ">
+                <Image src={image} alt="Copy Icon" width={40} height={40} />
+                {/* <img src={image} className="min-w-[48px] p-1 max-w-[100px]" /> */}
             </div>
 
             <p className="text-sm mt-[9px]">{title}</p>

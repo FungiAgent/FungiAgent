@@ -30,6 +30,64 @@ body {
     }
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px; /* Adjust width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Change the background color of the track */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #514af3; /* Change the color of the scroll thumb */
+    opacity: 75%;
+    border-radius: 6px; /* Round the corners of the scroll thumb */
+    border: 3px solid transparent; /* Add a transparent border to create padding */
+    background-clip: content-box; /* Clip the background color to the content box */
+    transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* Make scrollbar thumb visible only while scrolling */
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:focus {
+    background-color: #514af3; /* Change the color when active */
+    opacity: 75%;
+}
+
+/* Firefox scrollbar */
+html {
+    scrollbar-width: thin; /* Make the scrollbar thin */
+    scrollbar-color: #514af3 transparent; /* Set scrollbar color */
+    opacity: 75%;
+}
+
+/* Custom scrollbar for Firefox */
+html::-webkit-scrollbar {
+    width: 12px; /* Adjust width of the scrollbar */
+}
+
+html::-webkit-scrollbar-track {
+    background: transparent; /* Change the background color of the track */
+}
+
+html::-webkit-scrollbar-thumb {
+    background-color: #514af3; /* Change the color of the scroll thumb */
+    opacity: 75%;
+    border-radius: 6px; /* Round the corners of the scroll thumb */
+    border: 3px solid transparent; /* Add a transparent border to create padding */
+    background-clip: content-box; /* Clip the background color to the content box */
+    transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+html::-webkit-scrollbar-thumb:hover,
+html::-webkit-scrollbar-thumb:active,
+html::-webkit-scrollbar-thumb:focus {
+    background-color: #514af3; /* Change the color when active */
+    opacity: 75%;
+}
+
 .bar {
     width: 95%;
     height: 4px;

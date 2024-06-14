@@ -131,6 +131,12 @@ export function FungiGlobalContextProvider({
                 console.log(alchemyScaProvider.account?.address);
                 if (alchemyScaProvider) {
                     setScaAddress(alchemyScaProvider.account?.address);
+                    if (alchemyScaProvider?.account?.address) {
+                        localStorage.setItem(
+                            "scaAddress",
+                            alchemyScaProvider?.account?.address.toString(),
+                        );
+                    }
                 }
             }
         })();

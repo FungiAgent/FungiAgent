@@ -1,28 +1,16 @@
 import React from "react";
 import Image from "next/image";
-import {
-    formatNumber,
-    formatAmount,
-    formatAmountToUsd,
-} from "@/utils/formatNumber";
-import { networks } from "../../../../constants/Constants";
+import { formatAmount, formatAmountToUsd } from "@/utils/formatNumber";
 import { TokenData } from "@/domain/tokens/types";
 
 type AssetsTableCardProps = {
     asset: TokenData;
     index: number;
-    setTokenFrom: (TokenInfo) => void;
 };
 
-export default function AssetsTableCard({
-    asset,
-    setTokenFrom,
-}: AssetsTableCardProps) {
+export default function AssetsTableCard({ asset }: AssetsTableCardProps) {
     return (
-        <div
-            className="border-b border-gray-300 grid grid-cols-3 py-[22px] items-center fadeInAnimation border-l-4 hover:border-l-main border-l-white cursor-pointer"
-            onClick={() => setTokenFrom(asset.token)}
-        >
+        <div className=" grid grid-cols-3 py-[22px] items-center fadeInAnimation border-l-4 hover:border-l-main border-l-transparent cursor-pointer">
             <div className="col-span-1 flex items-center justify-start pl-[2vw]">
                 {/* <img width={40} height={40} alt="Token Logo" src={asset.token.logoURI} className="ml-[10px] rounded-full" /> */}
                 <Image
@@ -42,19 +30,21 @@ export default function AssetsTableCard({
             <div className="col-span-1 text-center">
                 {asset?.token.balance !== undefined && (
                     <>
-                        {formatAmount(
-                            asset?.token?.balance.toString() || "0",
-                            asset?.token?.decimals,
-                        ).slice(0, 9)}
-                        <div>
-                            ($
+                        <p>
+                            $
                             {formatAmountToUsd(
                                 asset?.token?.balance.toString() || "0",
                                 asset?.token?.decimals,
                                 Number(asset?.token?.priceUSD),
                             )}
-                            )
-                        </div>
+                        </p>
+                        <p className="text-gray-500 font-light text-sm">
+                            {asset.token.symbol}{" "}
+                            {formatAmount(
+                                asset?.token?.balance.toString() || "0",
+                                asset?.token?.decimals,
+                            ).slice(0, 9)}
+                        </p>
                     </>
                 )}
             </div>

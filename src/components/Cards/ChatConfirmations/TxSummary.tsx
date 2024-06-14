@@ -25,7 +25,7 @@ const TxSummaryHeader = ({
     console.log("Total Cost:", totalCost);
 
     return (
-        <div className="flex justify-between items-center h-[38px] rounded-full bg-white w-[454px]">
+        <div className="flex justify-between items-center h-[38px] rounded-full bg-white w-full">
             <div className="flex items-center p-[15px] pl-5">
                 {tokenInLogo && (
                     <Image
@@ -36,10 +36,10 @@ const TxSummaryHeader = ({
                         className="mr-2"
                     />
                 )}
-                <span>
-                    {formattedAmountToSwap} {tokenInSymbol} ={" "}
+                <p className="text-light mr-2">
+                    {formattedAmountToSwap} {tokenInSymbol} for{" "}
                     {formattedAmountToReceive} {tokenOutSymbol}
-                </span>
+                </p>
                 {tokenOutLogo && (
                     <Image
                         src={tokenOutLogo}
@@ -50,20 +50,22 @@ const TxSummaryHeader = ({
                     />
                 )}
             </div>
-            <Image
-                src="/GasStation.svg"
-                width={20}
-                height={20}
-                alt="Gas Station"
-            />
+
+            {/* 
             <p>
                 <span>Gas is covered by Fungi</span>
-            </p>
+            </p> */}
             {/* <p><span>${totalCost}</span></p> */}
             <div
-                className="cursor-pointer pr-[15px]"
+                className="cursor-pointer pr-[15px] flex items-center justify-center flex-row"
                 onClick={handleArrowClick}
             >
+                <Image
+                    src="/GasStation.svg"
+                    width={20}
+                    height={20}
+                    alt="Gas Station"
+                />
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-6 w-6 transform ${isExpanded ? "rotate-180" : ""}`}

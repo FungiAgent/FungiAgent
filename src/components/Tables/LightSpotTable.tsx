@@ -3,44 +3,29 @@ import LightSpotTableCard from "../Cards/TableCards/LightSpotTableCard";
 import Loader from "../Loader/SpinnerLoader";
 import StartDepositBanner from "../Sections/Fallbacks/StartDepositBanner";
 import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
-import { TokenInfo } from "@/domain/tokens/types";
 import { useTokenMarketData } from "@/hooks/useTokenMarketData";
 import { useTokensInfo } from "@/hooks/useTokensInfo";
-// import { CHAIN_ID } from "@/utils/gmx/config/chains";
 
-type SpotTableProps = {
-    startIndex: number;
-    endIndex: number;
-    getLength: (length: number) => void;
-    handlePageChange: (page: number) => void;
-    setTokenFrom: (token: TokenInfo) => void;
-    forceReload: boolean;
-    handleReloadTable: () => void; // Add handleReloadTable prop
-};
-
-export default function LightSpotTable({
-    startIndex,
-    endIndex,
-    getLength,
-    handlePageChange,
-    setTokenFrom,
-    forceReload,
-    handleReloadTable, // Destructure handleReloadTable prop
-}: SpotTableProps) {
+export default function LightSpotTable({ forceReload }) {
     const { tokens, fetchTokens } = useTokensInfo();
-    const [typeMember, setTypeMember] = useState<string>("Portfolio");
     const [loading, setLoading] = useState(false);
     const { tokenMarketsData, fetchData, isLoading } = useTokenMarketData([]);
     const [portfolioEmpty, setPortfolioEmpty] = useState(false);
+    const ITEMS_PER_PAGE = 6;
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [length, setLength] = useState(tokens.length);
+
+    const getLength = (length: number) => {
+        setLength(length);
+    };
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, length);
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
 
     const checkTokens = () => {
-        if (tokens && typeMember === "All") {
-            fetchTokens();
-            setLoading(true);
-            setPortfolioEmpty(false);
-            fetchData(tokens.slice(startIndex, endIndex));
-            getLength(tokens.length);
-        } else if (tokens && typeMember === "Portfolio") {
+        if (tokens) {
             setLoading(true);
 
             const tokensWithBalance = tokens.filter((tokenData: any) => {
@@ -51,7 +36,6 @@ export default function LightSpotTable({
                     1
                 );
             });
-            console.log("Tokens with balance: ", tokensWithBalance);
 
             if (tokensWithBalance.length !== 0) {
                 setPortfolioEmpty(false);
@@ -70,7 +54,7 @@ export default function LightSpotTable({
 
     useEffect(() => {
         handlePageChange(1);
-    }, [typeMember]);
+    }, []);
 
     useEffect(() => {
         checkTokens();
@@ -82,32 +66,78 @@ export default function LightSpotTable({
             setLoading(true);
         }
     }, [forceReload]);
+    const [selectedOption, setSelectedOption] = useState("tokens");
+
+    const portfolioOptions = [
+        {
+            title: "Tokens",
+            id: "tokens",
+        },
+        {
+            title: "Hyphas",
+            id: "hyphas",
+            disabled: true,
+        },
+        {
+            title: "Trades",
+            id: "trades",
+            disabled: true,
+        },
+        {
+            title: "Pools",
+            id: "pools",
+            disabled: true,
+        },
+        {
+            title: "Credit",
+            id: "credit",
+            disabled: true,
+        },
+        {
+            title: "NFTs",
+            id: "nfts",
+            disabled: true,
+        },
+    ];
 
     return (
-        <div className="mt-[20px] w-full h-[574px] pt-[24px] bg-white rounded-lg">
+        <div className="w-full  rounded-lg">
             {/* <button className="col-span-1 justify-self-center" onClick={handleReloadTable}>
           <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4" />
       </button> */}
-            <div className="grid grid-cols-3 pb-[26px] text-xl font-medium border-b border-gray-300 items-center">
-                <div className="col-span-1 text-center">Token</div>
-                <div className="col-span-1 text-center">Price</div>
-                <div className="col-span-1 text-center">Balance</div>
+            <div className="grid grid-cols-6 gap-1 py-[32px] items-center">
+                {portfolioOptions.map((i, idx) => {
+                    return (
+                        <button
+                            key={idx}
+                            className={`col-span-1 text-center text-sm ${i.id === selectedOption ? "font-semibold" : "font-extralight"} `}
+                            disabled={i.disabled}
+                        >
+                            {i.title}
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className="grid grid-cols-3 pb-[26px] text-xl font-medium   items-center">
+                <div className="col-span-1 text-center font-light">Token</div>
+                <div className="col-span-1 text-center font-light">Price</div>
+                <div className="col-span-1 text-center font-light">Balance</div>
             </div>
 
             {loading ? (
-                <div className="w-full h-[500px] flex items-center justify-center">
+                <div className="w-full flex items-center justify-center">
                     <Loader />
                 </div>
             ) : (
-                <div className="overflow-auto h-[50vh]">
-                    {portfolioEmpty ? (
+                <div className="overflow-auto ">
+                    {portfolioEmpty && !isLoading ? (
                         <StartDepositBanner />
                     ) : (
                         <>
                             {!isLoading ? (
                                 tokenMarketsData.map((token, index) => (
                                     <LightSpotTableCard
-                                        setTokenFrom={setTokenFrom}
                                         asset={token}
                                         key={token.token.coinKey}
                                         index={index}

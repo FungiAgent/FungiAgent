@@ -21,14 +21,16 @@ const AvatarAndName: React.FC<{ type: "human" | "ai" }> = ({ type }) => {
         type === "human" ? "/profile/User.svg" : "/profile/Logo.svg";
     const name = type === "human" ? "You" : "Fungi";
     return (
-        <div className={styles.avatarNameRow}>
-            <Image
-                src={avatarSrc}
-                alt={`${name} avatar`}
-                width={40}
-                height={40}
-            />
-            <span className={styles.name}>{name}</span>
+        <div className="flex flex-row items-center  mb-[10px]">
+            <div className="w-20 flex justify-center ">
+                <Image
+                    src={avatarSrc}
+                    alt={`${name} avatar`}
+                    width={40}
+                    height={40}
+                />
+            </div>
+            <p className="font-light text-sm">{name}</p>
         </div>
     );
 };
@@ -55,33 +57,23 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
         const content = msg?.content || "Unknown message format";
 
         // Define messageStyle based on messageType
-        const messageStyle =
-            messageType === "HumanMessage"
-                ? styles.humanMessage
-                : styles.aiMessage;
 
         // Parse Markdown content for AI messages
         const htmlContent =
             messageType === "AIMessage" ? marked(content) : content;
 
         return (
-            <div key={index} className={`${styles.message} ${messageStyle}`}>
-                <div className={styles.avatarAndNameContainer}>
-                    <AvatarAndName
-                        type={messageType === "HumanMessage" ? "human" : "ai"}
-                    />
-                </div>
-                <div className={styles.messageContentContainer}>
-                    {messageType === "AIMessage" ? (
+            <div key={index} className=" mb-[32px]">
+                <AvatarAndName
+                    type={messageType === "HumanMessage" ? "human" : "ai"}
+                />
+                <div className="flex flex-row">
+                    <div className="ml-20 pr-5">
                         <span
                             className={styles.messageContent}
                             dangerouslySetInnerHTML={{ __html: htmlContent }}
                         />
-                    ) : (
-                        <span className={styles.messageContent}>
-                            {htmlContent}
-                        </span>
-                    )}
+                    </div>
                 </div>
                 {index === nonSystemMessages.length - 1 && (
                     <div ref={endOfMessagesRef} />
@@ -92,15 +84,11 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
 
     const renderPlaceholder = () => {
         return (
-            <div className="col-span-3 flex items-center justify-center flex-col">
-                <Image
-                    width={150}
-                    height={150}
-                    alt="Logo"
-                    src={Logo.src}
-                    aria-hidden="true"
-                />
-                <h1 className="text-3xl">Hi, I'm Fungi! your DeFi Friend</h1>
+            <div className="flex flex-col justify-between h-full">
+                <div className="flex flex-col items-center mt-4">
+                    <Image src={Logo.src} alt="Logo" width={100} height={100} />
+                    <p className="text-xxl">Welcome.</p>
+                </div>
             </div>
         );
     };

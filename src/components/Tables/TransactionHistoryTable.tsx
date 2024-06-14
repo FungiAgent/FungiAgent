@@ -4,15 +4,9 @@ import getTransactionDetails from "@/lib/alchemy/getTransactionDetails";
 import { Transaction, TransactionDetails } from "@/lib/alchemy/types";
 import TransactionRow from "./TransactionRow";
 
-type TransactionHistoryTableProps = {
-    formatCurrency: (value: number) => string;
-};
-
 const ITEMS_PER_PAGE = 10;
 
-const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({
-    formatCurrency,
-}) => {
+const TransactionHistoryTable: React.FC = () => {
     const { transactions, isLoading, error, fetchTransactions, pageKey } =
         useTransactionHistory();
     const [transactionDetails, setTransactionDetails] = useState<{
@@ -125,7 +119,7 @@ const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 overflow-y-scroll">
             <div>
                 {paginatedTransactions.map((transaction, index) => (
                     <TransactionRow
@@ -139,7 +133,6 @@ const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = ({
                                   ]
                                 : null
                         }
-                        formatCurrency={formatCurrency}
                         index={index}
                     />
                 ))}
