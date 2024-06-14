@@ -20,8 +20,8 @@ export default function Header({ isConnected }) {
                     <ChangeNetworkDropdown networks={networks} />
                     <button onClick={() => setOpenMenu(true)} className="z-10">
                         <Image
-                            width={48}
-                            height={48}
+                            width={60}
+                            height={60}
                             alt="User"
                             src={User.src}
                         />

@@ -86,7 +86,12 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
         return (
             <div className="flex flex-col justify-between h-full">
                 <div className="flex flex-col items-center mt-4">
-                    <Image src={Logo.src} alt="Logo" width={100} height={100} />
+                    <Image
+                        src="/Logo.svg"
+                        alt="Logo"
+                        width={100}
+                        height={100}
+                    />
                     <p className="text-xxl">Welcome.</p>
                 </div>
             </div>

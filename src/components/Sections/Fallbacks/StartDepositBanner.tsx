@@ -15,7 +15,7 @@ export default function StartDepositBanner() {
                 width={200}
                 height={200}
                 alt="Logo Fungi"
-                src={Logo.src}
+                src="/Logo.svg"
                 aria-hidden="true"
                 className="my-[20px]"
             />

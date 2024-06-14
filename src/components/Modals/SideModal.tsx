@@ -49,12 +49,14 @@ const SideModal: FC<SideModalProps> = ({
         >
             <div className=" flex justify-center items-center">
                 <div className="flex flex-col px-10">
-                    <p className="font-light">My Balance</p>
-                    <p className="text-xl font-semibold">{balance}</p>
+                    <p className="font-light text-center">My Balance</p>
+                    <p className="text-xl font-semibold text-center">
+                        {balance}
+                    </p>
                 </div>
                 <div className="flex flex-col px-10">
-                    <p className="font-light">My Cash</p>
-                    <p className="text-xl font-semibold">{cash}</p>
+                    <p className="font-light text-center">My Cash</p>
+                    <p className="text-xl font-semibold text-center">{cash}</p>
                 </div>
             </div>
             <div className="overflow-y-auto">{categoryContent()}</div>
