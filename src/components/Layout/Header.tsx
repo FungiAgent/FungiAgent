@@ -18,7 +18,7 @@ export default function Header({ isConnected }) {
             {isConnected ? (
                 <div className="flex flex-row items-center justify-end">
                     <ChangeNetworkDropdown networks={networks} />
-                    <button onClick={() => setOpenMenu(true)}>
+                    <button onClick={() => setOpenMenu(true)} className="z-10">
                         <Image
                             width={48}
                             height={48}

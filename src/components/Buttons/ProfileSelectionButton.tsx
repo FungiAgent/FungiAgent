@@ -20,7 +20,7 @@ export default function ProfileSelectionButton({
             } flex flex-col items-center justify-center  `}
             onClick={onClick}
         >
-            <div className="p-1.5 rounded-full bg-gray-100">
+            <div className="p-1.5 rounded-full ">
                 <img src={image} className="min-w-[48px] p-1" />
             </div>
 

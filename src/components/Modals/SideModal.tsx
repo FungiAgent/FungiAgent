@@ -47,7 +47,7 @@ const SideModal: FC<SideModalProps> = ({
             exit={{ opacity: 0 }}
             className="p-6 w-full"
         >
-            <div className="mb-6 flex justify-center items-center">
+            <div className=" flex justify-center items-center">
                 <div className="flex flex-col px-10">
                     <p className="font-light">My Balance</p>
                     <p className="text-xl font-semibold">{balance}</p>

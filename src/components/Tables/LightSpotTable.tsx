@@ -66,12 +66,59 @@ export default function LightSpotTable({ forceReload }) {
             setLoading(true);
         }
     }, [forceReload]);
+    const [selectedOption, setSelectedOption] = useState("tokens");
+
+    const portfolioOptions = [
+        {
+            title: "Tokens",
+            id: "tokens",
+        },
+        {
+            title: "Hyphas",
+            id: "hyphas",
+            disabled: true,
+        },
+        {
+            title: "Trades",
+            id: "trades",
+            disabled: true,
+        },
+        {
+            title: "Pools",
+            id: "pools",
+            disabled: true,
+        },
+        {
+            title: "Credit",
+            id: "credit",
+            disabled: true,
+        },
+        {
+            title: "NFTs",
+            id: "nfts",
+            disabled: true,
+        },
+    ];
 
     return (
         <div className="w-full  rounded-lg">
             {/* <button className="col-span-1 justify-self-center" onClick={handleReloadTable}>
           <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4" />
       </button> */}
+            <div className="grid grid-cols-6 gap-1 py-[32px] items-center">
+                {portfolioOptions.map((i, idx) => {
+                    return (
+                        <button
+                            key={idx}
+                            className={`col-span-1 text-center text-sm ${i.id === selectedOption ? "font-semibold" : "font-extralight"} `}
+                            disabled={i.disabled}
+                        >
+                            {i.title}
+                        </button>
+                    );
+                })}
+            </div>
+
             <div className="grid grid-cols-3 pb-[26px] text-xl font-medium   items-center">
                 <div className="col-span-1 text-center font-light">Token</div>
                 <div className="col-span-1 text-center font-light">Price</div>

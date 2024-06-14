@@ -117,11 +117,11 @@ export default function ProfileModal({ getOpenModal }: ProfileModalProps) {
                             <Dialog.Panel className="absolute transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-fit top-0 right-10">
                                 <div className="bg-white rounded-lg px-4 py-2 shadow-input z-50">
                                     <div className="flex flex-col justify-center p-[36px] text-center">
-                                        <p className="text-xl mb-[18px]">
+                                        <p className="text-xl mb-[18px] font-light">
                                             Your Fungi Account
                                         </p>
                                         <button
-                                            className="shadow-input py-1 px-0.5 rounded-lg flex w-fit mx-auto items-center"
+                                            className=" py-1 px-0.5 rounded-lg flex w-fit mx-auto items-center"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(
                                                     scAccount as string,
