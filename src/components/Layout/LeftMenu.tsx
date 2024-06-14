@@ -2,6 +2,37 @@ import { formatCurrency } from "@/helpers/formatCurrency";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+const menuItems = [
+    {
+        title: "Portfolio",
+        image: "/navbar/portfolio.svg",
+        toggle: "Portfolio",
+    },
+    {
+        title: "Hyphas",
+        image: "/navbar/hyphas.svg",
+        toggle: "Hyphas",
+        disabled: true,
+    },
+    {
+        title: "Discover",
+        image: "/navbar/discover.svg",
+        toggle: "Discover",
+        disabled: true,
+    },
+    {
+        title: "History",
+        image: "/navbar/history.svg",
+        toggle: "History",
+    },
+    {
+        title: "Chats",
+        image: "/navbar/chats.svg",
+        toggle: "chats",
+        disabled: true,
+    },
+];
+
 export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
     return (
         <motion.div
@@ -12,41 +43,38 @@ export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
         >
             <div className="px-4">
                 <p className="font-light mb-1">My Balance</p>
-                <p className="mb-2 text-xl">{formatCurrency(totalBalance)}</p>
-                <p className="font-light mb-2">My Cash</p>
-                <p className="mb-1 text-xl">{formatCurrency(totalCash)}</p>
+                <p className="mb-4 text-xl">{formatCurrency(totalBalance)}</p>
+                <p className="font-light mb-1">My Cash</p>
+                <p className="mb-4 text-xl">{formatCurrency(totalCash)}</p>
             </div>
             <div className="mt-10">
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        toggleExpand("Portfolio");
-                    }}
-                    className="flex flex-row px-4 py-2 justify-center items-center my-2 hover:opacity-70"
-                >
-                    <Image
-                        src="/navbar/portfolio.svg"
-                        alt="portfolio"
-                        width={20}
-                        height={20}
-                    />
-                    <p className="ml-2">Portfolio</p>
-                </button>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        toggleExpand("History");
-                    }}
-                    className="flex flex-row px-4 py-2 justify-center items-center my-2 hover:opacity-70"
-                >
-                    <Image
-                        src="/navbar/history.svg"
-                        alt="history"
-                        width={20}
-                        height={20}
-                    />
-                    <p className="ml-2">History</p>
-                </button>
+                {menuItems.map((item, index) => {
+                    return (
+                        <button
+                            key={index}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                toggleExpand(item.toggle);
+                            }}
+                            disabled={item.disabled}
+                            className="flex flex-row px-4 py-2 justify-center items-center my-2 hover:opacity-70"
+                        >
+                            <div className="p-[10px]">
+                                <Image
+                                    src={item.image}
+                                    alt="portfolio"
+                                    width={20}
+                                    height={20}
+                                />
+                            </div>
+                            <p
+                                className={` ${item.disabled ? "text-gray-400" : ""}`}
+                            >
+                                {item.title}
+                            </p>
+                        </button>
+                    );
+                })}
             </div>
         </motion.div>
     );

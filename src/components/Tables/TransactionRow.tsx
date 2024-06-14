@@ -4,19 +4,11 @@ import { Transaction, TransactionDetails } from "@/lib/alchemy/types";
 import ClipboardIcon from "/public/img/clipboard-svgrepo-com.svg";
 import ClipboardCheckIcon from "/public/img/clipboard-check-svgrepo-com.svg";
 import { shortenAddress, copyToClipboard } from "@/utils";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import isToday from "dayjs/plugin/isToday";
-import isYesterday from "dayjs/plugin/isYesterday";
-import advancedFormat from "dayjs/plugin/advancedFormat";
-import weekday from "dayjs/plugin/weekday";
+
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { formatCurrency } from "@/helpers/formatCurrency";
-dayjs.extend(relativeTime);
-dayjs.extend(isToday);
-dayjs.extend(isYesterday);
-dayjs.extend(advancedFormat);
-dayjs.extend(weekday);
+
+import dayjs from "../../../dayjsConfig";
 
 type TransactionRowProps = {
     transaction: Transaction;
@@ -163,7 +155,7 @@ const TransactionRow: React.FC<TransactionRowProps> = React.memo(
 
         const renderOtherDetails = () => (
             <CardContainer>
-                <DateSection date={dateTime} />
+                {/* <DateSection date={dateTime} /> */}
 
                 <TitleSection title={transaction.operationType} />
                 <BodySection>
