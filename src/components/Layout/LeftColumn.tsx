@@ -21,18 +21,35 @@ export default function LeftColumn({
             animate={{ width: isExpanded ? "40%" : "20%" }}
             transition={{ duration: 0.5 }}
         >
-            <div className="h-[100px] p-5">
-                <Image
-                    width={62}
-                    height={68}
-                    alt="Logo"
-                    src={Logo.src}
-                    aria-hidden="true"
-                />
+            <div className="flex flex-row w-full justify-between items-center">
+                <div></div>
+                <div className="h-[100px] p-5">
+                    <Image
+                        width={62}
+                        height={68}
+                        alt="Logo"
+                        src={Logo.src}
+                        aria-hidden="true"
+                    />
+                </div>
+                <div>
+                    {isExpanded && (
+                        <div className="flex flex-row justify-end">
+                            <button onClick={toggleExpand}>
+                                <Image
+                                    src="/navbar/CloseSideBar.svg"
+                                    alt="Close"
+                                    width={12}
+                                    height={12}
+                                />
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {isConnected && (
-                <div className="flex w-full justify-between items-center text-lg font-semibold mb-4">
+                <div className="flex w-full justify-between items-center text-lg font-semibold mb-4 mt-[64px]">
                     <AnimatePresence mode="wait">
                         {isExpanded ? (
                             <SideModal

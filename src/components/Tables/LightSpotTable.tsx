@@ -68,7 +68,7 @@ export default function LightSpotTable({ forceReload }) {
     }, [forceReload]);
 
     return (
-        <div className="mt-[20px] w-full h-[574px] pt-[24px]  rounded-lg">
+        <div className="w-full  rounded-lg">
             {/* <button className="col-span-1 justify-self-center" onClick={handleReloadTable}>
           <img src="/Reload.svg" alt="Reload Icon" className="w-4 h-4" />
       </button> */}
@@ -79,11 +79,11 @@ export default function LightSpotTable({ forceReload }) {
             </div>
 
             {loading ? (
-                <div className="w-full h-[500px] flex items-center justify-center">
+                <div className="w-full flex items-center justify-center">
                     <Loader />
                 </div>
             ) : (
-                <div className="overflow-auto h-[50vh]">
+                <div className="overflow-auto ">
                     {portfolioEmpty && !isLoading ? (
                         <StartDepositBanner />
                     ) : (
