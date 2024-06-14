@@ -6,14 +6,14 @@ const ConfirmationButtons = ({ confirmAction, rejectAction, isConfirmed }) => {
             <button
                 onClick={confirmAction}
                 disabled={isConfirmed}
-                className={`px-4 py-2 rounded-full bg-green-500 text-white hover:bg-green-600 w-[88px] ${isConfirmed ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`px-4 py-2 rounded-full shadow-lg bg-confirm text-white hover:opacity-70 w-[88px] ${isConfirmed ? "opacity-50 cursor-not-allowed" : ""}`}
             >
                 Confirm
             </button>
             <button
                 onClick={rejectAction}
                 disabled={isConfirmed}
-                className={`px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 w-[88px] ${isConfirmed ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`px-4 py-2 rounded-full shadow-lg bg-cancel text-white hover:opacity-70 w-[88px] ${isConfirmed ? "opacity-50 cursor-not-allowed" : ""}`}
             >
                 Cancel
             </button>

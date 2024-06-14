@@ -126,8 +126,7 @@ export function FungiContextProvider({ children }: { children: ReactNode }) {
                 chain: getViemChain(chain),
                 signer,
                 gasManagerConfig: {
-                    policyId:
-                        "3d9deb19-b96d-4e91-b388-ef8d98e2ab1c",
+                    policyId: "3d9deb19-b96d-4e91-b388-ef8d98e2ab1c",
                 },
             });
 

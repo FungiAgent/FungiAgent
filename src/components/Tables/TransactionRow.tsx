@@ -11,6 +11,7 @@ import isYesterday from "dayjs/plugin/isYesterday";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import weekday from "dayjs/plugin/weekday";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { formatCurrency } from "@/helpers/formatCurrency";
 dayjs.extend(relativeTime);
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
@@ -22,7 +23,6 @@ type TransactionRowProps = {
     details?: TransactionDetails;
     prevDetails?: TransactionDetails | null;
 
-    formatCurrency: (value: number) => string;
     index: number;
 };
 
@@ -126,7 +126,7 @@ function HashSection({ to, id, hashVisible, setHashVisible }) {
 }
 
 const TransactionRow: React.FC<TransactionRowProps> = React.memo(
-    ({ transaction, details, formatCurrency, index, prevDetails }) => {
+    ({ transaction, details, index, prevDetails }) => {
         const dateTime = details
             ? dayjs(
                   new Date(details.timestamp * 1000).toLocaleString(),
@@ -216,7 +216,7 @@ const TransactionRow: React.FC<TransactionRowProps> = React.memo(
             : "Loading...";
         return (
             <button
-                className="flex flex-col align-top text-left p-4 bg-white border-l-white border-l-2  hover:border-l-main hover:border-l-2 cursor-pointer"
+                className="flex flex-col align-top text-left p-4  border-l-transparent border-l-2  hover:border-l-main hover:border-l-2 cursor-pointer"
                 onClick={toggleHashVisible}
             >
                 {((prevDetails &&

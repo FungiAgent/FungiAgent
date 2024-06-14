@@ -25,7 +25,6 @@ const tools = dynamicTools;
 // @ts-expect-error
 const prompt = await pull<ChatType>("hwchase17/openai-functions-agent");
 
-
 const agent = await createOpenAIFunctionsAgent({
     llm,
     // @ts-expect-error
@@ -33,7 +32,6 @@ const agent = await createOpenAIFunctionsAgent({
     // @ts-expect-error
     prompt,
 });
-
 
 const agentExecutor = new AgentExecutor({
     agent,
