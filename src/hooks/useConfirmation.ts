@@ -4,6 +4,7 @@ import { useHandleSend } from "@/hooks/useHandleSend";
 import { useMind } from "@/hooks";
 import { useUserOpContext } from "@/context/UserOpContext";
 import { useUserOperations } from "@/hooks/useUserOperations";
+import { usePortfolio } from "./usePortfolio";
 
 export enum ConfirmationType {
     Simple = "Simple",
@@ -47,6 +48,7 @@ export const useConfirmation = () => {
     const { sendUserOperations } = useUserOperations();
     const { userOp, setUserOp } = useUserOpContext(); // Get the shared state
     const { processInternalMessage } = useMind();
+    const { fetchPortfolio } = usePortfolio();
 
     const confirmAction = useCallback(async () => {
         if (confirmationDetails && userOp) {
@@ -66,8 +68,9 @@ export const useConfirmation = () => {
                 } else if (confirmationDetails.type === ConfirmationType.Swap) {
                     // console.log("User Operations to Execute:", userOp);
                     const result = await sendUserOperations(userOp);
+                    await fetchPortfolio();
                     await processInternalMessage(
-                        `The transfer was done successfully with ${JSON.stringify(result, null, 2)}. Now, explain to the user the results of the transaction along with hash information and where this transaction can be viewed on https://basescan.org.`,
+                        `The transfer was done successfully with ${JSON.stringify(result, null, 2)}. Now, explain to the user the results of the transaction along with hash information (excluding gas information and confirmations) and where this transaction can be viewed on https://basescan.org.`,
                     );
                 }
                 setShowConfirmationBox(false);

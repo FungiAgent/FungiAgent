@@ -24,11 +24,7 @@ const SideModal: FC<SideModalProps> = ({
     const categoryContent = () => {
         switch (activeCategory) {
             case "Portfolio":
-                return (
-                    <LightSpotTable
-                        forceReload={true} // Simplified for demonstration
-                    />
-                );
+                return <LightSpotTable />;
             case "History":
                 return <TransactionHistoryTable />;
             default:

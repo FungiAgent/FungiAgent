@@ -169,7 +169,7 @@ export const dynamicTools = [
             chain: z
                 .string()
                 .describe(
-                    "The blockchain network chain ID or name where the token resides. By default: BASE",
+                    "The blockchain network chain ID or symbol where the token resides. By default: BAS",
                 ),
             token: z
                 .string()
@@ -180,9 +180,14 @@ export const dynamicTools = [
         func: async ({ chain, token }): Promise<string> => {
             console.log("Fetching Token Information...");
             try {
+                console.log({ chain, token });
                 const tokenInfo = await getTokenInfo(chain, token);
-                console.log(`Token Info: ${JSON.stringify(tokenInfo)}`);
-                return JSON.stringify(tokenInfo);
+                if (tokenInfo) {
+                    console.log(`Token Info: ${JSON.stringify(tokenInfo)}`);
+                    return JSON.stringify(tokenInfo);
+                } else {
+                    return "There was an error with your request";
+                }
             } catch (error) {
                 console.error("Failed to fetch token information:", error);
                 throw new Error("Failed to fetch token information");
