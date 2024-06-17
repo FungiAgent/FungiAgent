@@ -3,6 +3,7 @@ import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 import getTransactionDetails from "@/lib/alchemy/getTransactionDetails";
 import { Transaction, TransactionDetails } from "@/lib/alchemy/types";
 import TransactionRow from "./TransactionRow";
+import Loader from "../Loader/SpinnerLoader";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -111,7 +112,11 @@ const TransactionHistoryTable: React.FC = () => {
     }, [sortedTransactions, currentPage, isLoading, error]);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="w-full flex items-center justify-center pt-10">
+                <Loader />
+            </div>
+        );
     }
 
     if (error) {

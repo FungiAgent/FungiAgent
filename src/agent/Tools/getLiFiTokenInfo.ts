@@ -18,5 +18,6 @@ export const getTokenInfo = async (
             token,
         },
     });
+    console.log({ data: result.data });
     return result.data;
 };
