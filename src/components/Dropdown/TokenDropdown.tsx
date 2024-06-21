@@ -23,23 +23,25 @@ const TokenDropdown: React.FC<TokenDropdownProps> = ({ onSelect }) => {
     };
 
     return (
-        <div className="mb-4">
+        <div className=" w-[40%] ">
             {loading ? (
                 <p>Loading tokens...</p>
             ) : error ? (
                 <p className="text-red-500">{error}</p>
             ) : (
-                <select
-                    value={selectedToken}
-                    onChange={handleChange}
-                    className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    {tokens.map((token) => (
-                        <option key={token.address} value={token.address}>
-                            {token.symbol}
-                        </option>
-                    ))}
-                </select>
+                <div className="shadow-lg rounded-full px-2 py-1">
+                    <select
+                        value={selectedToken}
+                        onChange={handleChange}
+                        className="px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-transparent bg-transparent  focus:ring-blue-500 border-0"
+                    >
+                        {tokens.map((token) => (
+                            <option key={token.address} value={token.address}>
+                                {token.symbol}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             )}
         </div>
     );

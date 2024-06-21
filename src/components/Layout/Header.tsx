@@ -26,7 +26,9 @@ export default function Header({ isConnected }) {
                             src={User.src}
                         />
                     </button>
-                    {openMenu && <ProfileModal getOpenModal={getOpenModal} />}
+                    {openMenu && (
+                        <ProfileModal open={openMenu} setOpen={setOpenMenu} />
+                    )}
                 </div>
             ) : (
                 <div className="flex items-center justify-end">
