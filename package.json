@@ -16,6 +16,7 @@
         "@alchemy/aa-signers": "^3.1.1",
         "@apollo/client": "3.5.6",
         "@duneanalytics/client-sdk": "^0.1.4",
+        "@fontsource/dm-sans": "^5.0.21",
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
         "@langchain/anthropic": "^0.1.8",

@@ -10,22 +10,26 @@ import { motion } from "framer-motion";
 export default function Header({ isConnected }) {
     const [openMenu, setOpenMenu] = useState(false);
 
-    const getOpenModal = (status: boolean) => {
-        setOpenMenu(status);
-    };
     return (
         <div className=" p-5 w-full h-[32px] absolute z-1 top-0 left-0">
             {isConnected ? (
                 <div className="flex flex-row items-center justify-end z-10">
                     <ChangeNetworkDropdown networks={networks} />
-                    <button onClick={() => setOpenMenu(true)} className="z-10">
-                        <Image
-                            width={60}
-                            height={60}
-                            alt="User"
-                            src={User.src}
-                        />
-                    </button>
+                    <motion.div
+                        whileHover={{ y: -5 }} // Change this value to adjust the float effect
+                    >
+                        <button
+                            onClick={() => setOpenMenu(true)}
+                            className="z-10"
+                        >
+                            <Image
+                                width={60}
+                                height={60}
+                                alt="User"
+                                src={User.src}
+                            />
+                        </button>
+                    </motion.div>
                     {openMenu && (
                         <ProfileModal open={openMenu} setOpen={setOpenMenu} />
                     )}

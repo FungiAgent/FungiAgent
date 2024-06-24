@@ -23,25 +23,33 @@ export default function LeftColumn({
         >
             <div className="flex flex-row w-full justify-between items-center z-10">
                 <div className="h-[100px] p-5">
-                    <Image
-                        width={60}
-                        height={60}
-                        alt="Logo"
-                        src="/Logo.svg"
-                        aria-hidden="true"
-                    />
+                    <motion.div
+                        whileHover={{ y: -5 }} // Change this value to adjust the float effect
+                    >
+                        <a target="_blank" href="https://fungi.ag">
+                            <Image
+                                width={60}
+                                height={60}
+                                alt="Logo"
+                                src="/Logo.svg"
+                                aria-hidden="true"
+                            />
+                        </a>
+                    </motion.div>
                 </div>
                 <div>
                     {isExpanded && (
                         <div className="flex flex-row justify-end mr-10 ">
-                            <button onClick={toggleExpand}>
-                                <Image
-                                    src="/navbar/CloseSideBar.svg"
-                                    alt="Close"
-                                    width={12}
-                                    height={12}
-                                />
-                            </button>
+                            <motion.div whileHover={{ y: -5 }}>
+                                <button onClick={toggleExpand} className="p-2">
+                                    <Image
+                                        src="/navbar/CloseSideBar.svg"
+                                        alt="Close"
+                                        width={12}
+                                        height={12}
+                                    />
+                                </button>
+                            </motion.div>
                         </div>
                     )}
                 </div>

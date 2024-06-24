@@ -17,11 +17,13 @@ import { useNotification } from "@/context/NotificationContextProvider";
 import SendModal from "../Modals/SendModal";
 import ModalContainer from "./ModalContainer";
 import DepositModal from "./DepositModal";
+import FriendsModal from "./FriendsModal";
 
 export default function ProfileModal({ open, setOpen }) {
     const { scAccount, logout } = useWallet();
     const [isSendModalOpen, setIsSendModalOpen] = useState(false);
     const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+    const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
 
     const router = useRouter();
     const { showNotification } = useNotification();
@@ -52,8 +54,8 @@ export default function ProfileModal({ open, setOpen }) {
         {
             title: "Add Friends",
             image: AddFriends.src,
-            status: false,
-            onClick: handle,
+            status: true,
+            onClick: () => setIsFriendsModalOpen(true),
         },
         {
             title: "Deposit",
@@ -134,6 +136,10 @@ export default function ProfileModal({ open, setOpen }) {
                 isOpen={isDepositModalOpen}
                 onClose={() => setIsDepositModalOpen(false)}
                 wallet={scAccount as string}
+            />
+            <FriendsModal
+                isOpen={isFriendsModalOpen}
+                onClose={() => setIsFriendsModalOpen(false)}
             />
         </div>
     );

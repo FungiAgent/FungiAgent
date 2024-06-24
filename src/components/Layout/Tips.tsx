@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 const tips = [
     {
         msg: "Check my portfolio",
@@ -17,12 +19,14 @@ export default function Tips() {
             <div className="flex flex-row gap-5 items-start mt-[32px]">
                 {tips.map((item, index) => {
                     return (
-                        <div
+                        <motion.div
+                            whileHover={{ y: -10 }} // Change this value to adjust the float effect
                             key={index}
-                            className="px-4 py-2 rounded-tips bg-tips shadow-input"
                         >
-                            <p className="font-light">{item.msg}</p>
-                        </div>
+                            <button className="px-4 py-2 rounded-tips bg-tips shadow-input">
+                                <p className="font-light">{item.msg}</p>
+                            </button>
+                        </motion.div>
                     );
                 })}
             </div>
