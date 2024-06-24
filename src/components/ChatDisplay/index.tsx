@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { marked } from "marked"; // Import the marked library
+import { AnimationControls, motion } from "framer-motion";
 
 const renderer = new marked.Renderer();
 
@@ -74,11 +75,29 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
             </div>
         );
     };
-
+    const floatAnimation = {
+        y: [0, -10, 0], // Change this array to adjust the floating effect
+        transition: {
+            duration: 2,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "easeInOut",
+        },
+    };
     const renderPlaceholder = () => {
         return (
             <div className="flex flex-col items-center mt-4 h-full  justify-center">
-                <Image src="/Logo.svg" alt="Logo" width={100} height={100} />
+                <motion.div
+                    // @ts-expect-error
+                    animate={floatAnimation}
+                >
+                    <Image
+                        src="/Logo.svg"
+                        alt="Logo"
+                        width={200}
+                        height={200}
+                    />
+                </motion.div>
             </div>
         );
     };

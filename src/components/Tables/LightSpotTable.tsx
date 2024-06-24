@@ -4,6 +4,7 @@ import Loader from "../Loader/SpinnerLoader";
 import StartDepositBanner from "../Sections/Fallbacks/StartDepositBanner";
 import SpotTableCardFallback from "../Cards/Fallbacks/SpotTableCardFallback";
 import { usePortfolio } from "@/hooks/usePortfolio";
+import { motion } from "framer-motion";
 
 export default function LightSpotTable() {
     const { isLoading, fetchPortfolio, portfolioData } = usePortfolio();
@@ -49,14 +50,15 @@ export default function LightSpotTable() {
             <div className="grid grid-cols-6 gap-1 py-[32px] items-center">
                 {portfolioOptions.map((i, idx) => {
                     return (
-                        <button
-                            key={idx}
-                            className={`col-span-1 text-center text-sm ${i.id === selectedOption ? "font-semibold" : "font-extralight"} `}
-                            disabled={i.disabled}
-                            onClick={() => setSelectedOption(i.id)}
-                        >
-                            {i.title}
-                        </button>
+                        <motion.div whileHover={{ y: -4 }} key={idx}>
+                            <button
+                                className={`col-span-1 text-center text-sm ${i.id === selectedOption ? "font-semibold" : "font-extralight"} ${i.disabled && "cursor-not-allowed"} `}
+                                disabled={i.disabled}
+                                onClick={() => setSelectedOption(i.id)}
+                            >
+                                {i.title}
+                            </button>
+                        </motion.div>
                     );
                 })}
             </div>

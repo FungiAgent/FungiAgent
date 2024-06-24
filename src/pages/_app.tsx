@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import "@/styles/globals.css";
 // Swr
 import { SWRConfig } from "swr";
+import "@fontsource/dm-sans";
 // Lib
 import { swrGCMiddleware } from "@/lib/swrMiddlewares";
 // Context
