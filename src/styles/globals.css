@@ -30,6 +30,10 @@ body {
     }
 }
 
+.menu-item-hover {
+    @apply hover:bg-mainHover hover:bg-opacity-30;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 12px; /* Adjust width of the scrollbar */

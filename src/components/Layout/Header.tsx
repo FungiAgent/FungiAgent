@@ -14,9 +14,9 @@ export default function Header({ isConnected }) {
         setOpenMenu(status);
     };
     return (
-        <div className="h-[32px] p-5 w-full">
+        <div className=" p-5 w-full h-[32px] absolute z-1 top-0 left-0">
             {isConnected ? (
-                <div className="flex flex-row items-center justify-end">
+                <div className="flex flex-row items-center justify-end z-10">
                     <ChangeNetworkDropdown networks={networks} />
                     <button onClick={() => setOpenMenu(true)} className="z-10">
                         <Image
@@ -26,7 +26,9 @@ export default function Header({ isConnected }) {
                             src={User.src}
                         />
                     </button>
-                    {openMenu && <ProfileModal getOpenModal={getOpenModal} />}
+                    {openMenu && (
+                        <ProfileModal open={openMenu} setOpen={setOpenMenu} />
+                    )}
                 </div>
             ) : (
                 <div className="flex items-center justify-end">

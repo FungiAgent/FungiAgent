@@ -45,7 +45,7 @@ export default function Main() {
                 activeCategory={activeCategory}
             />
             <motion.div
-                className="flex flex-col h-full"
+                className="flex flex-col h-screen"
                 animate={{
                     width: isExpanded ? "60%" : "80%",
                     transformOrigin: "left",
@@ -53,14 +53,14 @@ export default function Main() {
                 exit={{ opacity: 0, scaleX: 0, transformOrigin: "left" }}
             >
                 <Header isConnected={isConnected} />
-                <motion.div className="flex flex-row h-full w-full">
+                <motion.div className="flex flex-row h-full mr-[32px] w-full">
                     <CenterColumn
                         isConnected={isConnected}
                         isExpanded={isExpanded}
                     />
                     <RightColumn isExpanded={isExpanded} />
                 </motion.div>
-                <div className="h-[32px] w-full" />
+                <div className=" w-full" />
             </motion.div>
         </div>
     );

@@ -21,7 +21,7 @@ export default function LeftColumn({
             animate={{ width: isExpanded ? "40%" : "20%" }}
             transition={{ duration: 0.5 }}
         >
-            <div className="flex flex-row w-full justify-between items-center">
+            <div className="flex flex-row w-full justify-between items-center z-10">
                 <div className="h-[100px] p-5">
                     <Image
                         width={60}
@@ -33,7 +33,7 @@ export default function LeftColumn({
                 </div>
                 <div>
                     {isExpanded && (
-                        <div className="flex flex-row justify-end mr-10">
+                        <div className="flex flex-row justify-end mr-10 ">
                             <button onClick={toggleExpand}>
                                 <Image
                                     src="/navbar/CloseSideBar.svg"

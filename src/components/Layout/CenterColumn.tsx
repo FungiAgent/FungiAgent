@@ -69,7 +69,7 @@ export default function CenterColumn({ isExpanded, isConnected }) {
     };
     return (
         <motion.div
-            className="flex flex-col justify-center items-center  px-5 h-full"
+            className="flex flex-col justify-center items-center px-5 h-full"
             animate={{
                 width: isExpanded ? "100%" : "75%",
                 transformOrigin: "left",
@@ -77,23 +77,28 @@ export default function CenterColumn({ isExpanded, isConnected }) {
             exit={{ opacity: 0, scaleX: 0, transformOrigin: "left" }}
         >
             {isConnected ? (
-                <div className="flex flex-col items-center w-full h-full justify-end rounded-lg ">
+                <div className="flex flex-col items-center w-full h-full justify-end rounded-lg">
                     <div className="flex flex-col w-full h-full items-center justify-end overflow-y-hidden">
                         <ChatDisplay chatHistory={chatHistory} />
-                        <ConfirmationManager
-                            confirmationDetails={confirmationDetails}
-                            confirmAction={confirmAction}
-                            isConfirmed={isConfirmed}
-                            setIsConfirmed={setIsConfirmed}
-                            rejectAction={rejectAction}
-                            showConfirmationBox={showConfirmationBox}
-                        />
+                        {showConfirmationBox && (
+                            <div className="pb-[32px]">
+                                <ConfirmationManager
+                                    confirmationDetails={confirmationDetails}
+                                    confirmAction={confirmAction}
+                                    isConfirmed={isConfirmed}
+                                    setIsConfirmed={setIsConfirmed}
+                                    rejectAction={rejectAction}
+                                    showConfirmationBox={showConfirmationBox}
+                                />
+                            </div>
+                        )}
                     </div>
                     {chatHistory.length === 0 && <Tips />}
                     <UserInput
                         onSubmit={handleQuerySubmit}
                         showConfirmationBox={showConfirmationBox}
                     />
+                    <div className="h-[32px]"> </div>
                 </div>
             ) : (
                 <WelcomeMessage />

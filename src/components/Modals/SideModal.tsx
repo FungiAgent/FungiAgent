@@ -45,13 +45,17 @@ const SideModal: FC<SideModalProps> = ({
         >
             <div className=" flex justify-center items-center">
                 <div className="flex flex-col px-10">
-                    <p className="font-light text-center">My Balance</p>
+                    <p className="font-light text-center text-gray-500">
+                        My Balance
+                    </p>
                     <p className="text-xl font-semibold text-center">
                         {balance}
                     </p>
                 </div>
                 <div className="flex flex-col px-10">
-                    <p className="font-light text-center">My Cash</p>
+                    <p className="font-light text-center text-gray-500">
+                        My Cash
+                    </p>
                     <p className="text-xl font-semibold text-center">{cash}</p>
                 </div>
             </div>

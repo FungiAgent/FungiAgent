@@ -32,13 +32,13 @@ export const UserInput: React.FC<UserInputProps> = ({
     };
 
     return (
-        <div className="pb-0 flex items-center mt-4 w-full relative">
+        <div className="pb-0 flex items-center  w-full relative">
             <input
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyPress}
                 placeholder="What can I do for you?"
-                className={`p-4 h-16 w-full rounded-md border border-gray-300 ${showConfirmationBox ? "bg-gray-200" : "bg-white"}  pr-16 focus:outline-none focus:ring-2 focus:ring-main`}
+                className={`p-4 h-16 w-full rounded-chat bg-chat shadow-input ${showConfirmationBox ? "bg-gray-200" : "bg-white"} pr-16 focus:outline-none focus:ring-2 focus:ring-main`}
                 disabled={showConfirmationBox}
             />
             <button

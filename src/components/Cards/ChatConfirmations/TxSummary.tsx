@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 const TxSummaryHeader = ({
     isExpanded,
@@ -89,23 +90,31 @@ const TxSummaryDetails = ({ isExpanded, tool, gasCost, maxSlippage }) => {
     const networkCost = (Number(gasCost) || 0).toFixed(2); // Format network cost
 
     return (
-        isExpanded && (
-            <div className="w-[454px] border-gray-300 pt-4 bg-white h-[129px] rounded-[20px]">
-                <div className="flex justify-between pl-[15px] pr-[15px]">
-                    <span>Tool</span>
-                    <span>{tool}</span>
-                </div>
-                <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
-                    <span>Network Cost</span>
-                    {/* <span>${gasCost}</span> */}
-                    <span>Gas is covered by Fungi</span>
-                </div>
-                <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
-                    <span>Max Slippage</span>
-                    <span>{maxSlippage}%</span>
-                </div>
-            </div>
-        )
+        <AnimatePresence mode="wait">
+            {isExpanded && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-[454px] border-gray-300 pt-4 bg-white h-[129px] rounded-[20px]"
+                >
+                    <div className="flex justify-between pl-[15px] pr-[15px]">
+                        <span>Tool</span>
+                        <span>{tool}</span>
+                    </div>
+                    <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
+                        <span>Network Cost</span>
+                        {/* <span>${gasCost}</span> */}
+                        <span>Gas is covered by Fungi</span>
+                    </div>
+                    <div className="flex justify-between pl-[15px] pr-[15px] pt-3">
+                        <span>Max Slippage</span>
+                        <span>{maxSlippage}%</span>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 
