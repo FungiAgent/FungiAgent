@@ -80,14 +80,18 @@ export default function CenterColumn({ isExpanded, isConnected }) {
                 <div className="flex flex-col items-center w-full h-full justify-end rounded-lg">
                     <div className="flex flex-col w-full h-full items-center justify-end overflow-y-hidden">
                         <ChatDisplay chatHistory={chatHistory} />
-                        <ConfirmationManager
-                            confirmationDetails={confirmationDetails}
-                            confirmAction={confirmAction}
-                            isConfirmed={isConfirmed}
-                            setIsConfirmed={setIsConfirmed}
-                            rejectAction={rejectAction}
-                            showConfirmationBox={showConfirmationBox}
-                        />
+                        {showConfirmationBox && (
+                            <div className="pb-[32px]">
+                                <ConfirmationManager
+                                    confirmationDetails={confirmationDetails}
+                                    confirmAction={confirmAction}
+                                    isConfirmed={isConfirmed}
+                                    setIsConfirmed={setIsConfirmed}
+                                    rejectAction={rejectAction}
+                                    showConfirmationBox={showConfirmationBox}
+                                />
+                            </div>
+                        )}
                     </div>
                     {chatHistory.length === 0 && <Tips />}
                     <UserInput
