@@ -178,9 +178,9 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
             setShowModal={onClose}
             position={"center"}
         >
-            <div className="bg-white p-[30px] rounded-lg shadow-lg relative max-w-md w-full mx-auto transition-all">
-                <div className="flex flex-row justify-between w-full py-10">
-                    <div className="w-full">
+            <div className="relative max-w-md w-full mx-auto transition-all">
+                <div className="flex flex-row justify-between w-full">
+                    <div className="w-full flex flex-col items-start justify-start">
                         <input
                             type="text"
                             placeholder="0.00"
@@ -188,25 +188,26 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose }) => {
                             onChange={(e) => setAmount(e.target.value)}
                             className="text-xxl w-full rounded focus:outline-none focus:ring-2 focus:ring-transparent bg-transparent text-black placeholder-gray-600"
                         />
-                        <p className=" text-xs w-full rounded text-gray-400">
+                        <p className="text-xs w-full text-left rounded text-gray-400">
                             $0.00
                         </p>
-
                         {/* isValidAddress(recipient)
                                         ? "focus:ring-blue-500"
                                         : "focus:ring-red-500" */}
                     </div>
                     <TokenDropdown onSelect={setTokenAddress} />
                 </div>
-                <input
-                    maxLength={42}
-                    type="text"
-                    placeholder="0x..."
-                    value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
-                    className="my-2 py-2 px-4 text-lg w-full rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-transparent bg-transparent text-black placeholder-gray-400"
-                />
-                <div className="flex justify-between my-[14px]">
+                <div className="py-[40px]">
+                    <input
+                        maxLength={42}
+                        type="text"
+                        placeholder="0x..."
+                        value={recipient}
+                        onChange={(e) => setRecipient(e.target.value)}
+                        className="my-2 py-2 px-4 text-lg w-full rounded-xl shadow-input focus:outline-none focus:ring-2 focus:ring-transparent bg-transparent text-black placeholder-gray-400"
+                    />
+                </div>
+                <div className="flex justify-between mb-[14px]">
                     <p className="text-gray-500">Network Cost</p>
                     <div className="flex flex-row">
                         <Image

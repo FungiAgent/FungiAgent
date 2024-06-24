@@ -77,29 +77,22 @@ const ChatDisplay: React.FC<{ chatHistory: any[] }> = ({ chatHistory }) => {
 
     const renderPlaceholder = () => {
         return (
-            <div className="flex flex-col justify-between h-full">
-                <div className="flex flex-col items-center mt-4">
-                    <Image
-                        src="/Logo.svg"
-                        alt="Logo"
-                        width={100}
-                        height={100}
-                    />
-                    <p className="text-xxl">Welcome.</p>
-                </div>
+            <div className="flex flex-col items-center mt-4 h-full  justify-center">
+                <Image src="/Logo.svg" alt="Logo" width={100} height={100} />
             </div>
         );
     };
-
-    return (
-        <div className="p-[16px]  max-h-[65vh] flex flex-col gap-[10px] w-full">
-            <div className="overflow-y-auto flex flex-col gap-[10px] h-full">
-                {nonSystemMessages.length === 0
-                    ? renderPlaceholder()
-                    : nonSystemMessages.map(renderMessage)}
+    if (nonSystemMessages.length > 0) {
+        return (
+            <div className="pt-[32px] max-h-full flex flex-col gap-[10px] w-full">
+                <div className="overflow-y-auto flex flex-col gap-[10px] h-full">
+                    {nonSystemMessages.map(renderMessage)}
+                </div>
             </div>
-        </div>
-    );
+        );
+    } else {
+        return renderPlaceholder();
+    }
 };
 
 export default ChatDisplay;

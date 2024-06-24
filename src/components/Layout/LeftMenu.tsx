@@ -39,12 +39,12 @@ export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-start"
+            className="flex flex-col items-start pl-10"
         >
             <div className="px-4">
-                <p className="font-light mb-1">My Balance</p>
+                <p className="font-light mb-1 text-gray-500">My Balance</p>
                 <p className="mb-4 text-xl">{formatCurrency(totalBalance)}</p>
-                <p className="font-light mb-1">My Cash</p>
+                <p className="font-light mb-1 text-gray-500">My Cash</p>
                 <p className="mb-4 text-xl">{formatCurrency(totalCash)}</p>
             </div>
             <div className="mt-10">
@@ -59,7 +59,7 @@ export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
                             disabled={item.disabled}
                             className="flex flex-row px-4 py-2 justify-center items-center my-2 hover:opacity-70"
                         >
-                            <div className="p-[10px]">
+                            <div className="pr-[10px]">
                                 <Image
                                     src={item.image}
                                     alt="portfolio"
