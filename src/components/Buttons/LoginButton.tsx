@@ -8,13 +8,13 @@ export default function LoginButton() {
         <>
             <button
                 onClick={() => login()}
-                className="bg-main py-[9px] rounded-full font-bold text-white flex w-[160px] items-center justify-center"
+                className="bg-main py-[9px]  font-bold text-white flex w-[160px] items-center justify-center text-[16px] rounded-[20px] shadow-lg"
             >
                 {isLoading
                     ? "Loading..."
                     : isConnected
                       ? "Connecting..."
-                      : "Connect"}
+                      : "Log In"}
             </button>
         </>
     );
