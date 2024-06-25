@@ -50,29 +50,30 @@ export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
             <div className="mt-10">
                 {menuItems.map((item, index) => {
                     return (
-                        <button
-                            key={index}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                toggleExpand(item.toggle);
-                            }}
-                            disabled={item.disabled}
-                            className="flex flex-row px-4 py-2 justify-center items-center my-2 hover:opacity-70"
-                        >
-                            <div className="pr-[10px]">
-                                <Image
-                                    src={item.image}
-                                    alt="portfolio"
-                                    width={20}
-                                    height={20}
-                                />
-                            </div>
-                            <p
-                                className={` ${item.disabled ? "text-gray-400" : ""}`}
+                        <motion.div whileHover={{ y: -2 }} key={index}>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    toggleExpand(item.toggle);
+                                }}
+                                disabled={item.disabled}
+                                className="flex flex-row px-4 py-2 justify-center items-center my-4 hover:opacity-70"
                             >
-                                {item.title}
-                            </p>
-                        </button>
+                                <div className="pr-[10px]">
+                                    <Image
+                                        src={item.image}
+                                        alt="portfolio"
+                                        width={20}
+                                        height={20}
+                                    />
+                                </div>
+                                <p
+                                    className={` ${item.disabled ? "text-gray-400" : ""}`}
+                                >
+                                    {item.title}
+                                </p>
+                            </button>
+                        </motion.div>
                     );
                 })}
             </div>

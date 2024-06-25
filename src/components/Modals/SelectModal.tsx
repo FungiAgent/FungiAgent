@@ -53,7 +53,7 @@ export default function SelectModal({
                     value={searchQuery}
                     onChange={handleSearch}
                     placeholder="Search..."
-                    className="w-full p-2 mb-4 border  rounded"
+                    className={`py-2 px-3 w-full rounded-chat bg-chat shadow-input pr-16 focus:outline-none focus:ring-2 focus:ring-main`}
                 />
                 <div className="flex flex-col gap-5 max-h-[50vh] overflow-scroll">
                     {filteredItems.map(
