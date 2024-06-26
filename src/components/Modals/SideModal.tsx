@@ -1,8 +1,6 @@
 import React, { FC } from "react";
-import LightSpotTable from "@/components/Tables/LightSpotTable";
-import TransactionHistoryTable from "@/components/Tables/TransactionHistoryTable";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import PortfolioFeed from "../Feeds/PortfolioFeed";
 
 type SideModalProps = {
     isOpen: boolean;
@@ -24,9 +22,11 @@ const SideModal: FC<SideModalProps> = ({
     const categoryContent = () => {
         switch (activeCategory) {
             case "Portfolio":
-                return <LightSpotTable />;
+                return <PortfolioFeed />;
+            // return <LightSpotTable />;
             case "History":
-                return <TransactionHistoryTable />;
+                return <div>History Content</div>;
+            // return <TransactionHistoryTable />;
             default:
                 return (
                     <div className="text-center mt-10">

@@ -11,6 +11,7 @@ const nextConfig = {
         NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE:
             process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER_POLICY_ID_BASE,
         MAGIC_API_KEY: process.env.MAGIC_API_KEY,
+        THIRDWEB_CLIENT_ID: process.env.THIRDWEB_CLIENT_ID,
     },
     images: {
         domains: [

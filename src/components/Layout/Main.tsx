@@ -9,8 +9,6 @@ import { motion } from "framer-motion";
 import Header from "./Header";
 
 export default function Main() {
-    const { isConnected } = useWallet();
-
     const [isExpanded, setIsExpanded] = useState(false);
 
     const [tokenAddress, setTokenAddress] = useState<string>(
@@ -39,7 +37,6 @@ export default function Main() {
     return (
         <div className="flex h-screen overflow-y-hidden">
             <LeftColumn
-                isConnected={isConnected}
                 isExpanded={isExpanded}
                 toggleExpand={toggleExpand}
                 activeCategory={activeCategory}
@@ -52,12 +49,9 @@ export default function Main() {
                 }}
                 exit={{ opacity: 0, scaleX: 0, transformOrigin: "left" }}
             >
-                <Header isConnected={isConnected} />
+                <Header />
                 <motion.div className="flex flex-row h-full mr-[32px] w-full">
-                    <CenterColumn
-                        isConnected={isConnected}
-                        isExpanded={isExpanded}
-                    />
+                    <CenterColumn isExpanded={isExpanded} />
                     <RightColumn isExpanded={isExpanded} />
                 </motion.div>
                 <div className=" w-full" />

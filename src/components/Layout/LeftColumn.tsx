@@ -1,20 +1,18 @@
 import { formatCurrency } from "@/helpers/formatCurrency";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import Logo from "../../../public/profile/Logo.svg";
 import SideModal from "../Modals/SideModal";
 import LeftMenu from "./LeftMenu";
-import useScAccountPositions from "@/domain/position/useScAccountPositions";
-import useScAccountSpotPosition from "@/domain/position/useScAccountSpotPosition";
+import { useGlobalContext } from "@/context/NewGlobalContext";
 
 export default function LeftColumn({
-    isConnected,
     isExpanded,
     toggleExpand,
     activeCategory,
 }) {
-    const { totalBalance } = useScAccountPositions();
-    const { totalCash } = useScAccountSpotPosition();
+    const totalCash = 0;
+    const totalBalance = 0;
+    const { isConnected } = useGlobalContext();
     return (
         <motion.div
             className="flex  flex-col items-center justify-start h-full overflow-y-scroll "
@@ -62,9 +60,7 @@ export default function LeftColumn({
                             <SideModal
                                 isOpen={true}
                                 onClose={() => toggleExpand(activeCategory)}
-                                // @ts-expect-error
                                 balance={formatCurrency(totalBalance)}
-                                // @ts-expect-error
                                 cash={formatCurrency(totalCash)}
                                 activeCategory={activeCategory}
                             />

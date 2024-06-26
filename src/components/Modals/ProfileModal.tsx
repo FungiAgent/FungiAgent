@@ -20,16 +20,13 @@ import DepositModal from "./DepositModal";
 import FriendsModal from "./FriendsModal";
 
 export default function ProfileModal({ open, setOpen }) {
-    const { scAccount, logout } = useWallet();
     const [isSendModalOpen, setIsSendModalOpen] = useState(false);
     const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
     const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
-
+    const scAccount = "0x0102010e4310401034013040103";
     const router = useRouter();
-    const { showNotification } = useNotification();
 
     const logingOut = async () => {
-        logout();
         setOpen(false);
         router.push("/");
     };
@@ -95,10 +92,6 @@ export default function ProfileModal({ open, setOpen }) {
                     className="py-1 px-0.5 rounded-lg flex w-fit mx-auto items-center"
                     onClick={() => {
                         navigator.clipboard.writeText(scAccount as string);
-                        showNotification({
-                            message: "Link copied to clipboard.",
-                            type: "success",
-                        });
                     }}
                 >
                     <UserIcon

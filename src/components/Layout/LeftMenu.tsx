@@ -1,6 +1,10 @@
 import { formatCurrency } from "@/helpers/formatCurrency";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useQuery } from "react-query";
+import portfolioApi from "@/api/feeds";
+import { useGlobalContext } from "@/context/NewGlobalContext";
+import BlockLoader from "../Loader/BlockLoader";
 
 const menuItems = [
     {
@@ -34,6 +38,26 @@ const menuItems = [
 ];
 
 export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
+    const { accountAddress } = useGlobalContext();
+
+    const getCashBalance = async (): Promise<{
+        cash: number;
+        balance: number;
+    }> => {
+        const { data, ok } = await portfolioApi.getCashBalance({
+            account: accountAddress,
+        });
+        console.log({ data });
+        if (ok) {
+            // @ts-expect-error
+            return data;
+        }
+        return { cash: 0, balance: 0 };
+    };
+
+    const { data, error, isLoading } = useQuery("cash-balance", getCashBalance);
+    if (isLoading) return <BlockLoader />;
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -43,9 +67,11 @@ export default function LeftMenu({ totalBalance, totalCash, toggleExpand }) {
         >
             <div className="px-4">
                 <p className="font-light mb-1 text-gray-500">My Balance</p>
-                <p className="mb-4 text-xl">{formatCurrency(totalBalance)}</p>
+                {/* @ts-expect-error */}
+                <p className="mb-4 text-xl">{formatCurrency(data?.balance)}</p>
                 <p className="font-light mb-1 text-gray-500">My Cash</p>
-                <p className="mb-4 text-xl">{formatCurrency(totalCash)}</p>
+                {/* @ts-expect-error */}
+                <p className="mb-4 text-xl">{formatCurrency(data?.cash)}</p>
             </div>
             <div className="mt-10">
                 {menuItems.map((item, index) => {

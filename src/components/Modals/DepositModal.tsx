@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Dialog } from "@headlessui/react";
-import { useERC20Transfer } from "@/hooks/useERC20Transfer";
-import { BigNumber } from "alchemy-sdk";
-import { useNotification } from "@/context/NotificationContextProvider";
-import { useUserOperations } from "@/hooks/useUserOperations";
-import { useSimUO } from "@/hooks/useSimUO";
+import React, { useState } from "react";
+
 import TokenDropdown from "@/components/Dropdown/TokenDropdown";
-import { useLiFiTokenInfo } from "@/hooks/useLiFiTokenInfo";
-import { ethers } from "ethers";
-import { CheckIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import ModalContainer from "./ModalContainer";
-import { useWallet } from "@/hooks";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 interface SendModalProps {

@@ -1,5 +1,5 @@
 // React
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 // Headlessui
 import { Menu, Transition } from "@headlessui/react";
 // Heroicons
@@ -8,7 +8,6 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { NetworkType } from "@/types/Types";
 // Next
 import Image from "next/image";
-import useWallet from "@/hooks/useWallet";
 import { motion } from "framer-motion";
 
 type NetworkDropdownProps = {
@@ -21,14 +20,6 @@ export default function ChangeNetworkDropdown({
     isModal,
 }: NetworkDropdownProps) {
     const [chainSelected, setChainSelected] = useState<NetworkType>();
-    const { switchNetwork, chainId } = useWallet();
-
-    useEffect(() => {
-        const chainSelected = networks.filter(
-            (network: NetworkType) => network.id === chainId,
-        );
-        setChainSelected(chainSelected[0]);
-    }, [networks, chainId]);
 
     return (
         <Menu
@@ -83,9 +74,6 @@ export default function ChangeNetworkDropdown({
                             return (
                                 <Menu.Item key={network.name}>
                                     <button
-                                        onClick={() =>
-                                            switchNetwork(network.id)
-                                        }
                                         className={`py-1 my-1 ${
                                             isModal ? "" : "grid grid-cols-3"
                                         } w-full  items-center hover:opacity-80`}

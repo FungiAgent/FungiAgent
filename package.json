@@ -31,6 +31,7 @@
         "@typescript-eslint/parser": "^7.0.1",
         "@upstash/redis": "^1.29.0",
         "alchemy-sdk": "^3.0.0",
+        "apisauce": "^3.0.1",
         "cheerio": "^1.0.0-rc.12",
         "cors": "^2.8.5",
         "crypto-js": "4.2.0",
@@ -61,6 +62,7 @@
         "react-use": "17.3.1",
         "sass": "1.55.0",
         "swr": "^2.2.5",
+        "thirdweb": "^5.29.6",
         "use-context-selector": "1.4.1",
         "viem": "2.7.8"
     },

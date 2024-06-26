@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { marked } from "marked"; // Import the marked library
-import { AnimationControls, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 const renderer = new marked.Renderer();
 
